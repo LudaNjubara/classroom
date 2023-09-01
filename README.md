@@ -11,14 +11,12 @@ This is my final thesis project for Algebra University College. It is a web appl
 3. Install dependencies using the following commands:
 
 ```
-
-pnpm install
-pnpm run dev
-
+1. pnpm install
+2. pnpm run dev
 ```
 
 ### Usage
 
 1. After installation, do the following:
 2. Open http://localhost:3000 in your browser
-3. Start using it at your on preference
+3. Start using it at your own preference
