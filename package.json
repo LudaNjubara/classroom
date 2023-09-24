@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -50,7 +50,6 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
-    "prisma": "^5.2.0",
-    "zukeeper": "^1.0.2"
+    "prisma": "^5.2.0"
   }
 }
