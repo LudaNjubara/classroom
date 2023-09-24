@@ -1,5 +1,5 @@
-import Home from "@/components/home/Index";
+import HomeView from "@/components/pages/home/Index";
 
 export default function HomePage() {
-  return <Home />;
+  return <HomeView />;
 }

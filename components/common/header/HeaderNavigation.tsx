@@ -10,7 +10,7 @@ import { ThemeToggleButton } from "@components/common/theme-toggle-button";
 export default function HeaderNavigation() {
   const { isLoading, userSession } = useUserSession();
 
-  if (isLoading || !userSession)
+  if (isLoading && !userSession)
     return (
       <div className="flex gap-2">
         <Skeleton className="w-12 h-11 rounded-sm" />
@@ -19,7 +19,7 @@ export default function HeaderNavigation() {
       </div>
     );
 
-  return userSession.isAuthenticated ? (
+  return userSession?.isAuthenticated ? (
     <NavigationMenu>
       <NavigationMenuList className="flex gap-1">
         <NavigationMenuItem>

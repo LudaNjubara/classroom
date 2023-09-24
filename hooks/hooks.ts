@@ -9,7 +9,7 @@ export const useUserSession = () => {
         const getSession = async () => {
             setIsLoading(true);
             const session = await fetch("/api/auth");
-            const sessionJson = await session.json();
+            const sessionJson = await session.json() as TUserSession;
             setUserSession(sessionJson);
             setIsLoading(false);
         };

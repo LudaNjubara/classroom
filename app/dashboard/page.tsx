@@ -1,15 +1,31 @@
-import fetchUserSession from "@/lib/fetch-user-session";
+import DashboardView from "@/components/views/DashboardView";
+import fetchOrganizations from "@/lib/fetchers/fetch-organizations";
+import { initialProfile } from "@/lib/initial-profile";
+import { TOrganizationWithClassroomsWithStudentsWithTeachers } from "@/types/typings";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
-  const userSession = fetchUserSession();
+export default async function DashboardPage() {
+  const { isAuthenticated } = getKindeServerSession();
+
+  if (!isAuthenticated()) redirect("/");
+
+  const profile = await initialProfile();
+
+  let organizations: TOrganizationWithClassroomsWithStudentsWithTeachers[] = [];
+
+  const handleFetchOrganizations = async () => {
+    const returnedOrganizations = await fetchOrganizations();
+    if (returnedOrganizations) organizations = returnedOrganizations;
+  };
+
+  if (profile.role !== "GUEST") {
+    await handleFetchOrganizations();
+  }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-4xl font-bold text-center">Welcome to Dashboard page</h1>
-
-      {userSession.isAuthenticated && (
-        <p className="text-center">You are signed in as {userSession.user.email}</p>
-      )}
+    <main>
+      <DashboardView profile={profile} organizations={organizations} />
     </main>
   );
 }
