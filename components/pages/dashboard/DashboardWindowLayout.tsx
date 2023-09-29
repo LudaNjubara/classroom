@@ -26,17 +26,15 @@ export default function DashboardWindowLayout({ contextValue }: TProps) {
 
   if (!selectedOrganization) setSelectedOrganization(organizations[0]);
 
-  const handleSelectedOrganizationClick = (item: TOrganizationWithClassroomsWithStudentsWithTeachers) => {
-    if (item.id === selectedOrganization?.id) return;
-    setSelectedOrganization(item);
+  const handleSelectedOrganizationClick = (org: TOrganizationWithClassroomsWithStudentsWithTeachers) => {
+    if (org.id === selectedOrganization?.id) return;
+    setSelectedOrganization(org);
   };
 
   return (
     <DashboardContext.Provider value={contextValue}>
       <div>
         <header className="flex gap-4 mb-2 py-2">
-          <h2 className="min-w-[200px] w-fit">Dashboard</h2>
-
           {profile.role !== "ORGANIZATION" && (
             <ul className="flex gap-3 items-center overflow-x-auto">
               {organizations.map((org) => (

@@ -18,10 +18,18 @@ const tabToRender: TContentToRender = {
 
 function EmptyContent() {
   return (
-    <>
-      <h2 className="text-2xl font-semibold">Welcome to your dashboard</h2>
-      <p className="text-lg text-slate-600">Select a tab from the left to get started</p>
-    </>
+    <div className="w-full h-full grid place-items-center ">
+      <h2
+        className="text-6xl font-semibold bg-clip-text text-transparent
+      bg-gradient-to-b from-slate-200/40 to-slate-200/90
+      dark:from-slate-800 dark:to-slate-900/90"
+      >
+        Welcome to your dashboard
+      </h2>
+      <p className="py-3 px-4 rounded-sm bg-slate-100 dark:bg-slate-900 text-lg text-slate-400 dark:text-slate-500">
+        Select a tab from the left to get started
+      </p>
+    </div>
   );
 }
 
@@ -30,7 +38,7 @@ export default function DashboardContent() {
   const selectedTab = useDashboardStore((state) => state.selectedTab);
 
   return (
-    <div className="flex-1 p-4 min-h-full overflow-auto border-8 border-slate-200 dark:border-slate-800/60 rounded-md">
+    <div className="relative flex-1 p-4 min-h-full overflow-auto border-8 border-slate-200 dark:border-slate-800/60 rounded-md">
       {selectedTab ? tabToRender[selectedTab] : <EmptyContent />}
     </div>
   );
