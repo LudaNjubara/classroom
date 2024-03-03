@@ -37,6 +37,7 @@
     "cmdk": "^0.2.0",
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
+    "focus-trap-react": "^10.2.3",
     "lucide-react": "^0.274.0",
     "next": "13.4.19",
     "next-themes": "^0.2.1",

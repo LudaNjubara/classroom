@@ -74,6 +74,9 @@ dependencies:
   eslint-config-next:
     specifier: 13.4.19
     version: 13.4.19(eslint@8.48.0)(typescript@5.2.2)
+  focus-trap-react:
+    specifier: ^10.2.3
+    version: 10.2.3(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
   lucide-react:
     specifier: ^0.274.0
     version: 0.274.0(react@18.2.0)
@@ -2384,6 +2387,26 @@ packages:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
     dev: false
 
+  /focus-trap-react@10.2.3(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-YXBpFu/hIeSu6NnmV2xlXzOYxuWkoOtar9jzgp3lOmjWLWY59C/b8DtDHEAV4SPU07Nd/t+nS/SBNGkhUBFmEw==}
+    peerDependencies:
+      prop-types: ^15.8.1
+      react: '>=16.3.0'
+      react-dom: '>=16.3.0'
+    dependencies:
+      focus-trap: 7.5.4
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      tabbable: 6.2.0
+    dev: false
+
+  /focus-trap@7.5.4:
+    resolution: {integrity: sha512-N7kHdlgsO/v+iD/dMoJKtsSqs5Dz/dXZVebRgJw23LDk+jMi/974zyiOYDziY2JPp8xivq9BmUGwIJMiuSBi7w==}
+    dependencies:
+      tabbable: 6.2.0
+    dev: false
+
   /for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
     dependencies:
@@ -3670,6 +3693,10 @@ packages:
   /supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+    dev: false
+
+  /tabbable@6.2.0:
+    resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
     dev: false
 
   /tailwind-merge@1.14.0:

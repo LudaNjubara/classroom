@@ -1,6 +1,6 @@
 import { KindePermissions } from "@kinde-oss/kinde-auth-nextjs";
 import { KindeOrganization, KindeUser } from "@kinde-oss/kinde-auth-nextjs/server";
-import { Classroom, Organization, Teacher } from "@prisma/client";
+import { Classroom, Organization, Profile, Teacher } from "@prisma/client";
 
 type TUserSession = {
     isAuthenticated: boolean;
@@ -21,6 +21,10 @@ type TOrganizationWithClassroomsWithStudentsWithTeachers = Organization & {
     students: Student[];
 }
 
+type TTeacherWithProfile = Teacher & {
+    profile: Profile;
+}
+
 type TCountry = {
     name: {
         common: string;
@@ -39,7 +43,16 @@ type TDashboardAsideTab = {
     settings: 'settings',
 }
 
+type TOrder = "asc" | "desc";
+
+type TTeachersFetchFilterParams = Partial<Teacher> & {
+    from?: number;
+    orderBy?: keyof Teacher;
+    order?: TOrder;
+}
+
+
 type TRole = "ADMIN" | "GUEST" | "ORGANIZATION" | "TEACHER" | "STUDENT"
 
-export { TCountry, TDashboardAsideTab, TOrganizationWithClassroomsWithStudentsWithTeachers, TRole, TUser, TUserSession };
+export { TCountry, TDashboardAsideTab, TOrganizationWithClassroomsWithStudentsWithTeachers, TRole, TTeacherWithProfile, TTeachersFetchFilterParams, TUser, TUserSession };
 

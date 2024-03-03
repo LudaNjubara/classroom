@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useDashboardStore } from "@/lib/store/DashboardStore";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
+import AddTeacherModal from "./AddTeacherModal";
 
 export default function TeachersTab() {
   // zustand state and actions
@@ -21,7 +22,7 @@ export default function TeachersTab() {
         <div className="flex items-center justify-end mt-2">
           <Button className="flex gap-2 mt-4" onClick={() => setIsAddTeacherModalOpen(true)}>
             <PlusCircle size={18} className="opacity-80" />
-            Add Teacher
+            Add Teacher(s)
           </Button>
         </div>
 
@@ -32,19 +33,7 @@ export default function TeachersTab() {
         </div>
       </div>
 
-      {isAddTeacherModalOpen && (
-        <div className="absolute inset-0 p-4 bg-slate-950 animate-pop-up transform-gpu">
-          <h2 className="text-2xl font-medium">Add Teacher</h2>
-          <p className="text-slate-600">Add a new teacher to your organization</p>
-
-          <div className="flex items-center justify-end mt-4">
-            <Button variant="outline" onClick={() => setIsAddTeacherModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button className="ml-2">Add Teacher</Button>
-          </div>
-        </div>
-      )}
+      {isAddTeacherModalOpen && <AddTeacherModal setIsAddTeacherModalOpen={setIsAddTeacherModalOpen} />}
     </div>
   );
 }

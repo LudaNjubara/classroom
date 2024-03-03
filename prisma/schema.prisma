@@ -36,14 +36,13 @@ model Profile {
 model Organization {
   id String @id @default(cuid())
 
-  name    String  @db.VarChar(255)
-  address String  @db.VarChar(255)
-  phone   String  @db.VarChar(255)
-  city    String  @db.VarChar(255)
-  state   String  @db.VarChar(255)
-  country String  @db.VarChar(255)
-  email   String  @unique @db.VarChar(255)
-  picture String? @default("/default-user-avatar.png") @db.VarChar(255)
+  name    String @db.VarChar(255)
+  address String @db.VarChar(255)
+  phone   String @db.VarChar(255)
+  city    String @db.VarChar(255)
+  state   String @db.VarChar(255)
+  country String @db.VarChar(255)
+  email   String @unique @db.VarChar(255)
 
   profileId String
   profile   Profile @relation(fields: [profileId], references: [kindeId])
@@ -62,14 +61,13 @@ model Organization {
 model Teacher {
   id String @id @default(cuid())
 
-  name    String  @db.VarChar(255)
-  address String  @db.VarChar(255)
-  phone   String  @db.VarChar(255)
-  city    String  @db.VarChar(255)
-  state   String  @db.VarChar(255)
-  country String  @db.VarChar(255)
-  email   String  @unique @db.VarChar(255)
-  picture String? @default("/default-user-avatar.png") @db.VarChar(255)
+  name    String @db.VarChar(255)
+  address String @db.VarChar(255)
+  phone   String @db.VarChar(255)
+  city    String @db.VarChar(255)
+  state   String @db.VarChar(255)
+  country String @db.VarChar(255)
+  email   String @unique @db.VarChar(255)
 
   profileId String
   profile   Profile @relation(fields: [profileId], references: [kindeId])
@@ -90,14 +88,13 @@ model Teacher {
 model Student {
   id String @id @default(cuid())
 
-  name    String  @db.VarChar(255)
-  address String  @db.VarChar(255)
-  phone   String  @db.VarChar(255)
-  city    String  @db.VarChar(255)
-  state   String  @db.VarChar(255)
-  country String  @db.VarChar(255)
-  email   String  @unique @db.VarChar(255)
-  picture String? @default("/default-user-avatar.png") @db.VarChar(255)
+  name    String @db.VarChar(255)
+  address String @db.VarChar(255)
+  phone   String @db.VarChar(255)
+  city    String @db.VarChar(255)
+  state   String @db.VarChar(255)
+  country String @db.VarChar(255)
+  email   String @unique @db.VarChar(255)
 
   profileId String
   profile   Profile @relation(fields: [profileId], references: [kindeId])

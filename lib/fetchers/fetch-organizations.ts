@@ -4,14 +4,13 @@ import { handleError } from "@lib/helpers/handle-error";
 import { cookies } from "next/headers";
 
 
-const fetchOrganizations = async (): Promise<TOrganizationWithClassroomsWithStudentsWithTeachers[] | undefined> => {
+const fetchOrganizations = async (): Promise<TOrganizationWithClassroomsWithStudentsWithTeachers[]> => {
     const response = await fetch(API_ENDPOINTS.ORGANIZATION, {
         headers: { Cookie: cookies().toString() },
     });
 
     if (!response.ok) {
         handleError(response.status);
-        return;
     }
 
     const { organizations } = await response.json();

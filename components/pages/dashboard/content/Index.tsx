@@ -3,7 +3,7 @@ import { TDashboardAsideTab } from "@/types/typings";
 import ClassroomsTab from "@components/pages/dashboard/content/ClassroomsTab";
 import SettingsTab from "@components/pages/dashboard/content/SettingsTab";
 import StudentsTab from "@components/pages/dashboard/content/StudentsTab";
-import TeachersTab from "@components/pages/dashboard/content/TeachersTab";
+import TeachersTab from "./teacher-tab/Index";
 
 type TContentToRender = {
   [key in keyof TDashboardAsideTab]: React.ReactNode;
