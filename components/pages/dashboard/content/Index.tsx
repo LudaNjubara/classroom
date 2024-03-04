@@ -38,7 +38,7 @@ export default function DashboardContent() {
   const selectedTab = useDashboardStore((state) => state.selectedTab);
 
   return (
-    <div className="relative flex-1 p-4 min-h-full overflow-auto border-8 border-slate-200 dark:border-slate-800/60 rounded-md">
+    <div className="relative flex-1 p-4 min-h-full overflow-auto border-8 bg-slate-300 dark:bg-slate-950 border-slate-100 dark:border-slate-800/60 rounded-md">
       {selectedTab ? tabToRender[selectedTab] : <EmptyContent />}
     </div>
   );

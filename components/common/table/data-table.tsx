@@ -45,8 +45,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       <div className="flex items-center pb-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2 ml-auto">
-              <Columns size={18} className="opacity-80" />
+            <Button variant="outline" size={"sm"} className="flex items-center gap-2 ml-auto">
+              <Columns size={16} className="opacity-80" />
               Columns
             </Button>
           </DropdownMenuTrigger>

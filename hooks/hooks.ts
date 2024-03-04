@@ -1,4 +1,5 @@
-import { TUserSession } from "@/types/typings";
+import fetchTeachers from "@/lib/fetchers/fetch-teachers";
+import { TTeacherWithProfile, TTeachersFetchFilterParams, TUserSession } from "@/types/typings";
 import { useEffect, useState } from "react";
 
 export const useUserSession = () => {
@@ -19,3 +20,21 @@ export const useUserSession = () => {
 
     return { isLoading, userSession };
 };
+
+export function useTeachers(filterParams: TTeachersFetchFilterParams) {
+    const [data, setData] = useState<TTeacherWithProfile[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const getTeachers = async () => {
+            setIsLoading(true);
+            const teachers = await fetchTeachers(filterParams);
+            setData(teachers);
+            setIsLoading(false);
+        };
+
+        getTeachers();
+    }, [filterParams]);
+
+    return { data, isLoading };
+}

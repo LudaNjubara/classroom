@@ -1,34 +1,24 @@
 import GridView from "@/components/common/ui/GridView";
 import { Button } from "@/components/ui/button";
-import fetchTeachers from "@/lib/fetchers/fetch-teachers";
-import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
+import { useTeachers } from "@/hooks/hooks";
+import { TTeachersFetchFilterParams } from "@/types/typings";
 import FocusTrap from "focus-trap-react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import SearchBox from "./SearchBox";
 import TeacherCard from "./TeacherCard";
+import TeacherCardSkeleton from "./TeacherCardSkeleton";
 
 type TAddTeacherModalProps = {
   setIsAddTeacherModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 function AddTeacherModal({ setIsAddTeacherModalOpen }: TAddTeacherModalProps) {
-  const [teachers, setTeachers] = useState<TTeacherWithProfile[]>([]);
+  const [filterParams, setFilterParams] = useState<TTeachersFetchFilterParams>({ orderBy: "name" });
+  const { data: teachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
   const handleAddTeachers = () => {
-    setIsAddTeacherModalOpen(false);
+    // Add teachers to the organization
   };
-
-  useEffect(() => {
-    const getTeachers = async () => {
-      const filterParams: TTeachersFetchFilterParams = {
-        orderBy: "name",
-      };
-      const teachers = await fetchTeachers(filterParams);
-      setTeachers(teachers);
-    };
-
-    getTeachers();
-  }, []);
 
   return (
     <FocusTrap>
@@ -39,7 +29,15 @@ function AddTeacherModal({ setIsAddTeacherModalOpen }: TAddTeacherModalProps) {
         <div className="flex flex-col gap-5 mt-4">
           <SearchBox />
 
-          <div className="flex-1 mt-4">
+          <div className="flex-1 mt-4 overflow-y-auto pb-8">
+            {isTeachersLoading && (
+              <GridView>
+                {[...Array(5)].map((_, index) => (
+                  <TeacherCardSkeleton key={index} />
+                ))}
+              </GridView>
+            )}
+
             {teachers.length > 0 ? (
               <GridView>
                 {teachers.map((teacher) => (
@@ -52,7 +50,7 @@ function AddTeacherModal({ setIsAddTeacherModalOpen }: TAddTeacherModalProps) {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center justify-end mt-4">
+        <div className="sticky bottom-0 left-0 right-0 p-4 pb-0 flex items-center justify-end bg-slate-300 dark:bg-slate-950">
           <Button variant="outline" onClick={() => setIsAddTeacherModalOpen(false)}>
             Cancel
           </Button>

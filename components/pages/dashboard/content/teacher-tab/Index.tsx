@@ -20,7 +20,11 @@ export default function TeachersTab() {
         <p className="text-slate-600">View and manage your teachers here</p>
 
         <div className="flex items-center justify-end mt-2">
-          <Button className="flex gap-2 mt-4" onClick={() => setIsAddTeacherModalOpen(true)}>
+          <Button
+            className="flex gap-2 mt-4"
+            variant={"secondary"}
+            onClick={() => setIsAddTeacherModalOpen(true)}
+          >
             <PlusCircle size={18} className="opacity-80" />
             Add Teacher(s)
           </Button>
