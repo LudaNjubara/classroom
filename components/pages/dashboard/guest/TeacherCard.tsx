@@ -247,7 +247,6 @@ export default function TeacherCard({ profile, countries }: TProps) {
                     <FormLabel>Country</FormLabel>
                     <FormControl>
                       <CountriesCombobox
-                        searchingFor="Country"
                         countriesData={countries}
                         selectedCountry={selectedCountry}
                         setSelectedCountry={setSelectedCountry}

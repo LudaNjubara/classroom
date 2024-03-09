@@ -10,14 +10,12 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type TComboboxProps = {
-  searchingFor: string;
   countriesData: TCountry[];
   selectedCountry: string;
   setSelectedCountry: Dispatch<SetStateAction<string>>;
 };
 
 export const CountriesCombobox = memo(function CountriesCombobox({
-  searchingFor,
   countriesData,
   selectedCountry,
   setSelectedCountry,
@@ -32,13 +30,13 @@ export const CountriesCombobox = memo(function CountriesCombobox({
             ? countriesData.find(
                 (country) => country.name.common.toLowerCase() === selectedCountry.toLowerCase()
               )?.name.common
-            : `Search ${searchingFor}...`}
+            : `Search countries...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command className="max-h-[300px]">
-          <CommandEmpty>No {searchingFor} found.</CommandEmpty>
+          <CommandEmpty>No countries found.</CommandEmpty>
           <CommandGroup className="overflow-y-auto">
             {countriesData.map((country) => (
               <CommandItem
