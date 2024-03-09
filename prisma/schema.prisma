@@ -8,6 +8,7 @@ datasource db {
   relationMode = "prisma"
 }
 
+// USER ROLES
 enum Role {
   ADMIN
   GUEST
@@ -16,6 +17,24 @@ enum Role {
   STUDENT
 }
 
+// NOTIFICATIONS
+enum NotificationUserType {
+  ORGANIZATION
+  TEACHER
+  STUDENT
+}
+
+enum NotificationType {
+  ORGANIZATION_INVITE
+}
+
+enum NotificationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// DATABASE MODELS
 model Profile {
   id      String @id @default(cuid())
   kindeId String @unique
@@ -129,4 +148,24 @@ model Classroom {
 
   @@index([organizationId], name: "organizationId")
   @@map("classrooms")
+}
+
+model Notification {
+  id      String             @id @default(cuid())
+  type    NotificationType
+  status  NotificationStatus @default(PENDING)
+  message String
+
+  recipientId   String
+  recipientType NotificationUserType
+
+  senderId   String
+  senderType NotificationUserType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([senderId, senderType], name: "sender")
+  @@index([recipientId, recipientType], name: "recipient")
+  @@map("notifications")
 }

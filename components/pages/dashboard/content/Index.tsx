@@ -3,6 +3,7 @@ import { TDashboardAsideTab } from "@/types/typings";
 import ClassroomsTab from "@components/pages/dashboard/content/ClassroomsTab";
 import SettingsTab from "@components/pages/dashboard/content/SettingsTab";
 import StudentsTab from "@components/pages/dashboard/content/StudentsTab";
+import NotificationsTab from "./notifications-tab/Index";
 import TeachersTab from "./teacher-tab/Index";
 
 type TContentToRender = {
@@ -13,6 +14,7 @@ const tabToRender: TContentToRender = {
   classrooms: <ClassroomsTab />,
   teachers: <TeachersTab />,
   students: <StudentsTab />,
+  notifications: <NotificationsTab />,
   settings: <SettingsTab />,
 };
 

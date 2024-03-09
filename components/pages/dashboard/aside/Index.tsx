@@ -3,7 +3,7 @@ import { useDashboardContext } from "@/context/DashboardContext";
 import { useDashboardStore } from "@/lib/store/DashboardStore";
 import { TDashboardAsideTab } from "@/types/typings";
 import { Role } from "@prisma/client";
-import { BookOpen, FlaskConical, GraduationCap, Settings } from "lucide-react";
+import { Bell, BookOpen, FlaskConical, GraduationCap, Settings } from "lucide-react";
 import { useMemo } from "react";
 
 type TAsideItem = {
@@ -31,6 +31,12 @@ const asideItems: TAsideItem[] = [
     label: "Students",
     icon: <GraduationCap size={23} />,
     allowedRoles: ["ADMIN", "ORGANIZATION"],
+  },
+  {
+    id: "notifications",
+    label: "Notifications",
+    icon: <Bell size={20} />,
+    allowedRoles: ["ADMIN", "ORGANIZATION", "TEACHER", "STUDENT"],
   },
 ];
 
