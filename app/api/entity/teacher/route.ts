@@ -1,11 +1,11 @@
 import { db } from "@/lib/db";
+import { TTeacherSearchBy } from "@/types/typings";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Teacher } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const TAKE_LIMIT = 10;
-const TEMPLATE_TEACHER: Teacher = {
-    id: "",
+const TEMPLATE_TEACHER_FOR_SEARCH_BY: TTeacherSearchBy = {
     name: "",
     email: "",
     address: "",
@@ -13,13 +13,9 @@ const TEMPLATE_TEACHER: Teacher = {
     state: "",
     country: "",
     phone: "",
-    profileId: "",
-    organizationId: "",
-    createdAt: new Date(),
-    updatedAt: new Date(),
 }
-const ALLOWED_ORDER_BY_ARRAY = Object.keys(TEMPLATE_TEACHER);
-const ALLOWED_ORDER_ARRAY = ["asc", "desc"];
+const ALLOWED_SEARCH_BY_ARRAY = Object.keys(TEMPLATE_TEACHER_FOR_SEARCH_BY);
+const ALLOWED_ORDER_BY_ARRAY = ["asc", "desc"];
 
 const constructWhereClause = (options: Partial<Teacher>) => {
     const { organizationId, ...rest } = options;
@@ -46,17 +42,17 @@ const constructWhereClause = (options: Partial<Teacher>) => {
     return whereClause;
 }
 
-const constructOrderByClause = (options: { orderBy: string | null, order: string | null }) => {
-    const { orderBy, order } = options;
+const constructOrderByClause = (options: { searchBy: string | null, orderBy: string | null }) => {
+    const { searchBy, orderBy } = options;
     let orderByClause;
 
-    if (orderBy && order) {
+    if (searchBy && orderBy) {
         orderByClause = {
-            [orderBy]: order,
+            [searchBy]: orderBy,
         };
-    } else if (orderBy) {
+    } else if (searchBy) {
         orderByClause = {
-            [orderBy]: "asc",
+            [searchBy]: "asc",
         };
     } else {
         orderByClause = undefined;
@@ -132,19 +128,26 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const organizationId = searchParams.get("organizationId");
         const from = searchParams.get("from");
+        const query = searchParams.get("query");
+        const searchBy = searchParams.get("searchBy")
         const orderBy = searchParams.get("orderBy");
-        const order = searchParams.get("order");
+
+        console.log("url", request.url);
 
         if (from && isNaN(parseInt(from))) {
             throw new Error("Invalid query parameter 'from'");
+        } else if (searchBy && searchBy.split(",").every((searchBy) => ALLOWED_SEARCH_BY_ARRAY.includes(searchBy)) && !query) {
+            throw new Error("Invalid query parameter 'searchBy'. Used without 'query' parameter");
+        } else if (query && searchBy && !searchBy.split(",").every((searchBy) => ALLOWED_SEARCH_BY_ARRAY.includes(searchBy))) {
+            throw new Error("Invalid query parameter 'searchBy'");
         } else if (orderBy && !ALLOWED_ORDER_BY_ARRAY.includes(orderBy)) {
             throw new Error("Invalid query parameter 'orderBy'");
-        } else if (order && !ALLOWED_ORDER_ARRAY.includes(order)) {
-            throw new Error("Invalid query parameter 'order'");
         }
 
+        console.log({ organizationId, from, searchBy, orderBy })
+
         const whereClause = constructWhereClause({ organizationId });
-        const orderByClause = constructOrderByClause({ orderBy, order });
+        const orderByClause = constructOrderByClause({ searchBy: null, orderBy });
 
         const teachers = await db.teacher.findMany({
             where: whereClause,

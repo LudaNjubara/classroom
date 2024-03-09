@@ -25,6 +25,8 @@ type TTeacherWithProfile = Teacher & {
     profile: Profile;
 }
 
+type TTeacherSearchBy = Omit<Teacher, "id" | "organizationId" | "profileId" | "createdAt" | "updatedAt">;
+
 type TCountry = {
     name: {
         common: string;
@@ -40,19 +42,21 @@ type TDashboardAsideTab = {
     classrooms: 'classrooms',
     teachers: 'teachers',
     students: 'students',
+    notifications: 'notifications',
     settings: 'settings',
 }
 
-type TOrder = "asc" | "desc";
+type TOrderBy = "asc" | "desc";
 
-type TTeachersFetchFilterParams = Partial<Teacher> & {
+type TTeachersFetchFilterParams = {
     from?: number;
-    orderBy?: keyof Teacher;
-    order?: TOrder;
+    query?: string;
+    searchBy?: (keyof TTeacherSearchBy)[];
+    orderBy?: TOrderBy;
 }
 
 
 type TRole = "ADMIN" | "GUEST" | "ORGANIZATION" | "TEACHER" | "STUDENT"
 
-export { TCountry, TDashboardAsideTab, TOrganizationWithClassroomsWithStudentsWithTeachers, TRole, TTeacherWithProfile, TTeachersFetchFilterParams, TUser, TUserSession };
+export { TCountry, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TRole, TTeacherSearchBy, TTeacherWithProfile, TTeachersFetchFilterParams, TUser, TUserSession };
 

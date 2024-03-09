@@ -11,7 +11,7 @@ export default function TeacherCard({ teacher }: TTeacherCardProps) {
       <div className="relative basis-20 flex-shrink-0">
         <Image
           src={teacher.profile.picture!}
-          objectFit="cover"
+          style={{ objectFit: "cover", objectPosition: "center" }}
           quality={80}
           sizes="100px"
           alt={teacher.name}
