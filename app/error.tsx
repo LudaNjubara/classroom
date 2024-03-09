@@ -1,7 +1,7 @@
 "use client";
 
-import { toast } from "@/components/ui/use-toast";
 import { ERROR_MESSAGES } from "@/lib/constants/error-constants";
+import observableError from "@/services/ErrorObserver";
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   let toastTitle: string;
@@ -54,11 +54,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
       break;
   }
 
-  toast({
-    title: toastTitle,
-    description: toastDescription,
-    variant: "destructive",
-  });
+  observableError.notify({ title: toastTitle, description: toastDescription });
 
   return (
     <div className="container border-2 p-3 rounded-md border-red-400/50 dark:border-red-400/30 bg-red-700 dark:bg-red-900">
