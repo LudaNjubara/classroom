@@ -6,6 +6,8 @@ import { TeachersTab } from "@/features/teachers";
 import { useDashboardStore } from "@/stores";
 import { TDashboardAsideTab } from "@/types/typings";
 
+// TODO: add lazy import for the tabs
+
 type TContentToRender = {
   [key in keyof TDashboardAsideTab]: React.ReactNode;
 };
@@ -35,7 +37,7 @@ function EmptyContent() {
   );
 }
 
-export default function DashboardContentLayout() {
+export function DashboardContentLayout() {
   // zustand state and actions
   const selectedTab = useDashboardStore((state) => state.selectedTab);
 

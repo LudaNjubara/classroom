@@ -1,7 +1,7 @@
 
 import { TUserSession } from "@/types/typings";
 import { useEffect, useState } from "react";
-import { fetchUserSession } from "../api/fetch-user-session";
+import { fetchUserSession } from "..";
 
 export const useUserSession = () => {
     const [isLoading, setIsLoading] = useState(true);

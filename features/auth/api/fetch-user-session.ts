@@ -1,5 +1,5 @@
+import { API_ENDPOINTS } from "@/constants";
 import { TUserSession } from "@/types/typings";
-import { API_ENDPOINTS } from "../../../constants/api-constants";
 
 export const fetchUserSession = async (): Promise<TUserSession | null> => {
 

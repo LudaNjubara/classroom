@@ -1,6 +1,5 @@
 "use client";
 
-import DashboardContent from "@/components/Layout/DashboardContentLayout";
 import { Button } from "@/components/ui/button";
 import { DashboardContext, useDashboardContext } from "@/context";
 import { useDashboardStore } from "@/stores/dashboard/DashboardStore";
@@ -12,6 +11,7 @@ import {
 import { Profile, Role } from "@prisma/client";
 import { Bell, BookOpen, FlaskConical, GraduationCap, Settings } from "lucide-react";
 import { useMemo } from "react";
+import { DashboardContentLayout } from ".";
 
 type TAsideItem = {
   id: keyof TDashboardAsideTab;
@@ -47,7 +47,7 @@ const asideItems: TAsideItem[] = [
   },
 ];
 
-export function DashboardAside() {
+export function DashboardSidebar() {
   const { profile } = useDashboardContext();
 
   // zustand state and actions
@@ -152,8 +152,8 @@ export function DashboardLayout({ contextValue }: TDashboardLayoutProps) {
         <div className="flex gap-3 max-h-[800px] min-h-[700px]">
           {allowedRoles.includes(profile.role) && (
             <>
-              <DashboardAside />
-              <DashboardContent />
+              <DashboardSidebar />
+              <DashboardContentLayout />
             </>
           )}
         </div>

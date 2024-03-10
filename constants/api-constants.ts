@@ -1,6 +1,6 @@
-import { BASE_URL } from '.'
+import { BASE_URL } from "."
 
-export const BASE_API_ENDPOINT = `${BASE_URL}/api` as const
+const BASE_API_ENDPOINT = `${BASE_URL}/api` as const
 
 export const API_ENDPOINTS = {
     ORGANIZATION: `${BASE_API_ENDPOINT}/entity/organization`,
