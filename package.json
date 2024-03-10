@@ -13,6 +13,18 @@
     "path": false,
     "os": false
   },
+  "eslintConfig": {
+    "rules": {
+      "no-restricted-imports": [
+        "error",
+        {
+          "patterns": [
+            "@/features/*/*"
+          ]
+        }
+      ]
+    }
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
     "@kinde-oss/kinde-auth-nextjs": "^1.8.16",

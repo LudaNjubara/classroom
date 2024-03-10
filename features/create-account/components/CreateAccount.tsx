@@ -1,9 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import fetchCountries from "@/features/create-account/api/fetch-countries";
-import OrganizationCard from "@/features/create-account/components/OrganizationCard";
-import StudentCard from "@/features/create-account/components/StudentCard";
-import TeacherCard from "@/features/create-account/components/TeacherCard";
 import { Profile } from "@prisma/client";
+import fetchCountries from "../api/fetch-countries";
+import OrganizationCard from "./OrganizationCard";
+import StudentCard from "./StudentCard";
+import TeacherCard from "./TeacherCard";
 
 type TProps = {
   profile: Profile;

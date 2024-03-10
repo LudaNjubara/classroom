@@ -1,7 +1,8 @@
-import fetchTeachers from "@/features/teachers/api/fetch-teachers";
+
 import observableError from "@/services/ErrorObserver";
 import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
 import { useEffect, useState } from "react";
+import fetchTeachers from "../api/fetch-teachers";
 
 export function useTeachers(filterParams: TTeachersFetchFilterParams | undefined) {
     const [data, setData] = useState<TTeacherWithProfile[]>([]);

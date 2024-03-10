@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 
-export default function NotificationsTab() {
+export function NotificationsTab() {
   return (
     <div>
       <div>

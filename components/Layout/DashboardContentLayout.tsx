@@ -1,10 +1,10 @@
-import ClassroomsTab from "@/features/classrooms/components/ClassroomsTab";
-import SettingsTab from "@/features/settings/components/SettingsTab";
-import StudentsTab from "@/features/students/components/StudentsTab";
-import { useDashboardStore } from "@/stores/dashboard/DashboardStore";
+import { ClassroomsTab } from "@/features/classrooms";
+import { NotificationsTab } from "@/features/notifications";
+import { SettingsTab } from "@/features/settings";
+import { StudentsTab } from "@/features/students";
+import { TeachersTab } from "@/features/teachers";
+import { useDashboardStore } from "@/stores";
 import { TDashboardAsideTab } from "@/types/typings";
-import NotificationsTab from "../../features/notifications/components/NotificationsTab";
-import TeachersTab from "../../features/teachers/components/TeachersTab";
 
 type TContentToRender = {
   [key in keyof TDashboardAsideTab]: React.ReactNode;

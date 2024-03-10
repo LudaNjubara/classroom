@@ -1,13 +1,13 @@
 import { DataTable } from "@/components/Elements/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { teacherTableColumns } from "@/features/teachers/components/teacher-columns";
 import { useDashboardStore } from "@/stores/dashboard/DashboardStore";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import AddTeacherModal from "./AddTeacherModal";
+import { teacherTableColumns } from "./teacher-columns";
 
-export default function TeachersTab() {
+export function TeachersTab() {
   // zustand state and actions
   const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
 
