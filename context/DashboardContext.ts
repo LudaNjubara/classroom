@@ -2,14 +2,14 @@ import { TOrganizationWithClassroomsWithStudentsWithTeachers } from "@/types/typ
 import { Profile } from "@prisma/client";
 import { createContext, useContext } from "react";
 
-type DashboardContextType = {
+export type DashboardContextType = {
     profile: Profile;
     organizations: TOrganizationWithClassroomsWithStudentsWithTeachers[];
 }
 
-const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
+export const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
-const useDashboardContext = () => {
+export const useDashboardContext = () => {
     const context = useContext(DashboardContext);
 
     if (context === undefined) {
@@ -18,6 +18,3 @@ const useDashboardContext = () => {
 
     return context;
 }
-
-export { DashboardContext, useDashboardContext };
-

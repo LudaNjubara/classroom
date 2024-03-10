@@ -1,8 +1,8 @@
-import Footer from "@/components/common/footer/Index";
-import Header from "@/components/common/header/Index";
-import { ThemeProvider } from "@/components/providers/theme-provider";
+import ErrorHandler from "@/components/Error/ErrorHandler";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
 import { Toaster } from "@/components/ui/toaster";
-import ErrorHandler from "@/lib/helpers/ErrorHandler";
+import { ThemeProvider } from "@/providers/theme-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";

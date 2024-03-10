@@ -5,8 +5,8 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 import { TCountry } from "@/types/typings";
+import { cn } from "@/utils/cn";
 import { ButtonHTMLAttributes, forwardRef, useState } from "react";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}

@@ -1,7 +1,7 @@
+import { db } from "@/config"
+import { ERROR_MESSAGES } from "@/constants/error-constants"
+import { handleError } from "@/utils/handle-error"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
-import { ERROR_MESSAGES } from "@lib/constants/error-constants"
-import { db } from "@lib/db"
-import { handleError } from "@lib/helpers/handle-error"
 
 export const initialProfile = async () => {
     const { getUser, isAuthenticated } = getKindeServerSession()

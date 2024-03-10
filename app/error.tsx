@@ -1,6 +1,6 @@
 "use client";
 
-import { ERROR_MESSAGES } from "@/lib/constants/error-constants";
+import { ERROR_MESSAGES } from "@/constants/error-constants";
 import observableError from "@/services/ErrorObserver";
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {

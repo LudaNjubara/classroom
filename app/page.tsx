@@ -1,4 +1,4 @@
-import HomeView from "@/components/pages/home/Index";
+import HomeView from "@/views/HomeView";
 
 export default function HomePage() {
   return <HomeView />;

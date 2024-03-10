@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@/config/db";
 import { TTeacherSearchBy } from "@/types/typings";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Teacher } from "@prisma/client";

@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { TCountry } from "@/types/typings";
+import { cn } from "@/utils/cn";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Dispatch, SetStateAction, memo, useState } from "react";
 

@@ -1,5 +1,5 @@
+import { API_ENDPOINTS } from "@/constants/api-constants";
 import { TOrganizationWithClassroomsWithStudentsWithTeachers } from "@/types/typings";
-import { API_ENDPOINTS } from "@lib/constants/api-constants";
 import { cookies } from "next/headers";
 
 

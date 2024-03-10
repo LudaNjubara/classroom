@@ -1,8 +1,8 @@
-import DashboardView from "@/components/views/DashboardView";
 import fetchOrganizations from "@/lib/fetchers/fetch-organizations";
 import { initialProfile } from "@/lib/initial-profile";
 import observableError from "@/services/ErrorObserver";
 import { TOrganizationWithClassroomsWithStudentsWithTeachers } from "@/types/typings";
+import { DashboardView } from "@/views/DashboardView";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 
