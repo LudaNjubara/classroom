@@ -3,19 +3,19 @@
 import { DataTable } from "@/components/Elements/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useDisclosure } from "@/hooks/useDisclosure";
 import { useDashboardStore } from "@/stores/dashboard/DashboardStore";
 import { lazyImport } from "@/utils/lazy-import";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
-import AddTeacherModal from "./AddTeacherModal";
 import { teacherTableColumns } from "./teacher-columns";
+
 const { AddTeacherModal } = lazyImport(() => import("./AddTeacherModal"), "AddTeacherModal");
 
 export function TeachersTab() {
   // zustand state and actions
   const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
 
-  const [isAddTeacherModalOpen, setIsAddTeacherModalOpen] = useState(false);
+  const { isOpen: isModalOpen, toggle: toggleModal } = useDisclosure();
 
   return (
     <div>
@@ -23,25 +23,21 @@ export function TeachersTab() {
         <h2 className="text-2xl font-medium">Teachers</h2>
         <p className="text-slate-600">View and manage your teachers here</p>
 
-        <div className="flex items-center justify-end mt-2">
-          <Button
-            className="flex gap-2 mt-4"
-            variant={"secondary"}
-            onClick={() => setIsAddTeacherModalOpen(true)}
-          >
+        <div className="flex items-center justify-end">
+          <Button className="flex gap-2 mt-4" variant={"secondary"} onClick={toggleModal}>
             <PlusCircle size={18} className="opacity-80" />
-            Add Teacher(s)
+            Add Teacher&#40;s&#41;
           </Button>
         </div>
 
-        <Separator className="my-4" />
+        <Separator />
 
-        <div className="mt-8">
+        <div className="mt-4">
           <DataTable columns={teacherTableColumns} data={selectedOrganization?.teachers ?? []} />
         </div>
       </div>
 
-      {isAddTeacherModalOpen && <AddTeacherModal setIsAddTeacherModalOpen={setIsAddTeacherModalOpen} />}
+      {isModalOpen && <AddTeacherModal toggleOpen={toggleModal} />}
     </div>
   );
 }

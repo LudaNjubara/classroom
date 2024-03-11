@@ -5,7 +5,7 @@ type TTeacherCardProps = {
   teacher: TTeacherWithProfile;
 };
 
-export default function TeacherCard({ teacher }: TTeacherCardProps) {
+export function TeacherCard({ teacher }: TTeacherCardProps) {
   return (
     <article className="flex gap-3 rounded-lg bg-slate-400 dark:bg-slate-900 overflow-hidden animate-pop-up">
       <div className="relative basis-20 flex-shrink-0">

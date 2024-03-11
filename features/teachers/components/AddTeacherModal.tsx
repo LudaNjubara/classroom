@@ -2,16 +2,16 @@ import { GridView } from "@/components/Elements/";
 import { TeacherCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import { TTeachersFetchFilterParams } from "@/types/typings";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useTeachers } from "../hooks/useTeachers";
-import SearchBox from "./SearchBox";
-import TeacherCard from "./TeacherCard";
+import { SearchBox } from "./SearchBox";
+import { TeacherCard } from "./TeacherCard";
 
 type TAddTeacherModalProps = {
-  setIsAddTeacherModalOpen: Dispatch<SetStateAction<boolean>>;
+  toggleOpen: () => void;
 };
 
-function AddTeacherModal({ setIsAddTeacherModalOpen }: TAddTeacherModalProps) {
+export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
   const [filterParams, setFilterParams] = useState<TTeachersFetchFilterParams>();
   const { data: teachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
@@ -51,7 +51,7 @@ function AddTeacherModal({ setIsAddTeacherModalOpen }: TAddTeacherModalProps) {
       </div>
 
       <div className="sticky bottom-0 left-0 right-0 p-4 pb-0 flex items-center justify-end bg-slate-300 dark:bg-slate-950">
-        <Button variant="outline" onClick={() => setIsAddTeacherModalOpen(false)}>
+        <Button variant="outline" onClick={toggleOpen}>
           Cancel
         </Button>
         <Button className="ml-2" onClick={handleAddTeachers}>
@@ -61,5 +61,3 @@ function AddTeacherModal({ setIsAddTeacherModalOpen }: TAddTeacherModalProps) {
     </div>
   );
 }
-
-export default AddTeacherModal;

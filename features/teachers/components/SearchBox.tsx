@@ -112,7 +112,7 @@ type TSearchBoxTypes = {
   setFilterParams: Dispatch<SetStateAction<TTeachersFetchFilterParams | undefined>>;
 };
 
-function SearchBox({ setFilterParams }: TSearchBoxTypes) {
+export function SearchBox({ setFilterParams }: TSearchBoxTypes) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchByValues, setSearchByValues] = useState<(keyof TTeacherSearchBy)[]>([]);
   const [orderByValue, setOrderByValue] = useState<TOrderBy>();
@@ -168,5 +168,3 @@ function SearchBox({ setFilterParams }: TSearchBoxTypes) {
     </form>
   );
 }
-
-export default SearchBox;
