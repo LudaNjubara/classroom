@@ -1,10 +1,12 @@
-import { ClassroomsTab } from "@/features/classrooms";
-import { NotificationsTab } from "@/features/notifications";
-import { SettingsTab } from "@/features/settings";
-import { StudentsTab } from "@/features/students";
-import { TeachersTab } from "@/features/teachers";
 import { useDashboardStore } from "@/stores";
 import { TDashboardAsideTab } from "@/types/typings";
+import { lazyImport } from "@/utils/lazy-import";
+
+const { ClassroomsTab } = lazyImport(() => import("@/features/classrooms"), "ClassroomsTab");
+const { TeachersTab } = lazyImport(() => import("@/features/teachers"), "TeachersTab");
+const { StudentsTab } = lazyImport(() => import("@/features/students"), "StudentsTab");
+const { NotificationsTab } = lazyImport(() => import("@/features/notifications"), "NotificationsTab");
+const { SettingsTab } = lazyImport(() => import("@/features/settings"), "SettingsTab");
 
 // TODO: add lazy import for the tabs
 

@@ -4,10 +4,12 @@ import { DataTable } from "@/components/Elements/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useDashboardStore } from "@/stores/dashboard/DashboardStore";
+import { lazyImport } from "@/utils/lazy-import";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
 import AddTeacherModal from "./AddTeacherModal";
 import { teacherTableColumns } from "./teacher-columns";
+const { AddTeacherModal } = lazyImport(() => import("./AddTeacherModal"), "AddTeacherModal");
 
 export function TeachersTab() {
   // zustand state and actions
