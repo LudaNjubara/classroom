@@ -10,12 +10,12 @@ export const initialProfile = async () => {
         handleError(ERROR_MESSAGES.CLIENT_ERROR.UNAUTHORIZED.CODE)
     }
 
-    const user = getUser()
+    const user = await getUser()
 
     const profile = await db.profile.findUnique({
         where: {
-            kindeId: user.id!
-        }
+            kindeId: user!.id
+        }!
     })
 
     // If profile exists, return it
@@ -24,10 +24,10 @@ export const initialProfile = async () => {
     // If profile does not exist, create it
     const newProfile = await db.profile.create({
         data: {
-            kindeId: user.id!,
-            name: user.given_name!,
-            email: user.email!,
-            picture: user.picture
+            kindeId: user!.id,
+            name: user!.given_name!,
+            email: user!.email!,
+            picture: user!.picture
         }
     })
 

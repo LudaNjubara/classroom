@@ -67,11 +67,16 @@ export async function GET() {
     try {
         const { getUser, isAuthenticated } = getKindeServerSession();
 
-        if (!isAuthenticated()) {
+        if (!await isAuthenticated()) {
             return NextResponse.json("Unauthorized", { status: 401 });
         }
 
-        const user = getUser();
+        const user = await getUser();
+
+        if (!user) {
+            return NextResponse.json("Unauthorized", { status: 401 });
+        }
+
         const organizations = await db.organization.findMany({
             where: {
                 profileId: user.id!,

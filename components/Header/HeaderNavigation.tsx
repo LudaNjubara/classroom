@@ -4,13 +4,13 @@ import { ThemeToggleButton } from "@/components/Elements/button/ThemeToggleButto
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUserSession } from "@/features/auth";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { KindeButton } from "../Elements";
 
 export function HeaderNavigation() {
-  const { isLoading, userSession } = useUserSession();
+  const { isAuthenticated, isLoading } = useKindeBrowserClient();
 
-  if (isLoading && !userSession)
+  if (isLoading)
     return (
       <div className="flex gap-2">
         <Skeleton className="w-12 h-11 rounded-sm" />
@@ -19,7 +19,7 @@ export function HeaderNavigation() {
       </div>
     );
 
-  return userSession?.isAuthenticated ? (
+  return isAuthenticated ? (
     <NavigationMenu>
       <NavigationMenuList className="flex gap-1">
         <NavigationMenuItem>

@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 export default async function DashboardPage() {
   const { isAuthenticated } = getKindeServerSession();
 
-  if (!isAuthenticated()) redirect("/");
+  if (!(await isAuthenticated())) redirect("/");
 
   const profile = await initialProfile();
 

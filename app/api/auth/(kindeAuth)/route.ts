@@ -5,10 +5,10 @@ export async function GET() {
     const { getUser, getPermissions, getOrganization, isAuthenticated } = getKindeServerSession();
 
     const userSession = {
-        isAuthenticated: isAuthenticated(),
-        user: getUser(),
-        permissions: getPermissions(),
-        organization: getOrganization(),
+        isAuthenticated: await isAuthenticated(),
+        user: await getUser(),
+        permissions: await getPermissions(),
+        organization: await getOrganization(),
     };
 
     return NextResponse.json(userSession);
