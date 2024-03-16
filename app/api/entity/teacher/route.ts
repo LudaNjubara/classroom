@@ -51,6 +51,15 @@ function constructWhereClause({ organizationId, query, searchByArray }: TWhereCl
                 },
             })),
         };
+    } else if (query) {
+        whereClause = {
+            ...whereClause,
+            OR: ALLOWED_SEARCH_BY_ARRAY.map((searchBy) => ({
+                [searchBy]: {
+                    contains: query,
+                },
+            })),
+        };
     }
 
     return whereClause;
@@ -139,7 +148,7 @@ export async function GET(request: NextRequest) {
         const from = searchParams.get("from");
         const query = searchParams.get("query");
         const searchBy = searchParams.get("searchBy")
-        const orderBy = searchParams.get("orderBy");
+        const orderBy = searchParams.get("orderBy") as TOrderBy;
 
         if (from && isNaN(parseInt(from))) {
             return NextResponse.json({ error: "Invalid query parameter 'from'" }, { status: 400 })
@@ -151,11 +160,10 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "Invalid query parameter 'orderBy'" }, { status: 400 })
         }
 
-        const orderByFinal = orderBy as TOrderBy;
         const searchByArray = searchBy ? searchBy.split(",") : null;
 
         const whereClause = constructWhereClause({ organizationId, query, searchByArray });
-        const orderByClause = constructOrderByClause({ orderBy: orderByFinal, searchByArray });
+        const orderByClause = constructOrderByClause({ orderBy, searchByArray });
 
         const teachers = await db.teacher.findMany({
             where: whereClause,
