@@ -1,6 +1,7 @@
 "use server"
 
 import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
+import { handleError } from "@/utils/handle-error";
 import { cookies } from "next/headers";
 import { API_ENDPOINTS } from "../../../constants/api-constants";
 
@@ -18,7 +19,7 @@ const fetchTeachers = async (filterParams: TTeachersFetchFilterParams | undefine
     });
 
     if (!response.ok) {
-        throw new Error("There was an error fetching teachers. Please try again.");
+        handleError(response.status)
     }
 
     const { teachers } = await response.json();
