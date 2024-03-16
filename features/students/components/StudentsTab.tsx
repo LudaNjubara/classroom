@@ -20,16 +20,16 @@ export function StudentsTab() {
         <h2 className="text-2xl font-medium">Students</h2>
         <p className="text-slate-600">View and manage your students here</p>
 
-        <div className="flex items-center justify-end mt-2">
-          <Button className="flex gap-2 mt-4" onClick={() => setIsAddStudentModalOpen(true)}>
+        <div className="flex items-center justify-end mt-6">
+          <Button className="flex gap-2" variant={"secondary"} onClick={() => setIsAddStudentModalOpen(true)}>
             <PlusCircle size={18} className="opacity-80" />
-            Add Student
+            Add Student&#40;s&#41;
           </Button>
         </div>
 
         <Separator className="my-4" />
 
-        <div className="mt-8">
+        <div className="mt-4">
           <DataTable columns={studentTableColumns} data={selectedOrganization?.students ?? []} />
         </div>
       </div>

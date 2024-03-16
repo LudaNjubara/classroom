@@ -23,14 +23,14 @@ export function TeachersTab() {
         <h2 className="text-2xl font-medium">Teachers</h2>
         <p className="text-slate-600">View and manage your teachers here</p>
 
-        <div className="flex items-center justify-end">
-          <Button className="flex gap-2 mt-4" variant={"secondary"} onClick={toggleModal}>
+        <div className="flex items-center justify-end mt-6">
+          <Button className="flex gap-2" variant={"secondary"} onClick={toggleModal}>
             <PlusCircle size={18} className="opacity-80" />
             Add Teacher&#40;s&#41;
           </Button>
         </div>
 
-        <Separator />
+        <Separator className="my-4" />
 
         <div className="mt-4">
           <DataTable columns={teacherTableColumns} data={selectedOrganization?.teachers ?? []} />
