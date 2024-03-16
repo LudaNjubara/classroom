@@ -27,7 +27,5 @@ export function useTeachers(filterParams: TTeachersFetchFilterParams | undefined
         getTeachers();
     }, [filterParams]);
 
-    console.log("data", data)
-
     return { data, isLoading };
 }

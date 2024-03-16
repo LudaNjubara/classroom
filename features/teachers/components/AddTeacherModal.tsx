@@ -13,9 +13,9 @@ type TAddTeacherModalProps = {
 
 export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
   const [filterParams, setFilterParams] = useState<TTeachersFetchFilterParams>();
-  const { data: teachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
-  console.log("filterParams", filterParams);
+  // hooks
+  const { data: teachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
   const handleAddTeachers = () => {
     // Add teachers to the organization
