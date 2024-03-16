@@ -1,8 +1,26 @@
 import { db } from "@/config/db";
-import { TTeacherSearchBy } from "@/types/typings";
+import { TOrderBy, TTeacherSearchBy } from "@/types/typings";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { Teacher } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+
+type TWhereClauseParams = {
+    organizationId: string | null;
+    query: string | null;
+    searchByArray: typeof ALLOWED_SEARCH_BY_ARRAY | null;
+};
+
+type TOrderByClauseParams = {
+    orderBy: TOrderBy | null;
+    searchByArray: typeof ALLOWED_SEARCH_BY_ARRAY | null;
+};
+
+type TWhereClause = {
+    [key: string]: any;
+};
+
+type TOrderByClause = {
+    [key: string]: TOrderBy | undefined;
+};
 
 const TAKE_LIMIT = 10;
 const TEMPLATE_TEACHER_FOR_SEARCH_BY: TTeacherSearchBy = {
@@ -17,45 +35,36 @@ const TEMPLATE_TEACHER_FOR_SEARCH_BY: TTeacherSearchBy = {
 const ALLOWED_SEARCH_BY_ARRAY = Object.keys(TEMPLATE_TEACHER_FOR_SEARCH_BY);
 const ALLOWED_ORDER_BY_ARRAY = ["asc", "desc"];
 
-const constructWhereClause = (options: Partial<Teacher>) => {
-    const { organizationId, ...rest } = options;
-    let whereClause = {};
+function constructWhereClause({ organizationId, query, searchByArray }: TWhereClauseParams): TWhereClause {
+    let whereClause: TWhereClause = {};
 
     if (organizationId) {
+        whereClause = { ...whereClause, organizationId };
+    }
+
+    if (query && searchByArray) {
         whereClause = {
-            ...rest,
-            organizationId,
-            profile: {
-                role: "TEACHER"
-            },
-        };
-    } else {
-        whereClause = {
-            ...rest,
-            organizationId: null,
-            profile: {
-                role: "TEACHER"
-            },
+            ...whereClause,
+            OR: searchByArray.map((searchBy) => ({
+                [searchBy]: {
+                    contains: query,
+                },
+            })),
         };
     }
 
     return whereClause;
 }
 
-const constructOrderByClause = (options: { searchBy: string | null, orderBy: string | null }) => {
-    const { searchBy, orderBy } = options;
-    let orderByClause;
+function constructOrderByClause({ orderBy, searchByArray }: TOrderByClauseParams): TOrderByClause {
+    let orderByClause: TOrderByClause = {};
 
-    if (searchBy && orderBy) {
-        orderByClause = {
-            [searchBy]: orderBy,
-        };
-    } else if (searchBy) {
-        orderByClause = {
-            [searchBy]: "asc",
-        };
-    } else {
-        orderByClause = undefined;
+    if (orderBy && searchByArray) {
+        searchByArray.forEach((searchBy) => {
+            orderByClause = { ...orderByClause, [searchBy]: orderBy };
+        });
+    } else if (orderBy) {
+        orderByClause = { name: orderBy };
     }
 
     return orderByClause;
@@ -121,7 +130,7 @@ export async function GET(request: NextRequest) {
     try {
         const { isAuthenticated } = getKindeServerSession();
 
-        if (!isAuthenticated()) {
+        if (!await isAuthenticated()) {
             return NextResponse.json("Unauthorized", { status: 401 });
         }
 
@@ -132,22 +141,21 @@ export async function GET(request: NextRequest) {
         const searchBy = searchParams.get("searchBy")
         const orderBy = searchParams.get("orderBy");
 
-        console.log("url", request.url);
-
         if (from && isNaN(parseInt(from))) {
-            throw new Error("Invalid query parameter 'from'");
+            return NextResponse.json({ error: "Invalid query parameter 'from'" }, { status: 400 })
         } else if (searchBy && searchBy.split(",").every((searchBy) => ALLOWED_SEARCH_BY_ARRAY.includes(searchBy)) && !query) {
-            throw new Error("Invalid query parameter 'searchBy'. Used without 'query' parameter");
+            return NextResponse.json({ error: "Invalid query parameter 'query'. Used without 'searchBy' parameter" }, { status: 400 })
         } else if (query && searchBy && !searchBy.split(",").every((searchBy) => ALLOWED_SEARCH_BY_ARRAY.includes(searchBy))) {
-            throw new Error("Invalid query parameter 'searchBy'");
+            return NextResponse.json({ error: "Invalid query parameter 'searchBy'" }, { status: 400 })
         } else if (orderBy && !ALLOWED_ORDER_BY_ARRAY.includes(orderBy)) {
-            throw new Error("Invalid query parameter 'orderBy'");
+            return NextResponse.json({ error: "Invalid query parameter 'orderBy'" }, { status: 400 })
         }
 
-        console.log({ organizationId, from, searchBy, orderBy })
+        const orderByFinal = orderBy as TOrderBy;
+        const searchByArray = searchBy ? searchBy.split(",") : null;
 
-        const whereClause = constructWhereClause({ organizationId });
-        const orderByClause = constructOrderByClause({ searchBy: null, orderBy });
+        const whereClause = constructWhereClause({ organizationId, query, searchByArray });
+        const orderByClause = constructOrderByClause({ orderBy: orderByFinal, searchByArray });
 
         const teachers = await db.teacher.findMany({
             where: whereClause,
@@ -163,11 +171,7 @@ export async function GET(request: NextRequest) {
     }
 
     catch (error) {
-        console.log(error);
-        if (error instanceof Error) {
-            return NextResponse.json({ error: error.message }, { status: 400 })
-        }
-
+        console.log("error", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 }
