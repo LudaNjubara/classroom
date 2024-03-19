@@ -183,32 +183,3 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 }
-
-/* export async function GET() {
-    try {
-        const { getUser, isAuthenticated } = getKindeServerSession();
-
-        if (!isAuthenticated()) {
-            return NextResponse.json("Unauthorized", { status: 401 });
-        }
-
-        const user = getUser();
-        const organizations = await db.organization.findMany({
-            where: {
-                profileId: user.id!,
-            },
-            include: {
-                students: true,
-                teachers: true,
-                classrooms: true,
-            }
-        })
-
-        return NextResponse.json({ organizations }, { status: 200 })
-    }
-
-    catch (error) {
-        console.log(error);
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 })
-    }
-} */
