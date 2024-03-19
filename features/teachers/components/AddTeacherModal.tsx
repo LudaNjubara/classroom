@@ -1,9 +1,10 @@
 import { GridView } from "@/components/Elements/";
 import { TeacherCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
-import { TTeachersFetchFilterParams } from "@/types/typings";
+import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
 import { useState } from "react";
 import { useTeachers } from "../hooks/useTeachers";
+import { TSelectedTeacherItem } from "../types";
 import { SearchBox } from "./SearchBox";
 import { TeacherCard } from "./TeacherCard";
 
@@ -13,18 +14,33 @@ type TAddTeacherModalProps = {
 
 export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
   const [filterParams, setFilterParams] = useState<TTeachersFetchFilterParams>();
+  const [selectedTeacherItems, setSelectedTeacherItems] = useState<TSelectedTeacherItem[]>([]);
 
   // hooks
   const { data: teachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
+  const handleSelectTeacher = (teacher: TTeacherWithProfile, customInviteMessage?: string) => {
+    setSelectedTeacherItems((prev) => {
+      if (prev.some((item) => item.teacherId === teacher.id)) {
+        return prev.map((item) => (item.teacherId === teacher.id ? { ...item, customInviteMessage } : item));
+      }
+
+      return [...prev, { teacherId: teacher.id, customInviteMessage }];
+    });
+  };
+
   const handleAddTeachers = () => {
     // Add teachers to the organization
+
+    console.log("Selected Teachers", selectedTeacherItems);
   };
 
   return (
     <div className="absolute inset-0 p-4 bg-slate-300 dark:bg-slate-950 animate-pop-up transform-gpu">
       <h2 className="text-2xl font-medium">Add Teacher</h2>
-      <p className="text-slate-600">Add a new teacher to your organization</p>
+      <p className="text-slate-600">
+        Add new teachers to your organization. Search and select people you want to invite.
+      </p>
 
       <div className="flex flex-col gap-5 mt-4">
         <SearchBox setFilterParams={setFilterParams} />
@@ -38,10 +54,15 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
             </GridView>
           )}
 
-          {!!teachers.length ? (
+          {!isTeachersLoading && !!teachers.length ? (
             <GridView>
               {teachers.map((teacher) => (
-                <TeacherCard key={teacher.id} teacher={teacher} />
+                <TeacherCard
+                  key={teacher.id}
+                  teacher={teacher}
+                  isSelected={selectedTeacherItems.some((item) => item.teacherId === teacher.id)}
+                  handleSelectTeacher={handleSelectTeacher}
+                />
               ))}
             </GridView>
           ) : (
