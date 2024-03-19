@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useDisclosure } from "@/hooks/useDisclosure";
 import { TOrderBy, TTeacherSearchBy, TTeachersFetchFilterParams } from "@/types/typings";
 import { cn } from "@/utils/cn";
 import { CheckIcon, Filter, Search, SortDesc } from "lucide-react";
 import { Dispatch, SetStateAction, memo, useRef, useState } from "react";
+import { validateSearchBoxInputs } from "..";
 
 type TOrderByComboboxTypes = {
   searchBys: TTeacherSearchBy;
@@ -24,7 +26,7 @@ const SearchByCombobox = memo(function SearchByCombobox({
   searchByValues,
   setSearchByValues,
 }: TOrderByComboboxTypes) {
-  const [open, setOpen] = useState(false);
+  const { isOpen, toggle } = useDisclosure();
 
   const handleSelect = (currentValue: string) => {
     const currValueTyped = currentValue as keyof TTeacherSearchBy;
@@ -37,9 +39,14 @@ const SearchByCombobox = memo(function SearchByCombobox({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={isOpen} onOpenChange={toggle}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[150px] justify-between">
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={isOpen}
+          className="w-[150px] justify-between"
+        >
           <span className="truncate">
             {searchByValues.length === 0
               ? "Search by..."
@@ -116,11 +123,27 @@ export function SearchBox({ setFilterParams }: TSearchBoxTypes) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchByValues, setSearchByValues] = useState<(keyof TTeacherSearchBy)[]>([]);
   const [orderByValue, setOrderByValue] = useState<TOrderBy>();
+  const [inputErrors, setInputErrors] = useState<{ query?: string }>({});
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const query = searchInputRef.current?.value;
+    if (!searchInputRef.current) {
+      console.log("searchInputRef.current is null");
+      return;
+    }
+
+    const query = searchInputRef.current.value;
+
+    const { isValid, errors } = validateSearchBoxInputs({ query, searchByValues, orderByValue });
+
+    if (!isValid) {
+      setInputErrors(errors);
+      return;
+    }
+
+    setInputErrors({});
+
     setFilterParams({
       query,
       searchBy: searchByValues.length ? searchByValues : undefined,
@@ -134,7 +157,7 @@ export function SearchBox({ setFilterParams }: TSearchBoxTypes) {
         <div className="relative flex-1">
           <Input
             type="text"
-            className="py-5 pl-11 pr-4 dark:bg-slate-900"
+            className={`py-5 pl-11 pr-4 dark:bg-slate-900 ${inputErrors?.query ? "border-red-500/60" : ""}`}
             placeholder="Search for teachers"
             ref={searchInputRef}
           />
