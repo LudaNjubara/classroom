@@ -1,15 +1,16 @@
 "use server"
 
-import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
+import { TPaginatedResponse, TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
 import { handleError } from "@/utils/handle-error";
 import { cookies } from "next/headers";
 import { API_ENDPOINTS } from "../../../constants/api-constants";
 
-const fetchTeachers = async (filterParams: TTeachersFetchFilterParams | undefined): Promise<TTeacherWithProfile[]> => {
+const fetchTeachers = async (filterParams: TTeachersFetchFilterParams | undefined): Promise<TPaginatedResponse<TTeacherWithProfile>> => {
     const params = {
         ...filterParams,
         searchBy: filterParams?.searchBy?.join(",") ?? "",
         from: filterParams?.from?.toString() ?? "",
+        take: filterParams?.take?.toString() ?? "",
     }
 
     const urlSearchParams = new URLSearchParams(params).toString();
@@ -22,9 +23,9 @@ const fetchTeachers = async (filterParams: TTeachersFetchFilterParams | undefine
         handleError(response.status)
     }
 
-    const { teachers } = await response.json();
+    const data = await response.json();
 
-    return teachers;
+    return data;
 };
 
 export default fetchTeachers;

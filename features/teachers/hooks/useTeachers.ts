@@ -1,19 +1,19 @@
 
 import observableError from "@/services/ErrorObserver";
-import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
+import { TPaginatedResponse, TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
 import { useEffect, useState } from "react";
 import fetchTeachers from "../api/fetch-teachers";
 
 export function useTeachers(filterParams: TTeachersFetchFilterParams | undefined) {
-    const [data, setData] = useState<TTeacherWithProfile[]>([]);
+    const [data, setData] = useState<TPaginatedResponse<TTeacherWithProfile>>({ data: [], count: 0 });
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const getTeachers = async () => {
             try {
                 setIsLoading(true);
-                const teachers = await fetchTeachers(filterParams);
-                setData(teachers);
+                const paginatedTeachers = await fetchTeachers(filterParams);
+                setData(paginatedTeachers);
 
             } catch (error) {
                 if (error instanceof Error) {

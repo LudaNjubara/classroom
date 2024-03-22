@@ -2,6 +2,11 @@ import { KindePermissions } from "@kinde-oss/kinde-auth-nextjs";
 import { KindeOrganization, KindeUser } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Classroom, Organization, Profile, Teacher } from "@prisma/client";
 
+type TPaginatedResponse<T> = {
+    count: number;
+    data: T[];
+}
+
 type TUserSession = {
     isAuthenticated: boolean;
     user: KindeUser;
@@ -50,6 +55,7 @@ type TOrderBy = "asc" | "desc";
 
 type TTeachersFetchFilterParams = {
     from?: number;
+    take?: number;
     query?: string;
     searchBy?: (keyof TTeacherSearchBy)[];
     orderBy?: TOrderBy;
@@ -58,5 +64,5 @@ type TTeachersFetchFilterParams = {
 
 type TRole = "ADMIN" | "GUEST" | "ORGANIZATION" | "TEACHER" | "STUDENT"
 
-export { TCountry, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TRole, TTeacherSearchBy, TTeacherWithProfile, TTeachersFetchFilterParams, TUser, TUserSession };
+export { TCountry, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TTeacherSearchBy, TTeacherWithProfile, TTeachersFetchFilterParams, TUser, TUserSession };
 

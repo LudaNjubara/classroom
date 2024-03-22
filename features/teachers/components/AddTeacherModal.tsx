@@ -1,4 +1,5 @@
 import { GridView } from "@/components/Elements/";
+import CustomPagination from "@/components/Elements/pagination/CustomPagination";
 import { TeacherCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
@@ -17,7 +18,7 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
   const [selectedTeacherItems, setSelectedTeacherItems] = useState<TSelectedTeacherItem[]>([]);
 
   // hooks
-  const { data: teachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
+  const { data: paginatedTeachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
   const handleSelectTeacher = (teacher: TTeacherWithProfile, inviteMessage?: string) => {
     setSelectedTeacherItems((prev) => {
@@ -60,9 +61,9 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
             </GridView>
           )}
 
-          {!isTeachersLoading && !!teachers.length && (
+          {!isTeachersLoading && !!paginatedTeachers.data.length && (
             <GridView>
-              {teachers.map((teacher) => (
+              {paginatedTeachers.data.map((teacher) => (
                 <TeacherCard
                   key={teacher.id}
                   teacher={teacher}
@@ -73,10 +74,20 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
             </GridView>
           )}
 
-          {!isTeachersLoading && !teachers.length && (
+          {!isTeachersLoading && !paginatedTeachers.data.length && (
             <p className=" text-slate-600 py-5 text-center">No teachers found</p>
           )}
         </div>
+
+        <CustomPagination
+          count={paginatedTeachers.count || 0}
+          page={(filterParams?.from && (filterParams.from % 10) + 1) || 1}
+          rowsPerPage={filterParams?.take || 10}
+          onChangePage={(page) => setFilterParams((prev) => ({ ...prev, from: page }))}
+          onChangeNumOfItemsPerPage={(numOfItems) =>
+            setFilterParams((prev) => ({ ...prev, from: 0, take: numOfItems }))
+          }
+        />
       </div>
 
       <div className="sticky bottom-0 left-0 right-0 p-4 pb-0 flex items-center justify-end bg-slate-300 dark:bg-slate-950">

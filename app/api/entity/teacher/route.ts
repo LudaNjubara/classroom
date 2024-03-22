@@ -22,7 +22,7 @@ type TOrderByClause = {
     [key: string]: TOrderBy | undefined;
 };
 
-const TAKE_LIMIT = 10;
+const DEFAULT_TAKE_LIMIT = 10;
 const TEMPLATE_TEACHER_FOR_SEARCH_BY: TTeacherSearchBy = {
     name: "",
     email: "",
@@ -146,12 +146,15 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const organizationId = searchParams.get("organizationId");
         const from = searchParams.get("from");
+        const take = searchParams.get("take");
         const query = searchParams.get("query");
         const searchBy = searchParams.get("searchBy")
         const orderBy = searchParams.get("orderBy") as TOrderBy;
 
         if (from && isNaN(parseInt(from))) {
             return NextResponse.json({ error: "Invalid query parameter 'from'" }, { status: 400 })
+        } else if (take && isNaN(parseInt(take))) {
+            return NextResponse.json({ error: "Invalid query parameter 'take'" }, { status: 400 })
         } else if (searchBy && searchBy.split(",").every((searchBy) => ALLOWED_SEARCH_BY_ARRAY.includes(searchBy)) && !query) {
             return NextResponse.json({ error: "Invalid query parameter 'query'. Used without 'searchBy' parameter" }, { status: 400 })
         } else if (query && searchBy && !searchBy.split(",").every((searchBy) => ALLOWED_SEARCH_BY_ARRAY.includes(searchBy))) {
@@ -165,17 +168,22 @@ export async function GET(request: NextRequest) {
         const whereClause = constructWhereClause({ organizationId, query, searchByArray });
         const orderByClause = constructOrderByClause({ orderBy, searchByArray });
 
-        const teachers = await db.teacher.findMany({
-            where: whereClause,
-            include: {
-                profile: true,
-            },
-            skip: from ? parseInt(from) : 0,
-            take: TAKE_LIMIT,
-            orderBy: orderByClause,
-        })
+        const data = await db.$transaction([
+            db.teacher.count({ where: whereClause }),
+            db.teacher.findMany({
+                where: whereClause,
+                include: {
+                    profile: true,
+                },
+                skip: from ? parseInt(from) : 0,
+                take: take ? parseInt(take) : DEFAULT_TAKE_LIMIT,
+                orderBy: orderByClause,
+            }),
+        ]);
 
-        return NextResponse.json({ teachers }, { status: 200 })
+        console.log("take", take)
+
+        return NextResponse.json({ count: data[0], data: data[1] }, { status: 200 })
     }
 
     catch (error) {
