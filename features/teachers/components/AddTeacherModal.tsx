@@ -19,13 +19,19 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
   // hooks
   const { data: teachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
-  const handleSelectTeacher = (teacher: TTeacherWithProfile, customInviteMessage?: string) => {
+  const handleSelectTeacher = (teacher: TTeacherWithProfile, inviteMessage?: string) => {
     setSelectedTeacherItems((prev) => {
       if (prev.some((item) => item.teacherId === teacher.id)) {
-        return prev.map((item) => (item.teacherId === teacher.id ? { ...item, customInviteMessage } : item));
+        if (inviteMessage) {
+          // Update the inviteMessage for the teacher
+          return prev.map((item) => (item.teacherId === teacher.id ? { ...item, inviteMessage } : item));
+        } else {
+          // Remove the teacher from the selected teachers
+          return prev.filter((item) => item.teacherId !== teacher.id);
+        }
       }
 
-      return [...prev, { teacherId: teacher.id, customInviteMessage }];
+      return [...prev, { teacherId: teacher.id, inviteMessage }];
     });
   };
 
@@ -54,7 +60,7 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
             </GridView>
           )}
 
-          {!isTeachersLoading && !!teachers.length ? (
+          {!isTeachersLoading && !!teachers.length && (
             <GridView>
               {teachers.map((teacher) => (
                 <TeacherCard
@@ -65,7 +71,9 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
                 />
               ))}
             </GridView>
-          ) : (
+          )}
+
+          {!isTeachersLoading && !teachers.length && (
             <p className=" text-slate-600 py-5 text-center">No teachers found</p>
           )}
         </div>
