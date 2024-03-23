@@ -4,9 +4,11 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { useDisclosure } from "@/hooks/useDisclosure";
+import { useDashboardStore } from "@/stores";
 import { TTeacherWithProfile } from "@/types/typings";
 import { CheckCircle2, Info, MessageSquareText } from "lucide-react";
 import { useState } from "react";
+import { validateInviteMessageInput } from "..";
 
 type TTeacherCardControlsProps = {
   teacher: TTeacherWithProfile;
@@ -15,9 +17,36 @@ type TTeacherCardControlsProps = {
 };
 
 const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeacherCardControlsProps) => {
-  const [customInviteMessage, setCustomInviteMessage] = useState("");
+  // zustand state and actions
+  const selectedTeacherItems = useDashboardStore((state) => state.selectedTeacherItems);
 
+  // derived state
+  const thisTeacherItem = selectedTeacherItems.find((item) => item.teacherId === teacher.id);
+
+  // state
+  const [customInviteMessage, setCustomInviteMessage] = useState(thisTeacherItem?.inviteMessage ?? "");
+  const [inputErrors, setInputErrors] = useState<{ inviteMessage?: string }>({});
+
+  console.log("thisTeacherItem", thisTeacherItem);
+  console.log("customInviteMessage", customInviteMessage);
+
+  // hooks
   const { isOpen: isPopoverOpen, close: closePopover, toggle: togglePopover } = useDisclosure();
+
+  // handlers
+  const handleInviteMessageTextareaChange = (input: string) => {
+    const { isValid, errors } = validateInviteMessageInput(input);
+
+    if (isValid) {
+      setInputErrors({});
+      setCustomInviteMessage(input);
+    } else {
+      if (errors.inviteMessage === "Message is required") {
+        setInputErrors(errors);
+        setCustomInviteMessage(input);
+      }
+    }
+  };
 
   return (
     <div
@@ -57,9 +86,13 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
                 <Textarea
                   id="inviteMessage"
                   placeholder="Type message here..."
+                  className={inputErrors.inviteMessage ? "border-red-400" : ""}
                   value={customInviteMessage}
-                  onChange={(e) => setCustomInviteMessage(e.target.value)}
+                  onChange={(e) => handleInviteMessageTextareaChange(e.target.value)}
                 />
+                {inputErrors.inviteMessage && (
+                  <p className="text-xs text-red-400">{inputErrors.inviteMessage}</p>
+                )}
               </div>
 
               <Button
@@ -68,7 +101,7 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
                   setCustomInviteMessage("");
                   closePopover();
                 }}
-                disabled={!customInviteMessage}
+                disabled={!!Object.keys(inputErrors).length}
                 variant="default"
               >
                 Select teacher
@@ -78,9 +111,9 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
         </Popover>
 
         <Button
-          onClick={() => handleSelectTeacher(teacher)}
           variant="secondary"
           className="p-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-900 hover:bg-slate-500 dark:hover:bg-slate-800/80 transition-colors duration-200"
+          onClick={() => handleSelectTeacher(teacher)}
         >
           {<CheckCircle2 size={18} className={`${isSelected ? "text-green-500" : "text-white"}`} />}
         </Button>

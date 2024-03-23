@@ -1,14 +1,20 @@
+import { useDashboardStore } from "@/stores";
 import { TTeacherWithProfile } from "@/types/typings";
 import Image from "next/image";
 import TeacherCardControls from "./TeacherCardControls";
 
 type TTeacherCardProps = {
   teacher: TTeacherWithProfile;
-  isSelected: boolean;
   handleSelectTeacher: (teacher: TTeacherWithProfile, customInviteMessage?: string) => void;
 };
 
-export function TeacherCard({ teacher, isSelected, handleSelectTeacher }: TTeacherCardProps) {
+export function TeacherCard({ teacher, handleSelectTeacher }: TTeacherCardProps) {
+  // zustand state and actions
+  const selectedTeacherItems = useDashboardStore((state) => state.selectedTeacherItems);
+
+  // derived state
+  const isSelected = selectedTeacherItems.some((item) => item.teacherId === teacher.id);
+
   return (
     <article
       onClick={() => handleSelectTeacher(teacher)}

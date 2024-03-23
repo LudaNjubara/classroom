@@ -181,8 +181,6 @@ export async function GET(request: NextRequest) {
             }),
         ]);
 
-        console.log("take", take)
-
         return NextResponse.json({ count: data[0], data: data[1] }, { status: 200 })
     }
 

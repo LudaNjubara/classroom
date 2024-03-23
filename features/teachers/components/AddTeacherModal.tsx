@@ -2,8 +2,9 @@ import { GridView } from "@/components/Elements/";
 import CustomPagination from "@/components/Elements/pagination/CustomPagination";
 import { TeacherCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
+import { useDashboardStore } from "@/stores";
 import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTeachers } from "../hooks/useTeachers";
 import { TSelectedTeacherItem } from "../types";
 import { SearchBox } from "./SearchBox";
@@ -14,33 +15,55 @@ type TAddTeacherModalProps = {
 };
 
 export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
+  // zustand state and actions
+  const selectedTeacherItems = useDashboardStore((state) => state.selectedTeacherItems);
+  const setSelectedTeacherItems = useDashboardStore((state) => state.setSelectedTeacherItems);
+
+  // state
   const [filterParams, setFilterParams] = useState<TTeachersFetchFilterParams>();
-  const [selectedTeacherItems, setSelectedTeacherItems] = useState<TSelectedTeacherItem[]>([]);
 
   // hooks
   const { data: paginatedTeachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
-  const handleSelectTeacher = (teacher: TTeacherWithProfile, inviteMessage?: string) => {
-    setSelectedTeacherItems((prev) => {
-      if (prev.some((item) => item.teacherId === teacher.id)) {
+  // handlers
+  const handleSelectTeacher = useCallback(
+    (teacher: TTeacherWithProfile, inviteMessage?: string) => {
+      let teacherItemsToStore: TSelectedTeacherItem[] = [];
+
+      if (selectedTeacherItems.some((item) => item.teacherId === teacher.id)) {
         if (inviteMessage) {
           // Update the inviteMessage for the teacher
-          return prev.map((item) => (item.teacherId === teacher.id ? { ...item, inviteMessage } : item));
+          teacherItemsToStore = selectedTeacherItems.map((item) =>
+            item.teacherId === teacher.id ? { ...item, inviteMessage } : item
+          );
         } else {
           // Remove the teacher from the selected teachers
-          return prev.filter((item) => item.teacherId !== teacher.id);
+          teacherItemsToStore = selectedTeacherItems.filter((item) => item.teacherId !== teacher.id);
         }
+      } else {
+        teacherItemsToStore = [...selectedTeacherItems, { teacherId: teacher.id, inviteMessage }];
       }
 
-      return [...prev, { teacherId: teacher.id, inviteMessage }];
-    });
-  };
+      setSelectedTeacherItems(teacherItemsToStore);
+    },
+    [selectedTeacherItems, setSelectedTeacherItems]
+  );
 
   const handleAddTeachers = () => {
     // Add teachers to the organization
 
     console.log("Selected Teachers", selectedTeacherItems);
   };
+
+  const handleCancel = () => {
+    toggleOpen();
+  };
+
+  useEffect(() => {
+    return () => {
+      setSelectedTeacherItems([]);
+    };
+  }, []);
 
   return (
     <div className="absolute inset-0 p-4 bg-slate-300 dark:bg-slate-950 animate-pop-up transform-gpu">
@@ -63,14 +86,11 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
 
           {!isTeachersLoading && !!paginatedTeachers.data.length && (
             <GridView>
-              {paginatedTeachers.data.map((teacher) => (
-                <TeacherCard
-                  key={teacher.id}
-                  teacher={teacher}
-                  isSelected={selectedTeacherItems.some((item) => item.teacherId === teacher.id)}
-                  handleSelectTeacher={handleSelectTeacher}
-                />
-              ))}
+              {paginatedTeachers.data.map((teacher) => {
+                return (
+                  <TeacherCard key={teacher.id} teacher={teacher} handleSelectTeacher={handleSelectTeacher} />
+                );
+              })}
             </GridView>
           )}
 
@@ -91,7 +111,7 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
       </div>
 
       <div className="sticky bottom-0 left-0 right-0 p-4 pb-0 flex items-center justify-end bg-slate-300 dark:bg-slate-950">
-        <Button variant="outline" onClick={toggleOpen}>
+        <Button variant="outline" onClick={handleCancel}>
           Cancel
         </Button>
         <Button className="ml-2" onClick={handleAddTeachers}>
