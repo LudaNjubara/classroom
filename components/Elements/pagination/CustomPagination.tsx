@@ -39,6 +39,9 @@ export default function CustomPagination({
   onChangePage,
   onChangeNumOfItemsPerPage,
 }: TCustomPaginationProps) {
+  const isPaginationPrevDisabled = !count || page === 1;
+  const isPaginationNextDisabled = !count || page === Math.ceil(count / rowsPerPage);
+
   const isPageInRange = (pageNumber: number) =>
     pageNumber === 1 || pageNumber === count / rowsPerPage || Math.abs(page - pageNumber) < 3;
   const isPageAtEdge = (pageNumber: number) => Math.abs(page - pageNumber) === 3;
@@ -59,7 +62,13 @@ export default function CustomPagination({
       </Select>
 
       <Pagination className="flex gap-2">
-        <PaginationPrevious disabled={!count || page === 1} onClick={() => onChangePage(page - 1)}>
+        <PaginationPrevious
+          disabled={isPaginationPrevDisabled}
+          onClick={() => {
+            if (isPaginationPrevDisabled) return;
+            onChangePage(page - 1);
+          }}
+        >
           Previous
         </PaginationPrevious>
 
@@ -90,8 +99,11 @@ export default function CustomPagination({
         </PaginationContent>
 
         <PaginationNext
-          disabled={!count || page === Math.ceil(count / rowsPerPage)}
-          onClick={() => onChangePage(page + 1)}
+          disabled={isPaginationNextDisabled}
+          onClick={() => {
+            if (isPaginationNextDisabled) return;
+            onChangePage(page + 1);
+          }}
         >
           Next
         </PaginationNext>
