@@ -7,7 +7,7 @@ import { useDisclosure } from "@/hooks/useDisclosure";
 import { useDashboardStore } from "@/stores";
 import { TTeacherWithProfile } from "@/types/typings";
 import { CheckCircle2, Info, MessageSquareText } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { validateInviteMessageInput } from "..";
 
 type TTeacherCardControlsProps = {
@@ -23,29 +23,31 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
   // derived state
   const thisTeacherItem = selectedTeacherItems.find((item) => item.teacherId === teacher.id);
 
-  // state
-  const [customInviteMessage, setCustomInviteMessage] = useState(thisTeacherItem?.inviteMessage ?? "");
-  const [inputErrors, setInputErrors] = useState<{ inviteMessage?: string }>({});
+  // refs
+  const inviteMessageRef = useRef<HTMLTextAreaElement>(null);
 
-  console.log("thisTeacherItem", thisTeacherItem);
-  console.log("customInviteMessage", customInviteMessage);
+  // state
+  const [inputErrors, setInputErrors] = useState<{ inviteMessage?: string }>({});
 
   // hooks
   const { isOpen: isPopoverOpen, close: closePopover, toggle: togglePopover } = useDisclosure();
 
   // handlers
-  const handleInviteMessageTextareaChange = (input: string) => {
+  const handleInviteMessageSubmit = () => {
+    if (!inviteMessageRef.current) return;
+
+    const input = inviteMessageRef.current.value;
+
     const { isValid, errors } = validateInviteMessageInput(input);
 
-    if (isValid) {
-      setInputErrors({});
-      setCustomInviteMessage(input);
-    } else {
-      if (errors.inviteMessage === "Message is required") {
-        setInputErrors(errors);
-        setCustomInviteMessage(input);
-      }
+    if (!isValid) {
+      setInputErrors(errors);
+      return;
     }
+
+    setInputErrors({});
+    handleSelectTeacher(teacher, input);
+    closePopover();
   };
 
   return (
@@ -84,26 +86,18 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
               <div className="flex flex-col gap-2">
                 <Label htmlFor="inviteMessage">Message</Label>
                 <Textarea
+                  ref={inviteMessageRef}
                   id="inviteMessage"
                   placeholder="Type message here..."
                   className={inputErrors.inviteMessage ? "border-red-400" : ""}
-                  value={customInviteMessage}
-                  onChange={(e) => handleInviteMessageTextareaChange(e.target.value)}
+                  defaultValue={thisTeacherItem?.inviteMessage ?? ""}
                 />
                 {inputErrors.inviteMessage && (
                   <p className="text-xs text-red-400">{inputErrors.inviteMessage}</p>
                 )}
               </div>
 
-              <Button
-                onClick={() => {
-                  handleSelectTeacher(teacher, customInviteMessage);
-                  setCustomInviteMessage("");
-                  closePopover();
-                }}
-                disabled={!!Object.keys(inputErrors).length}
-                variant="default"
-              >
+              <Button onClick={handleInviteMessageSubmit} variant="default">
                 Select teacher
               </Button>
             </div>
