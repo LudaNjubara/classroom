@@ -25,7 +25,7 @@ enum NotificationUserType {
 }
 
 enum NotificationType {
-  ORGANIZATION_INVITE
+  ORGANIZATION_INVITE_TEACHER
 }
 
 enum NotificationStatus {

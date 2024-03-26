@@ -6,6 +6,9 @@ export const API_ENDPOINTS = {
     ORGANIZATION: `${BASE_API_ENDPOINT}/entity/organization`,
     STUDENT: `${BASE_API_ENDPOINT}/entity/student`,
     TEACHER: `${BASE_API_ENDPOINT}/entity/teacher`,
+    NOTIFICATION: {
+        INVITE_TEACHERS: `${BASE_API_ENDPOINT}/entity/notification/invite-teachers`,
+    },
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,
 } as const

@@ -5,7 +5,7 @@ import { handleError } from "@/utils/handle-error";
 import { cookies } from "next/headers";
 import { API_ENDPOINTS } from "../../../constants/api-constants";
 
-const fetchTeachers = async (filterParams: TTeachersFetchFilterParams | undefined): Promise<TPaginatedResponse<TTeacherWithProfile>> => {
+export const fetchTeachers = async (filterParams: TTeachersFetchFilterParams | undefined): Promise<TPaginatedResponse<TTeacherWithProfile>> => {
     const params = {
         ...filterParams,
         searchBy: filterParams?.searchBy?.join(",") ?? "",
@@ -27,5 +27,3 @@ const fetchTeachers = async (filterParams: TTeachersFetchFilterParams | undefine
 
     return data;
 };
-
-export default fetchTeachers;

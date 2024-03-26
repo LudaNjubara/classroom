@@ -2,9 +2,11 @@ import { GridView } from "@/components/Elements/";
 import CustomPagination from "@/components/Elements/pagination/CustomPagination";
 import { TeacherCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 import { useDashboardStore } from "@/stores";
 import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
 import { useCallback, useEffect, useState } from "react";
+import { inviteTeachers } from "../api/invite-teachers";
 import { useTeachers } from "../hooks/useTeachers";
 import { TSelectedTeacherItem } from "../types";
 import { SearchBox } from "./SearchBox";
@@ -49,14 +51,17 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
     [selectedTeacherItems, setSelectedTeacherItems]
   );
 
-  const handleAddTeachers = () => {
+  const handleAddTeachers = async () => {
     // Add teachers to the organization
 
-    console.log("Selected Teachers", selectedTeacherItems);
-  };
+    await inviteTeachers(selectedTeacherItems);
 
-  const handleCancel = () => {
-    toggleOpen();
+    toast({
+      title: "Teachers invited successfully",
+      description:
+        "Invitations have been sent to the selected teachers. You can view the status in the notifications tab.",
+      variant: "default",
+    });
   };
 
   useEffect(() => {
@@ -111,7 +116,7 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
       </div>
 
       <div className="sticky bottom-0 left-0 right-0 p-4 pb-0 flex items-center justify-end bg-slate-300 dark:bg-slate-950">
-        <Button variant="outline" onClick={handleCancel}>
+        <Button variant="outline" onClick={toggleOpen}>
           Cancel
         </Button>
         <Button className="ml-2" onClick={handleAddTeachers}>
