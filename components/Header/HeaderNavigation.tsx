@@ -31,6 +31,7 @@ export function HeaderNavigation() {
 
         <NavigationMenuItem>
           <Button
+            asChild
             variant="ghost"
             className={`h-11 transition-colors duration-200 ${
               pathname === "/"
@@ -38,7 +39,7 @@ export function HeaderNavigation() {
                 : "hover:bg-slate-100 dark:hover:bg-slate-900"
             }`}
           >
-            Home
+            <Link href="/">Home</Link>
           </Button>
         </NavigationMenuItem>
 
