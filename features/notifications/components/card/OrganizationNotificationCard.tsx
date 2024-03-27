@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
 import { useOrganizationNotifications } from "../../hooks/useOrganizationNotifications";
 
-export type TOrganizationNotificationCardProps = {
+type TOrganizationNotificationCardProps = {
   toggleModal: () => void;
 };
 

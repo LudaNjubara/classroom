@@ -8,8 +8,6 @@ const { StudentsTab } = lazyImport(() => import("@/features/students"), "Student
 const { NotificationsTab } = lazyImport(() => import("@/features/notifications"), "NotificationsTab");
 const { SettingsTab } = lazyImport(() => import("@/features/settings"), "SettingsTab");
 
-// TODO: add lazy import for the tabs
-
 type TContentToRender = {
   [key in keyof TDashboardAsideTab]: React.ReactNode;
 };
