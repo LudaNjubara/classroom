@@ -1,5 +1,6 @@
 "use client";
 
+import { CustomModal } from "@/components/Elements";
 import { DataTable } from "@/components/Elements/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -37,7 +38,11 @@ export function TeachersTab() {
         </div>
       </div>
 
-      {isModalOpen && <AddTeacherModal toggleOpen={toggleModal} />}
+      {isModalOpen && (
+        <CustomModal>
+          <AddTeacherModal toggleOpen={toggleModal} />
+        </CustomModal>
+      )}
     </div>
   );
 }

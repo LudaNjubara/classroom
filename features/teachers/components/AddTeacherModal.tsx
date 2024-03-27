@@ -52,8 +52,6 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
   );
 
   const handleAddTeachers = async () => {
-    // Add teachers to the organization
-
     await inviteTeachers(selectedTeacherItems);
 
     toast({
@@ -71,7 +69,7 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
   }, []);
 
   return (
-    <div className="absolute inset-0 p-4 bg-slate-300 dark:bg-slate-950 animate-pop-up transform-gpu">
+    <>
       <h2 className="text-2xl font-medium">Add Teacher</h2>
       <p className="text-slate-600">
         Add new teachers to your organization. Search and select people you want to invite.
@@ -123,6 +121,6 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
           Add Teacher(s)
         </Button>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { CustomModal } from "@/components/Elements";
 import { DataTable } from "@/components/Elements/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -35,7 +36,7 @@ export function StudentsTab() {
       </div>
 
       {isAddStudentModalOpen && (
-        <div className="absolute inset-0 p-4 bg-slate-300 dark:bg-slate-950 animate-pop-up transform-gpu">
+        <CustomModal>
           <h2 className="text-2xl font-medium">Add Student</h2>
           <p className="text-slate-600">Add a new student to your organization</p>
 
@@ -45,7 +46,7 @@ export function StudentsTab() {
             </Button>
             <Button className="ml-2">Add Student</Button>
           </div>
-        </div>
+        </CustomModal>
       )}
     </div>
   );
