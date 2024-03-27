@@ -52,6 +52,8 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
   );
 
   const handleAddTeachers = async () => {
+    if (!selectedTeacherItems.length) return;
+
     await inviteTeachers(selectedTeacherItems);
 
     toast({
@@ -117,7 +119,7 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
         <Button variant="outline" onClick={toggleOpen}>
           Cancel
         </Button>
-        <Button className="ml-2" onClick={handleAddTeachers}>
+        <Button className="ml-2" onClick={handleAddTeachers} disabled={selectedTeacherItems.length === 0}>
           Add Teacher(s)
         </Button>
       </div>
