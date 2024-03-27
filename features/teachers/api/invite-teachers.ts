@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { TSelectedTeacherItem } from "..";
 import { API_ENDPOINTS } from "../../../constants/api-constants";
 
-export const inviteTeachers = async (teacherItems: TSelectedTeacherItem[]) => {
+export async function inviteTeachers(teacherItems: TSelectedTeacherItem[]) {
     const response = await fetch(API_ENDPOINTS.NOTIFICATION.INVITE_TEACHERS, {
         method: "POST",
         headers: {
