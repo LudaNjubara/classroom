@@ -10,7 +10,7 @@ import {
 } from "@/types/typings";
 import { Profile, Role } from "@prisma/client";
 import { Bell, BookOpen, FlaskConical, GraduationCap, Settings } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { DashboardContentLayout } from ".";
 
 type TAsideItem = {
@@ -125,12 +125,15 @@ export function DashboardLayout({ contextValue }: TDashboardLayoutProps) {
   const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
   const setSelectedOrganization = useDashboardStore((state) => state.setSelectedOrganization);
 
-  if (!selectedOrganization) setSelectedOrganization(organizations[0]);
-
   const handleSelectedOrganizationClick = (org: TOrganizationWithClassroomsWithStudentsWithTeachers) => {
     if (org.id === selectedOrganization?.id) return;
     setSelectedOrganization(org);
   };
+
+  useEffect(() => {
+    if (!selectedOrganization && profile.role !== "ORGANIZATION" && organizations.length > 0)
+      setSelectedOrganization(organizations[0]);
+  }, [organizations, profile.role]);
 
   return (
     <DashboardContext.Provider value={contextValue}>
