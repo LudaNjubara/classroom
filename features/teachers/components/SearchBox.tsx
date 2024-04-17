@@ -128,10 +128,7 @@ export function SearchBox({ setFilterParams }: TSearchBoxTypes) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!searchInputRef.current) {
-      console.log("searchInputRef.current is null");
-      return;
-    }
+    if (!searchInputRef.current) return;
 
     const query = searchInputRef.current.value;
 

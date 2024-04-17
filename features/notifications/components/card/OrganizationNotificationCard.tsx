@@ -2,7 +2,12 @@
 
 import { NotificationSkeleton } from "@/components/Loaders/NotificationSkeleton";
 import { Button } from "@/components/ui/button";
-import { XIcon } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { Notification } from "@prisma/client";
+import dayjs from "dayjs";
+import { CalendarDaysIcon, XIcon } from "lucide-react";
+import { acceptNotification, dismissNotification } from "../..";
+import { NOTIFICATIONS_WITH_ACTIONS } from "../../constants";
 import { useOrganizationNotifications } from "../../hooks/useOrganizationNotifications";
 
 type TOrganizationNotificationCardProps = {
@@ -10,8 +15,34 @@ type TOrganizationNotificationCardProps = {
 };
 
 export function OrganizationNotificationCard({ toggleModal }: TOrganizationNotificationCardProps) {
+  const { toast } = useToast();
+
   // hooks
   const { data: paginatedNotifications, isLoading } = useOrganizationNotifications();
+
+  // handlers
+  const handleAction = async (action: "ACCEPT" | "DISMISS", notification: Notification) => {
+    switch (action) {
+      case "ACCEPT":
+        await acceptNotification(notification);
+
+        toast({
+          title: "Welcome to the organization",
+          description: "You have successfully joined the organization",
+        });
+        break;
+      case "DISMISS":
+        await dismissNotification(notification);
+
+        toast({
+          title: "Notification dismissed",
+          description: "You have successfully dismissed the notification",
+        });
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div>
@@ -54,12 +85,38 @@ export function OrganizationNotificationCard({ toggleModal }: TOrganizationNotif
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <p className="text-slate-600 dark:text-slate-600">
-                        {notification.createdAt.toLocaleString()}
-                      </p>
-                      <Button variant="outline" size="sm">
-                        Mark as read
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <CalendarDaysIcon size={18} className="text-slate-600 dark:text-slate-600" />
+                        <p className="text-slate-600 dark:text-slate-600 text-sm">
+                          {dayjs(notification.createdAt).format("DD MMM, YYYY")}
+                        </p>
+                      </div>
+                      {NOTIFICATIONS_WITH_ACTIONS.includes(notification.type) ? (
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleAction("DISMISS", notification)}
+                          >
+                            Dismiss
+                          </Button>
+
+                          <Button
+                            variant="outline"
+                            className="bg-green-800 hover:bg-green-600 transition-colors duration-200"
+                            size="sm"
+                            onClick={() => handleAction("ACCEPT", notification)}
+                          >
+                            Accept
+                          </Button>
+                        </div>
+                      ) : (
+                        <div>
+                          <Button variant="outline" size="sm">
+                            View info
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

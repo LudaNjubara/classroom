@@ -15,19 +15,26 @@ export async function GET() {
         if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
+        const teacher = await db.teacher.findFirst({
+            where: {
+                profileId: user.id
+            }
+        });
 
-        console.log("userId", user.id)
+        if (!teacher) {
+            return NextResponse.json({ error: "Teacher not found" }, { status: 404 })
+        }
 
         const notifications = await db.$transaction([
             db.notification.count({
                 where: {
-                    recipientId: user.id,
+                    recipientId: teacher.id,
                     senderType: "ORGANIZATION"
                 }
             }),
             db.notification.findMany({
                 where: {
-                    recipientId: user.id,
+                    recipientId: teacher.id,
                     senderType: "ORGANIZATION"
                 },
                 orderBy: {
@@ -35,8 +42,6 @@ export async function GET() {
                 },
             })
         ]);
-
-        console.log(notifications)
 
         return NextResponse.json({ count: notifications[0], data: notifications[1] }, { status: 200 })
     } catch (error) {

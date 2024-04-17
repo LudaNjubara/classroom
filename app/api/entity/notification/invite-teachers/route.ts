@@ -19,6 +19,16 @@ export async function POST(req: Request) {
 
         const { teacherItems }: { teacherItems: TSelectedTeacherItem[] } = await req.json();
 
+        const organization = await db.organization.findFirst({
+            where: {
+                profileId: user.id
+            }
+        });
+
+        if (!organization) {
+            return NextResponse.json({ error: "Organization not found" }, { status: 404 })
+        }
+
         await db.$transaction(
             teacherItems.map((item) => db.notification.create({
                 data: {
@@ -26,7 +36,7 @@ export async function POST(req: Request) {
                     message: item.inviteMessage ?? "Join our organization",
                     recipientId: item.teacherId,
                     recipientType: "TEACHER",
-                    senderId: user.id,
+                    senderId: organization.id,
                     senderType: "ORGANIZATION",
                 }
 

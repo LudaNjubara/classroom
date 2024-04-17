@@ -7,6 +7,8 @@ export const API_ENDPOINTS = {
     STUDENT: `${BASE_API_ENDPOINT}/entity/student`,
     TEACHER: `${BASE_API_ENDPOINT}/entity/teacher`,
     NOTIFICATION: {
+        DISMISS: `${BASE_API_ENDPOINT}/entity/notification/dismiss`,
+        ACCEPT: `${BASE_API_ENDPOINT}/entity/notification/accept`,
         INVITE_TEACHERS: `${BASE_API_ENDPOINT}/entity/notification/invite-teachers`,
         ORGANIZATION: `${BASE_API_ENDPOINT}/entity/notification/organization`,
     },
