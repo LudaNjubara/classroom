@@ -131,8 +131,7 @@ export function DashboardLayout({ contextValue }: TDashboardLayoutProps) {
   };
 
   useEffect(() => {
-    if (!selectedOrganization && profile.role !== "ORGANIZATION" && organizations.length > 0)
-      setSelectedOrganization(organizations[0]);
+    if (!selectedOrganization && organizations.length > 0) setSelectedOrganization(organizations[0]);
   }, [organizations, profile.role]);
 
   return (
