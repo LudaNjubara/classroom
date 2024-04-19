@@ -1,0 +1,1 @@
+export type TNotificationAction = "ACCEPT" | "DISMISS";
