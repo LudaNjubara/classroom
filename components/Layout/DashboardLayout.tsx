@@ -137,7 +137,7 @@ export function DashboardLayout({ contextValue }: TDashboardLayoutProps) {
   return (
     <DashboardContext.Provider value={contextValue}>
       <div>
-        <header className="flex gap-4 mb-2 py-2">
+        <header className="flex gap-4 mb-2 py-2 pl-3 ml-[200px]">
           {profile.role !== "ORGANIZATION" && (
             <ul className="flex gap-3 items-center overflow-x-auto">
               {organizations.map((org) => (

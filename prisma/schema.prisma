@@ -36,7 +36,7 @@ enum NotificationStatus {
 
 // DATABASE MODELS
 model Profile {
-  id      String @id @default(cuid())
+  id      String @id @unique @default(cuid())
   kindeId String @unique
   role    Role   @default(GUEST)
 
@@ -53,7 +53,7 @@ model Profile {
 }
 
 model Organization {
-  id String @id @default(cuid())
+  id String @id @unique @default(cuid())
 
   name    String @db.VarChar(255)
   address String @db.VarChar(255)
@@ -66,8 +66,8 @@ model Organization {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [kindeId])
 
-  teachers   Teacher[]
-  students   Student[]
+  teachers   OrganizationTeacher[]
+  students   OrganizationStudent[]
   classrooms Classroom[]
 
   createdAt DateTime @default(now())
@@ -78,7 +78,7 @@ model Organization {
 }
 
 model Teacher {
-  id String @id @default(cuid())
+  id String @id @unique @default(cuid())
 
   name    String @db.VarChar(255)
   address String @db.VarChar(255)
@@ -91,8 +91,7 @@ model Teacher {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [kindeId])
 
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizations OrganizationTeacher[]
 
   classrooms Classroom[]
 
@@ -100,12 +99,22 @@ model Teacher {
   updatedAt DateTime @updatedAt
 
   @@index([profileId], name: "profileId")
-  @@index([organizationId], name: "organizationId")
   @@map("teachers")
 }
 
+model OrganizationTeacher {
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  teacherId String  @unique
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  @@id([organizationId, teacherId])
+  @@index([teacherId])
+}
+
 model Student {
-  id String @id @default(cuid())
+  id String @id @unique @default(cuid())
 
   name    String @db.VarChar(255)
   address String @db.VarChar(255)
@@ -118,8 +127,7 @@ model Student {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [kindeId])
 
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizations OrganizationStudent[]
 
   classrooms Classroom[]
 
@@ -127,12 +135,22 @@ model Student {
   updatedAt DateTime @updatedAt
 
   @@index([profileId], name: "profileId")
-  @@index([organizationId], name: "organizationId")
   @@map("students")
 }
 
+model OrganizationStudent {
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  studentId String  @unique
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@id([organizationId, studentId])
+  @@index([studentId])
+}
+
 model Classroom {
-  id String @id @default(cuid())
+  id String @id @unique @default(cuid())
 
   name        String @db.VarChar(255)
   description String @db.Text
@@ -151,7 +169,7 @@ model Classroom {
 }
 
 model Notification {
-  id      String             @id @default(cuid())
+  id      String             @id @unique @default(cuid())
   type    NotificationType
   status  NotificationStatus @default(PENDING)
   message String

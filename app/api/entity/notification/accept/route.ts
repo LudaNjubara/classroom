@@ -31,17 +31,17 @@ export async function PUT(req: Request) {
             return NextResponse.json({ error: "Organization or teacher not found" }, { status: 404 })
         }
 
-        // update the teacher with the organization
-        // update the notification status to ACCEPTED
         const transaction = await db.$transaction([
-            db.teacher.update({
-                where: {
-                    id: teacher.id
-                },
+            db.organizationTeacher.create({
                 data: {
                     organization: {
                         connect: {
                             id: organization.id
+                        }
+                    },
+                    teacher: {
+                        connect: {
+                            id: teacher.id
                         }
                     }
                 }

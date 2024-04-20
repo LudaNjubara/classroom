@@ -33,7 +33,9 @@ export async function POST(req: Request) {
                     country,
                     phone,
                     profileId,
-                    organizationId: null,
+                    organizations: {
+                        create: [],
+                    },
                     classrooms: {
                         create: [],
                     },
