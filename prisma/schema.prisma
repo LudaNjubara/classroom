@@ -104,10 +104,10 @@ model Teacher {
 }
 
 model OrganizationTeacher {
-  organizationId String       @unique
+  organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  teacherId String  @unique
+  teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id])
 
   @@id([organizationId, teacherId])
