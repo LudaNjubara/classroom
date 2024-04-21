@@ -3,7 +3,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Role } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-type TAllowedRoles = Exclude<Role, "ADMIN" | "ORGANIZATION" | "GUEST">;
+type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST">;
 
 export async function POST(req: Request) {
     try {
@@ -69,6 +69,31 @@ export async function POST(req: Request) {
 const roleStrategies: {
     [key in TAllowedRoles]: (kindeId: string) => Promise<any>;
 } = {
+    ORGANIZATION: async (kindeId: string) => {
+        const organization = await db.organization.findFirst({
+            where: {
+                profileId: kindeId,
+            },
+            include: {
+                students: true,
+                teachers: {
+                    include: {
+                        teacher: true,
+                    }
+                },
+                classrooms: true,
+            }
+        });
+
+        if (organization?.teachers) {
+            const teachers = organization?.teachers.map(organizationTeacher => organizationTeacher.teacher);
+
+            // @ts-ignore
+            organization.teachers = teachers;
+        }
+
+        return [organization];
+    },
     STUDENT: async (kindeId: string) => {
         const studentOrganizations = await db.organization.findMany({
             where: {
@@ -123,10 +148,10 @@ export async function GET() {
             return NextResponse.json({ error: "Profile not found" }, { status: 404 })
         }
 
-        const allowedRoles: TAllowedRoles[] = ["STUDENT", "TEACHER"];
+        const allowedRoles: TAllowedRoles[] = ["STUDENT", "TEACHER", "ORGANIZATION"];
 
         if (!allowedRoles.includes(profile.role as TAllowedRoles)) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+            return NextResponse.json("Unauthorized", { status: 401 })
         }
 
         // fetch all organizations associated with the profile
