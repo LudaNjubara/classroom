@@ -1,10 +1,13 @@
 import observableError from "@/services/ErrorObserver";
 import { TPaginatedResponse } from "@/types/typings";
-import { Notification } from "@prisma/client";
+import { Notification, Role } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { fetchOrganizationNotifications } from "..";
+import { TNotificationForType } from "../types";
 
-export function useOrganizationNotifications() {
+const ALLOWED_ROLES: TNotificationForType[] = ["ORGANIZATION", "TEACHER", "STUDENT"];
+
+export function useOrganizationNotifications(profileRole: Role) {
     const [data, setData] = useState<TPaginatedResponse<Notification>>({ data: [], count: 0 });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -12,7 +15,7 @@ export function useOrganizationNotifications() {
         const getOrganizationNotifications = async () => {
             try {
                 setIsLoading(true);
-                const paginatedNotifications = await fetchOrganizationNotifications();
+                const paginatedNotifications = await fetchOrganizationNotifications(profileRole as TNotificationForType);
                 setData(paginatedNotifications);
 
             } catch (error) {
@@ -24,8 +27,10 @@ export function useOrganizationNotifications() {
             }
         };
 
+        if (!ALLOWED_ROLES.includes(profileRole as TNotificationForType)) return
+
         getOrganizationNotifications();
-    }, []);
+    }, [profileRole]);
 
     return { data, isLoading };
 }

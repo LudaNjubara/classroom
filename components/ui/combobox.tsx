@@ -5,7 +5,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { TCountry } from "@/types/typings";
+import { TCountry } from "@/features/create-account";
 import { cn } from "@/utils/cn";
 import { ButtonHTMLAttributes, forwardRef, useState } from "react";
 

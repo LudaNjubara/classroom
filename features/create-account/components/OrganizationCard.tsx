@@ -1,6 +1,5 @@
 "use client";
 
-import { TCountry } from "@/types/typings";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,6 +23,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { API_ENDPOINTS } from "@/constants/api-constants";
 import { Profile } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { TCountry } from "../types";
 
 const formSchema = z.object({
   name: z

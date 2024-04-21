@@ -1,4 +1,1 @@
-export type TSelectedTeacherItem = {
-    teacherId: string;
-    inviteMessage?: string;
-}
+export * from "./teacher-types";

@@ -1,15 +1,12 @@
-import { GridView } from "@/components/Elements/";
-import CustomPagination from "@/components/Elements/pagination/CustomPagination";
+import { CustomPagination, GridView, SearchBox } from "@/components/Elements/";
 import { TeacherCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { useDashboardStore } from "@/stores";
-import { TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
 import { useCallback, useEffect, useState } from "react";
 import { inviteTeachers } from "../api/invite-teachers";
 import { useTeachers } from "../hooks/useTeachers";
-import { TSelectedTeacherItem } from "../types";
-import { SearchBox } from "./SearchBox";
+import { TSelectedTeacherItem, TTeacherWithProfile, TTeachersFetchFilterParams } from "../types";
 import { TeacherCard } from "./TeacherCard";
 
 type TAddTeacherModalProps = {
@@ -68,6 +65,8 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
     return () => {
       setSelectedTeacherItems([]);
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -78,7 +77,19 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
       </p>
 
       <div className="flex flex-col gap-5 mt-4">
-        <SearchBox setFilterParams={setFilterParams} />
+        <SearchBox
+          searchingFor="teachers"
+          searchFields={{
+            name: "Name",
+            email: "Email",
+            address: "Address",
+            city: "City",
+            state: "State",
+            phone: "Phone",
+            country: "Country",
+          }}
+          setFilterParams={setFilterParams}
+        />
 
         <div className="flex-1 mt-4 overflow-y-auto pb-8">
           {isTeachersLoading && (

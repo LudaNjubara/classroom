@@ -1,12 +1,12 @@
 "use server"
 
-import { API_ENDPOINTS } from "@/constants";
 import { TPaginatedResponse } from "@/types/typings";
 import { handleError } from "@/utils/handle-error";
 import { cookies } from "next/headers";
-import { TTeacherWithProfile, TTeachersFetchFilterParams } from "../types";
+import { API_ENDPOINTS } from "../../../constants/api-constants";
+import { TStudentWithProfile, TStudentsFetchFilterParams } from "../types";
 
-export async function fetchTeachers(filterParams: TTeachersFetchFilterParams | undefined): Promise<TPaginatedResponse<TTeacherWithProfile>> {
+export async function fetchStudents(filterParams: TStudentsFetchFilterParams | undefined): Promise<TPaginatedResponse<TStudentWithProfile>> {
     const params = {
         ...filterParams,
         searchBy: filterParams?.searchBy?.join(",") ?? "",
@@ -16,7 +16,7 @@ export async function fetchTeachers(filterParams: TTeachersFetchFilterParams | u
 
     const urlSearchParams = new URLSearchParams(params).toString();
 
-    const response = await fetch(`${API_ENDPOINTS.TEACHER}?${urlSearchParams}`, {
+    const response = await fetch(`${API_ENDPOINTS.STUDENT}?${urlSearchParams}`, {
         headers: { Cookie: cookies().toString() },
     });
 

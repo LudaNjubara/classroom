@@ -1,4 +1,4 @@
-import { TCountry } from "@/types/typings";
+import { TCountry } from "../types";
 
 const COUNTRIES_API_URL = 'https://restcountries.com/v3.1/all';
 

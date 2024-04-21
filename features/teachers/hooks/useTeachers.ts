@@ -1,8 +1,8 @@
 
 import observableError from "@/services/ErrorObserver";
-import { TPaginatedResponse, TTeacherWithProfile, TTeachersFetchFilterParams } from "@/types/typings";
+import { TPaginatedResponse } from "@/types/typings";
 import { useEffect, useState } from "react";
-import { fetchTeachers } from "..";
+import { TTeacherWithProfile, TTeachersFetchFilterParams, fetchTeachers } from "..";
 
 export function useTeachers(filterParams: TTeachersFetchFilterParams | undefined) {
     const [data, setData] = useState<TPaginatedResponse<TTeacherWithProfile>>({ data: [], count: 0 });

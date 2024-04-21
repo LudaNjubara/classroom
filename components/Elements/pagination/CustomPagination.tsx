@@ -32,7 +32,7 @@ type TCustomPaginationProps = {
   onChangeNumOfItemsPerPage: (numOfItems: number) => void;
 };
 
-export default function CustomPagination({
+export function CustomPagination({
   count,
   page,
   rowsPerPage,

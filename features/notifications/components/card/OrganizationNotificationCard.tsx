@@ -3,6 +3,7 @@
 import { NotificationSkeleton } from "@/components/Loaders/NotificationSkeleton";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useDashboardContext } from "@/context";
 import { Notification } from "@prisma/client";
 import dayjs from "dayjs";
 import { CalendarDaysIcon, CheckCheckIcon, CircleOffIcon, XIcon } from "lucide-react";
@@ -84,9 +85,11 @@ type TOrganizationNotificationCardProps = {
 };
 
 export function OrganizationNotificationCard({ toggleModal }: TOrganizationNotificationCardProps) {
+  // context
+  const { profile } = useDashboardContext();
   // hooks
   const { toast } = useToast();
-  const { data: paginatedNotifications, isLoading } = useOrganizationNotifications();
+  const { data: paginatedNotifications, isLoading } = useOrganizationNotifications(profile.role);
 
   // handlers
   const handleAction = useCallback(

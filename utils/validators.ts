@@ -1,8 +1,10 @@
-import { TOrderBy, TTeacherSearchBy } from "@/types/typings";
-import { sanitizeInput } from ".";
-import { MAX_NUM_OF_INVITE_MESSAGE_CHARACTERS } from "../constants";
+import { MAX_NUM_OF_INVITE_MESSAGE_CHARACTERS } from "@/constants";
+import { TStudentSearchBy } from "@/features/students/types";
+import { TTeacherSearchBy } from "@/features/teachers";
+import { TOrderBy } from "@/types/typings";
+import { sanitizeInput } from "./misc";
 
-export function validateSearchBoxInputs(inputs: { query: string, searchByValues: (keyof TTeacherSearchBy)[], orderByValue?: TOrderBy }) {
+export function validateSearchBoxInputs(inputs: { query: string, searchByValues: (keyof TTeacherSearchBy)[] | (keyof TStudentSearchBy)[], orderByValue?: TOrderBy }) {
     const { query, searchByValues } = inputs;
 
     const errors: { query?: string } = {};

@@ -5,10 +5,20 @@ import { TPaginatedResponse } from "@/types/typings";
 import { handleError } from "@/utils/handle-error";
 import { Notification } from "@prisma/client";
 import { cookies } from "next/headers";
+import { TNotificationForType } from "../types";
 
-export async function fetchOrganizationNotifications(): Promise<TPaginatedResponse<Notification>> {
 
-    const response = await fetch(API_ENDPOINTS.NOTIFICATION.ORGANIZATION, {
+
+const roleToUrlMap: { [key in TNotificationForType]: string } = {
+    ORGANIZATION: API_ENDPOINTS.NOTIFICATION.ORGANIZATION.ORGANIZATION,
+    TEACHER: API_ENDPOINTS.NOTIFICATION.ORGANIZATION.TEACHER,
+    STUDENT: API_ENDPOINTS.NOTIFICATION.ORGANIZATION.STUDENT,
+};
+
+export async function fetchOrganizationNotifications(profileRole: TNotificationForType): Promise<TPaginatedResponse<Notification>> {
+    const URL = roleToUrlMap[profileRole];
+
+    const response = await fetch(URL, {
         headers: { Cookie: cookies().toString() },
     });
 

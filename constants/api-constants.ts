@@ -10,9 +10,13 @@ export const API_ENDPOINTS = {
         DISMISS: `${BASE_API_ENDPOINT}/entity/notification/dismiss`,
         ACCEPT: `${BASE_API_ENDPOINT}/entity/notification/accept`,
         INVITE_TEACHERS: `${BASE_API_ENDPOINT}/entity/notification/invite-teachers`,
-        ORGANIZATION: `${BASE_API_ENDPOINT}/entity/notification/organization`,
+        INVITE_STUDENTS: `${BASE_API_ENDPOINT}/entity/notification/invite-students`,
+        ORGANIZATION: {
+            TEACHER: `${BASE_API_ENDPOINT}/entity/notification/organization/for-teacher`,
+            STUDENT: `${BASE_API_ENDPOINT}/entity/notification/organization/for-student`,
+            ORGANIZATION: `${BASE_API_ENDPOINT}/entity/notification/organization/for-organization`,
+        },
     },
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,
 } as const
-

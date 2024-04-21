@@ -8,28 +8,40 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { TStudentSearchBy, TStudentsFetchFilterParams } from "@/features/students/types";
+import { TTeacherSearchBy, TTeachersFetchFilterParams } from "@/features/teachers";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import { TOrderBy, TTeacherSearchBy, TTeachersFetchFilterParams } from "@/types/typings";
+import { TOrderBy } from "@/types/typings";
 import { cn } from "@/utils/cn";
+import { validateSearchBoxInputs } from "@/utils/validators";
 import { CheckIcon, Filter, Search, SortDesc } from "lucide-react";
 import { Dispatch, SetStateAction, memo, useRef, useState } from "react";
-import { validateSearchBoxInputs } from "..";
 
-type TOrderByComboboxTypes = {
-  searchBys: TTeacherSearchBy;
+type TTeacherSearchByComboboxAttributes = {
+  searchFields: { [key in keyof TTeacherSearchBy]: string };
   searchByValues: (keyof TTeacherSearchBy)[];
   setSearchByValues: (value: (keyof TTeacherSearchBy)[]) => void;
 };
 
+type TStudentSearchByComboboxAttributes = {
+  searchFields: { [key in keyof TStudentSearchBy]: string };
+  searchByValues: (keyof TStudentSearchBy)[];
+  setSearchByValues: (value: (keyof TStudentSearchBy)[]) => void;
+};
+
+type TSearchByComboboxProps = {
+  searchingFor: "teachers" | "students";
+} & (TTeacherSearchByComboboxAttributes | TStudentSearchByComboboxAttributes);
+
 const SearchByCombobox = memo(function SearchByCombobox({
-  searchBys,
+  searchFields,
   searchByValues,
   setSearchByValues,
-}: TOrderByComboboxTypes) {
+}: TSearchByComboboxProps) {
   const { isOpen, toggle } = useDisclosure();
 
   const handleSelect = (currentValue: string) => {
-    const currValueTyped = currentValue as keyof TTeacherSearchBy;
+    const currValueTyped = currentValue as keyof typeof searchFields;
 
     if (searchByValues.includes(currValueTyped)) {
       setSearchByValues(searchByValues.filter((value) => value !== currValueTyped));
@@ -51,7 +63,7 @@ const SearchByCombobox = memo(function SearchByCombobox({
             {searchByValues.length === 0
               ? "Search by..."
               : searchByValues.length === 1
-              ? searchBys[searchByValues[0]]
+              ? searchFields[searchByValues[0]]
               : "Multiple"}
           </span>
           <Filter className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -62,7 +74,7 @@ const SearchByCombobox = memo(function SearchByCombobox({
           <CommandInput placeholder="Search by..." />
           <CommandEmpty>No search by found.</CommandEmpty>
           <CommandGroup>
-            {Object.entries(searchBys).map(([key, value]) => (
+            {Object.entries(searchFields).map(([key, value]) => (
               <CommandItem key={key} value={key} onSelect={handleSelect}>
                 {value}
                 <CheckIcon
@@ -82,7 +94,7 @@ const SearchByCombobox = memo(function SearchByCombobox({
   );
 });
 
-type TOrderByDropdownTypes = {
+type TOrderByDropdownProps = {
   setOrderByValue: (value: TOrderBy | undefined) => void;
   orderByValue?: TOrderBy;
 };
@@ -90,7 +102,7 @@ type TOrderByDropdownTypes = {
 const OrderByDropdown = memo(function OrderByDropdown({
   setOrderByValue,
   orderByValue,
-}: TOrderByDropdownTypes) {
+}: TOrderByDropdownProps) {
   const handleSelect = (value: TOrderBy) => {
     setOrderByValue(orderByValue === value ? undefined : value);
   };
@@ -115,13 +127,23 @@ const OrderByDropdown = memo(function OrderByDropdown({
   );
 });
 
-type TSearchBoxTypes = {
+type TTeacherAttributes = {
+  searchFields: { [key in keyof TTeacherSearchBy]: string };
   setFilterParams: Dispatch<SetStateAction<TTeachersFetchFilterParams | undefined>>;
 };
 
-export function SearchBox({ setFilterParams }: TSearchBoxTypes) {
+type TStudentAttributes = {
+  searchFields: { [key in keyof TStudentSearchBy]: string };
+  setFilterParams: Dispatch<SetStateAction<TStudentsFetchFilterParams | undefined>>;
+};
+
+type TSearchBoxTypes = {
+  searchingFor: "teachers" | "students";
+} & (TTeacherAttributes | TStudentAttributes);
+
+export function SearchBox({ setFilterParams, searchFields, searchingFor }: TSearchBoxTypes) {
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [searchByValues, setSearchByValues] = useState<(keyof TTeacherSearchBy)[]>([]);
+  const [searchByValues, setSearchByValues] = useState<(keyof typeof searchFields)[]>([]);
   const [orderByValue, setOrderByValue] = useState<TOrderBy>();
   const [inputErrors, setInputErrors] = useState<{ query?: string }>({});
 
@@ -155,7 +177,7 @@ export function SearchBox({ setFilterParams }: TSearchBoxTypes) {
           <Input
             type="text"
             className={`py-5 pl-11 pr-4 dark:bg-slate-900 ${inputErrors?.query ? "border-red-500/60" : ""}`}
-            placeholder="Search for teachers"
+            placeholder={`Search ${searchingFor}...`}
             ref={searchInputRef}
           />
           <span className="absolute inset-y-0 left-2 flex items-center pl-2">
@@ -170,15 +192,8 @@ export function SearchBox({ setFilterParams }: TSearchBoxTypes) {
 
       <div className="flex gap-2 items-center">
         <SearchByCombobox
-          searchBys={{
-            name: "Name",
-            email: "Email",
-            address: "Address",
-            phone: "Phone",
-            city: "City",
-            state: "State",
-            country: "Country",
-          }}
+          searchingFor={searchingFor}
+          searchFields={searchFields}
           searchByValues={searchByValues}
           setSearchByValues={setSearchByValues}
         />

@@ -1,6 +1,6 @@
 import { KindePermissions } from "@kinde-oss/kinde-auth-nextjs";
 import { KindeOrganization, KindeUser } from "@kinde-oss/kinde-auth-nextjs/server";
-import { Classroom, Organization, Profile, Teacher } from "@prisma/client";
+import { Classroom, Organization, Teacher } from "@prisma/client";
 
 type TPaginatedResponse<T> = {
     count: number;
@@ -26,23 +26,6 @@ type TOrganizationWithClassroomsWithStudentsWithTeachers = Organization & {
     students: Student[];
 }
 
-type TTeacherWithProfile = Teacher & {
-    profile: Profile;
-}
-
-type TTeacherSearchBy = Omit<Teacher, "id" | "organizationId" | "profileId" | "createdAt" | "updatedAt">;
-
-type TCountry = {
-    name: {
-        common: string;
-    },
-    cca2: string;
-    flags: {
-        png: string;
-        svg: string;
-    }
-}
-
 type TDashboardAsideTab = {
     classrooms: 'classrooms',
     teachers: 'teachers',
@@ -53,16 +36,7 @@ type TDashboardAsideTab = {
 
 type TOrderBy = "asc" | "desc";
 
-type TTeachersFetchFilterParams = {
-    from?: number;
-    take?: number;
-    query?: string;
-    searchBy?: (keyof TTeacherSearchBy)[];
-    orderBy?: TOrderBy;
-}
-
-
 type TRole = "ADMIN" | "GUEST" | "ORGANIZATION" | "TEACHER" | "STUDENT"
 
-export { TCountry, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TTeacherSearchBy, TTeacherWithProfile, TTeachersFetchFilterParams, TUser, TUserSession };
+export { TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TUser, TUserSession };
 

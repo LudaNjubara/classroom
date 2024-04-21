@@ -1,5 +1,6 @@
 import { db } from "@/config/db";
-import { TOrderBy, TTeacherSearchBy } from "@/types/typings";
+import { TTeacherSearchBy } from "@/features/teachers";
+import { TOrderBy } from "@/types/typings";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 

@@ -8,20 +8,20 @@ import { useDashboardStore } from "@/stores";
 import { validateInviteMessageInput } from "@/utils/validators";
 import { CheckCircle2, Info, MessageSquareText } from "lucide-react";
 import { useRef, useState } from "react";
-import { TTeacherWithProfile } from "../types";
+import { TStudentWithProfile } from "../types";
 
-type TTeacherCardControlsProps = {
-  teacher: TTeacherWithProfile;
-  handleSelectTeacher: (teacher: TTeacherWithProfile, customInviteMessage?: string) => void;
+type TStudentCardControlsProps = {
+  student: TStudentWithProfile;
+  handleSelectStudent: (student: TStudentWithProfile, customInviteMessage?: string) => void;
   isSelected: boolean;
 };
 
-const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeacherCardControlsProps) => {
+const StudentCardControls = ({ student, handleSelectStudent, isSelected }: TStudentCardControlsProps) => {
   // zustand state and actions
-  const selectedTeacherItems = useDashboardStore((state) => state.selectedTeacherItems);
+  const selectedStudentItems = useDashboardStore((state) => state.selectedStudentItems);
 
   // derived state
-  const thisTeacherItem = selectedTeacherItems.find((item) => item.teacherId === teacher.id);
+  const thisStudentItem = selectedStudentItems.find((item) => item.studentId === student.id);
 
   // refs
   const inviteMessageRef = useRef<HTMLTextAreaElement>(null);
@@ -46,7 +46,7 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
     }
 
     setInputErrors({});
-    handleSelectTeacher(teacher, input);
+    handleSelectStudent(student, input);
     closePopover();
   };
 
@@ -72,7 +72,7 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
               <div className="space-y-2">
                 <h4 className="font-medium leading-none">Custom message</h4>
                 <div className="flex flex-col gap-3 text-sm text-muted-foreground">
-                  <p>Create a customized message that will be sent to the teacher.</p>
+                  <p>Create a customized message that will be sent to the student.</p>
 
                   <Alert>
                     <Info size={18} />
@@ -90,7 +90,7 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
                   id="inviteMessage"
                   placeholder="Type message here..."
                   className={inputErrors.inviteMessage ? "border-red-400" : ""}
-                  defaultValue={thisTeacherItem?.inviteMessage ?? ""}
+                  defaultValue={thisStudentItem?.inviteMessage ?? ""}
                 />
                 {inputErrors.inviteMessage && (
                   <p className="text-xs text-red-400">{inputErrors.inviteMessage}</p>
@@ -98,7 +98,7 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
               </div>
 
               <Button onClick={handleInviteMessageSubmit} variant="default">
-                Select teacher
+                Select student
               </Button>
             </div>
           </PopoverContent>
@@ -107,7 +107,7 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
         <Button
           variant="secondary"
           className="p-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-900 hover:bg-slate-500 dark:hover:bg-slate-800/80 transition-colors duration-200"
-          onClick={() => handleSelectTeacher(teacher)}
+          onClick={() => handleSelectStudent(student)}
         >
           {<CheckCircle2 size={18} className={`${isSelected ? "text-green-500" : "text-white"}`} />}
         </Button>
@@ -116,4 +116,4 @@ const TeacherCardControls = ({ teacher, handleSelectTeacher, isSelected }: TTeac
   );
 };
 
-export default TeacherCardControls;
+export default StudentCardControls;

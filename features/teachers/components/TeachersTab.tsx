@@ -14,6 +14,7 @@ export function TeachersTab() {
   // zustand state and actions
   const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
 
+  // hooks
   const { isOpen: isModalOpen, toggle: toggleModal } = useDisclosure();
 
   return (
