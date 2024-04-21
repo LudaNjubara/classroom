@@ -142,7 +142,12 @@ export function DashboardLayout({ contextValue }: TDashboardLayoutProps) {
             <ul className="flex gap-3 items-center overflow-x-auto">
               {organizations.map((org) => (
                 <li key={org.id}>
-                  <Button size="sm" className="py-1" onClick={() => handleSelectedOrganizationClick(org)}>
+                  <Button
+                    size="sm"
+                    variant={selectedOrganization?.id === org.id ? "default" : "secondary"}
+                    className="py-1"
+                    onClick={() => handleSelectedOrganizationClick(org)}
+                  >
                     {org.name}
                   </Button>
                 </li>
