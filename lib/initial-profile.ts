@@ -12,6 +12,10 @@ export const initialProfile = async () => {
 
     const user = await getUser()
 
+    if (!user) {
+        handleError(ERROR_MESSAGES.CLIENT_ERROR.NOT_FOUND.CODE)
+    }
+
     const profile = await db.profile.findUnique({
         where: {
             kindeId: user!.id
@@ -22,14 +26,17 @@ export const initialProfile = async () => {
     if (profile) return profile
 
     // If profile does not exist, create it
-    const newProfile = await db.profile.create({
-        data: {
-            kindeId: user!.id,
-            name: user!.given_name!,
-            email: user!.email!,
-            picture: user!.picture
-        }
-    })
+    const data: { kindeId: string; name: string; email: string; picture?: string } = {
+        kindeId: user!.id,
+        name: user!.given_name!,
+        email: user!.email!,
+    };
+
+    if (user!.picture) {
+        data.picture = user!.picture;
+    }
+
+    const newProfile = await db.profile.create({ data })
 
     return newProfile
 }
