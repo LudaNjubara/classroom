@@ -75,7 +75,11 @@ const roleStrategies: {
                 profileId: kindeId,
             },
             include: {
-                students: true,
+                students: {
+                    include: {
+                        student: true,
+                    }
+                },
                 teachers: {
                     include: {
                         teacher: true,
@@ -90,6 +94,13 @@ const roleStrategies: {
 
             // @ts-ignore
             organization.teachers = teachers;
+        }
+
+        if (organization?.students) {
+            const students = organization?.students.map(organizationStudent => organizationStudent.student);
+
+            // @ts-ignore
+            organization.students = students;
         }
 
         return [organization];
