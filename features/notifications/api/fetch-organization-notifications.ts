@@ -7,8 +7,6 @@ import { Notification } from "@prisma/client";
 import { cookies } from "next/headers";
 import { TNotificationForType } from "../types";
 
-
-
 const roleToUrlMap: { [key in TNotificationForType]: string } = {
     ORGANIZATION: API_ENDPOINTS.NOTIFICATION.ORGANIZATION.ORGANIZATION,
     TEACHER: API_ENDPOINTS.NOTIFICATION.ORGANIZATION.TEACHER,

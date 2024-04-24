@@ -132,7 +132,7 @@ export function DashboardLayout({ contextValue }: TDashboardLayoutProps) {
 
   useEffect(() => {
     if (!selectedOrganization && organizations.length > 0) setSelectedOrganization(organizations[0]);
-  }, [organizations, profile.role]);
+  }, [organizations, profile.role, selectedOrganization]);
 
   return (
     <DashboardContext.Provider value={contextValue}>
