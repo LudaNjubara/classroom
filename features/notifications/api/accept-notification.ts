@@ -5,9 +5,17 @@ import { handleError } from "@/utils/handle-error";
 import { Notification } from "@prisma/client";
 import { cookies } from "next/headers";
 
+const recipientTypeToUrlMap = {
+    ORGANIZATION: API_ENDPOINTS.NOTIFICATION.ACCEPT.ORGANIZATION,
+    TEACHER: API_ENDPOINTS.NOTIFICATION.ACCEPT.TEACHER,
+    STUDENT: API_ENDPOINTS.NOTIFICATION.ACCEPT.STUDENT,
+};
+
 export const acceptNotification = async (notification: Notification) => {
 
-    const response = await fetch(API_ENDPOINTS.NOTIFICATION.ACCEPT, {
+    const URL = recipientTypeToUrlMap[notification.recipientType];
+
+    const response = await fetch(URL, {
         method: "PUT",
         headers: { Cookie: cookies().toString() },
         body: JSON.stringify({ notification }),

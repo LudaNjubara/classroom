@@ -8,7 +8,11 @@ export const API_ENDPOINTS = {
     TEACHER: `${BASE_API_ENDPOINT}/entity/teacher`,
     NOTIFICATION: {
         DISMISS: `${BASE_API_ENDPOINT}/entity/notification/dismiss`,
-        ACCEPT: `${BASE_API_ENDPOINT}/entity/notification/accept`,
+        ACCEPT: {
+            ORGANIZATION: `${BASE_API_ENDPOINT}/entity/notification/accept/organization`,
+            TEACHER: `${BASE_API_ENDPOINT}/entity/notification/accept/teacher`,
+            STUDENT: `${BASE_API_ENDPOINT}/entity/notification/accept/student`,
+        },
         INVITE_TEACHERS: `${BASE_API_ENDPOINT}/entity/notification/invite-teachers`,
         INVITE_STUDENTS: `${BASE_API_ENDPOINT}/entity/notification/invite-students`,
         ORGANIZATION: {
