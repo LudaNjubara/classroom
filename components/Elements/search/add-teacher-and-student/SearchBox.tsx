@@ -139,9 +139,10 @@ type TStudentAttributes = {
 
 type TSearchBoxTypes = {
   searchingFor: "teachers" | "students";
+  className?: string;
 } & (TTeacherAttributes | TStudentAttributes);
 
-export function SearchBox({ setFilterParams, searchFields, searchingFor }: TSearchBoxTypes) {
+export function SearchBox({ setFilterParams, searchFields, searchingFor, className }: TSearchBoxTypes) {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [searchByValues, setSearchByValues] = useState<(keyof typeof searchFields)[]>([]);
   const [orderByValue, setOrderByValue] = useState<TOrderBy>();
@@ -171,7 +172,7 @@ export function SearchBox({ setFilterParams, searchFields, searchingFor }: TSear
   };
 
   return (
-    <form className="flex gap-5 items-center" onSubmit={handleSubmit}>
+    <form className={`${cn("flex gap-5 items-center", className)}`} onSubmit={handleSubmit}>
       <div className="flex-1 flex gap-2 items-center">
         <div className="relative flex-1">
           <Input
