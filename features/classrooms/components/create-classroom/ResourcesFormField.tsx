@@ -1,6 +1,6 @@
 "use client";
 
-import { MultiFileDropzone, type FileState } from "@/components/Elements/dropzone/MultiFIleDropzone";
+import { MultiFileDropzone, type FileState } from "@/components/Elements/dropzone/MultiFileDropzone";
 import { useEdgeStore } from "@/config/edgestore";
 import { cn } from "@/utils/cn";
 import { memo, useState } from "react";
