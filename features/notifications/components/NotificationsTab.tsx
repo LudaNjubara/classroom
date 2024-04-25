@@ -4,6 +4,7 @@ import { CustomModal, GridView } from "@/components/Elements";
 import { Separator } from "@/components/ui/separator";
 import { useDashboardContext } from "@/context";
 import { useDisclosure } from "@/hooks/useDisclosure";
+import { Role } from "@prisma/client";
 import { BuildingIcon, GraduationCapIcon, TestTube2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { OrganizationNotificationCard, StudentNotificationCard, TeacherNotificationCard } from ".";
@@ -16,7 +17,7 @@ type TNotificationCard = {
   description: string;
   icon: JSX.Element;
   renderComponent: (props: any) => JSX.Element;
-  allowedRoles: string[];
+  allowedRoles: Role[];
 };
 
 const notificationCards: TNotificationCard[] = [
