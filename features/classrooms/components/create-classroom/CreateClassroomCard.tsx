@@ -81,7 +81,7 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
           className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
         />
 
-        <ResourcesFormField />
+        <ResourcesFormField className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out" />
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
