@@ -21,6 +21,9 @@ export const API_ENDPOINTS = {
             ORGANIZATION: `${BASE_API_ENDPOINT}/entity/notification/organization/for-organization`,
         },
     },
+    CLASSROOM: {
+        CREATE: `${BASE_API_ENDPOINT}/entity/classroom`,
+    },
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,
 } as const

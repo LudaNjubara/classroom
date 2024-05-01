@@ -1,6 +1,6 @@
 "use client";
 
-import { NotificationSkeleton } from "@/components/Loaders/NotificationSkeleton";
+import { NotificationSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useDashboardContext } from "@/context";

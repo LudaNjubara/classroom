@@ -1,3 +1,5 @@
+import { type FileState } from "@/components/Elements/dropzone/MultiFileDropzone";
+import { Spinner } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,14 +12,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
+import { useEdgeStore } from "@/config/edgestore";
 import { TSelectedStudentItem } from "@/features/students";
 import { TSelectedTeacherItem } from "@/features/teachers";
+import { useDashboardStore } from "@/stores";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
+import { createClassroom } from "../../api";
+import { TScheduleItem } from "../../types";
 import { ResourcesFormField } from "./ResourcesFormField";
+import { ScheduleFormField } from "./ScheduleFormField";
 import { StudentsFormField } from "./StudentsFormField";
 import { TeachersFormField } from "./TeachersFormField";
 
@@ -26,14 +35,33 @@ const formSchema = z.object({
   description: z.string().min(1, { message: "Please enter a description." }),
 });
 
+const initialScheduleItem: TScheduleItem = {
+  id: uuidv4(),
+  day: "Monday",
+  startTime: "12:00",
+  endTime: "1:00",
+  startTimeAmPm: "PM",
+  endTimeAmPm: "PM",
+};
+
 type TCreateClassroomCardProps = {
   toggleModal: () => void;
 };
 
 export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) {
+  // zustan state and actions
+  const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
+
   // state
   const [selectedStudentItems, setSelectedStudentItems] = useState<TSelectedStudentItem[]>([]);
   const [selectedTeacherItems, setSelectedTeacherItems] = useState<TSelectedTeacherItem[]>([]);
+  const [fileStates, setFileStates] = useState<FileState[]>([]);
+  const [scheduleItems, setScheduleItems] = useState<TScheduleItem[]>([initialScheduleItem]);
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+
+  // hooks
+  const { edgestore } = useEdgeStore();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,8 +73,80 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
   });
 
   // handlers
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+  const updateFileProgress = (key: string, progress: FileState["progress"]) => {
+    setFileStates((fileStates) => {
+      const newFileStates = structuredClone(fileStates);
+      const fileState = newFileStates.find((fileState) => fileState.key === key);
+      if (fileState) {
+        fileState.progress = progress;
+      }
+      return newFileStates;
+    });
+  };
+
+  const handleFileUpload = async ({ classroomId }: { classroomId: string }) => {
+    await Promise.all(
+      fileStates.map(async (fileState) => {
+        try {
+          if (fileState.progress !== "PENDING") return;
+          const res = await edgestore.publicFiles.upload({
+            input: { classroomId },
+            file: fileState.file,
+            onProgressChange: async (progress) => {
+              updateFileProgress(fileState.key, progress);
+              if (progress === 100) {
+                // wait 1 second to set it to complete
+                // so that the user can see the progress bar
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                updateFileProgress(fileState.key, "COMPLETE");
+              }
+            },
+          });
+        } catch (err) {
+          updateFileProgress(fileState.key, "ERROR");
+        }
+      })
+    );
+  };
+
+  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
+    if (!selectedOrganization) return;
+
+    console.log("selectedStudentItems", selectedStudentItems);
+    console.log("selectedTeacherItems", selectedTeacherItems);
+
+    setIsFormSubmitting(true);
+
+    try {
+      const classroomRes = await createClassroom({
+        studentItems: selectedStudentItems,
+        teacherItems: selectedTeacherItems,
+        scheduleItems,
+        organizationId: selectedOrganization?.id,
+        classroom: {
+          name: formData.name,
+          description: formData.description,
+        },
+      });
+
+      await handleFileUpload({ classroomId: classroomRes.classroom.id });
+
+      toast({
+        title: "Classroom created successfully",
+        description: "The classroom has been created successfully.",
+        variant: "default",
+      });
+    } catch (err) {
+      console.error(err);
+
+      toast({
+        title: "Failed to create classroom",
+        description: "An error occurred while creating the classroom. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFormSubmitting(false);
+    }
   };
 
   return (
@@ -81,7 +181,17 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
           className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
         />
 
-        <ResourcesFormField className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out" />
+        <ResourcesFormField
+          fileStates={fileStates}
+          setFileStates={setFileStates}
+          className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
+        />
+
+        <ScheduleFormField
+          className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
+          scheduleItems={scheduleItems}
+          setScheduleItems={setScheduleItems}
+        />
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -117,7 +227,15 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={toggleModal}>
+                Cancel
+              </Button>
+
+              <Button type="submit" className="min-w-40" disabled={isFormSubmitting}>
+                {isFormSubmitting ? <Spinner /> : "Create Classroom"}
+              </Button>
+            </div>
           </form>
         </Form>
       </div>

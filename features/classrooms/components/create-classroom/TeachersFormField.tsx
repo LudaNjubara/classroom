@@ -1,8 +1,8 @@
 import { CustomPagination, GridView, SearchBox } from "@/components/Elements";
 import { TeacherCardSkeleton } from "@/components/Loaders";
-import { useStudents } from "@/features/students/hooks/useStudents";
 import { TSelectedTeacherItem, TTeacherWithProfile, TTeachersFetchFilterParams } from "@/features/teachers";
 import { TeacherCard } from "@/features/teachers/components/TeacherCard";
+import { useTeachers } from "@/features/teachers/hooks/useTeachers";
 import { cn } from "@/utils/cn";
 import { memo, useCallback, useState } from "react";
 
@@ -18,7 +18,7 @@ export const TeachersFormField = memo(
     const [filterParams, setFilterParams] = useState<TTeachersFetchFilterParams>();
 
     // hooks
-    const { data: paginatedTeachers, isLoading: isTeachersLoading } = useStudents(filterParams);
+    const { data: paginatedTeachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
 
     // handlers
     const handleSelectTeacher = useCallback(

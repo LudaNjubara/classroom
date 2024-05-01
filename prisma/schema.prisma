@@ -94,7 +94,7 @@ model Teacher {
 
   organizations OrganizationTeacher[]
 
-  classrooms Classroom[]
+  classrooms ClassroomTeacher[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -130,7 +130,7 @@ model Student {
 
   organizations OrganizationStudent[]
 
-  classrooms Classroom[]
+  classrooms ClassroomStudent[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -153,20 +153,77 @@ model OrganizationStudent {
 model Classroom {
   id String @id @unique @default(cuid())
 
-  name        String @db.VarChar(255)
-  description String @db.Text
+  name        String     @db.VarChar(255)
+  description String     @db.Text
+  schedule    Schedule[]
+  resources   Resource[]
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  teachers Teacher[]
-  students Student[]
+  teachers ClassroomTeacher[]
+  students ClassroomStudent[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([organizationId], name: "organizationId")
   @@map("classrooms")
+}
+
+model ClassroomTeacher {
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  @@id([classroomId, teacherId])
+  @@index([teacherId])
+}
+
+model ClassroomStudent {
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@id([classroomId, studentId])
+  @@index([studentId])
+}
+
+model Schedule {
+  id String @id @unique @default(cuid())
+
+  dayOfWeek     String
+  startTime     String
+  startTimeAmPm String
+  endTime       String
+  endTimeAmPm   String
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  @@index([classroomId], name: "classroomId")
+  @@map("schedules")
+}
+
+model Resource {
+  id String @id @unique @default(cuid())
+
+  name        String @db.VarChar(255)
+  description String @db.Text
+  url         String @db.VarChar(255)
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([classroomId], name: "classroomId")
+  @@map("resources")
 }
 
 model Notification {

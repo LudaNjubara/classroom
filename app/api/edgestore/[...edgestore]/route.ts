@@ -5,6 +5,7 @@ import { initEdgeStore } from '@edgestore/server';
 import { CreateContextOptions, createEdgeStoreNextHandler } from '@edgestore/server/adapters/next/app';
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Role } from '@prisma/client';
+import * as z from 'zod';
 
 const DEFAULT_MAX_SIZE = 1024 * 1024 * 10; // 10MB
 
@@ -67,7 +68,11 @@ async function createContext({ req }: CreateContextOptions): Promise<Context> {
 
     if (!user) {
         console.log("User not found")
-        handleError(ERROR_MESSAGES.CLIENT_ERROR.NOT_FOUND.CODE)
+        return {
+            id: " ",
+            profileId: " ",
+            role: " "
+        }
     }
 
     const profile = await db.profile.findUnique({
@@ -104,10 +109,14 @@ const edgeStoreRouter = es.router({
     publicFiles: es.fileBucket({
         maxSize: DEFAULT_MAX_SIZE,
     })
+        .input(z.object({
+            classroomId: z.string().optional(),
+        }))
         .metadata(({ ctx, input }) => ({
             profileId: ctx.profileId,
             userId: ctx.id,
             userRole: ctx.role,
+            classroomId: input.classroomId,
         })),
 });
 
