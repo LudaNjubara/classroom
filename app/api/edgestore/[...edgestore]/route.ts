@@ -14,7 +14,7 @@ type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST">;
 type Context = {
     id: string;
     profileId: string;
-    role: string;
+    role: Role;
 };
 
 const queryStrategies: {
@@ -71,13 +71,13 @@ async function createContext({ req }: CreateContextOptions): Promise<Context> {
         return {
             id: " ",
             profileId: " ",
-            role: " "
+            role: "GUEST"
         }
     }
 
     const profile = await db.profile.findUnique({
         where: {
-            kindeId: user!.id
+            kindeId: user.id
         }!
     })
 

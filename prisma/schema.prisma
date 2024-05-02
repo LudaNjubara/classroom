@@ -212,9 +212,12 @@ model Schedule {
 model Resource {
   id String @id @unique @default(cuid())
 
-  name        String @db.VarChar(255)
-  description String @db.Text
-  url         String @db.VarChar(255)
+  name String @db.VarChar(255)
+  size Int
+  url  String @db.VarChar(255)
+
+  metadataId String            @unique
+  metadata   ResourcesMetadata @relation(fields: [metadataId], references: [id])
 
   classroomId String
   classroom   Classroom @relation(fields: [classroomId], references: [id])
@@ -223,7 +226,21 @@ model Resource {
   updatedAt DateTime @updatedAt
 
   @@index([classroomId], name: "classroomId")
+  @@index([metadataId], name: "metadataId")
   @@map("resources")
+}
+
+model ResourcesMetadata {
+  id String @id @unique @default(cuid())
+
+  resource Resource?
+
+  profileId   String  @unique
+  userId      String  @unique
+  userRole    Role
+  classroomId String?
+
+  @@map("resources_metadata")
 }
 
 model Notification {

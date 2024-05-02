@@ -23,8 +23,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
-import { createClassroom } from "../../api";
-import { TScheduleItem } from "../../types";
+import { createClassroom, updateClassroom } from "../../api";
+import { TFileUploadResponseWithFilename, TScheduleItem } from "../../types";
 import { ResourcesFormField } from "./ResourcesFormField";
 import { ScheduleFormField } from "./ScheduleFormField";
 import { StudentsFormField } from "./StudentsFormField";
@@ -85,6 +85,8 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
   };
 
   const handleFileUpload = async ({ classroomId }: { classroomId: string }) => {
+    const uploadResponses: TFileUploadResponseWithFilename[] = [];
+
     await Promise.all(
       fileStates.map(async (fileState) => {
         try {
@@ -102,18 +104,18 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
               }
             },
           });
+          uploadResponses.push({ ...res, filename: fileState.file.name });
         } catch (err) {
           updateFileProgress(fileState.key, "ERROR");
         }
       })
     );
+
+    return uploadResponses;
   };
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     if (!selectedOrganization) return;
-
-    console.log("selectedStudentItems", selectedStudentItems);
-    console.log("selectedTeacherItems", selectedTeacherItems);
 
     setIsFormSubmitting(true);
 
@@ -129,7 +131,11 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
         },
       });
 
-      await handleFileUpload({ classroomId: classroomRes.classroom.id });
+      const uploadResponses = await handleFileUpload({ classroomId: classroomRes.classroom.id });
+
+      await updateClassroom({
+        resources: uploadResponses,
+      });
 
       toast({
         title: "Classroom created successfully",
