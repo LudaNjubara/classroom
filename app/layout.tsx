@@ -2,7 +2,6 @@ import ErrorHandler from "@/components/Error/ErrorHandler";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Toaster } from "@/components/ui/toaster";
-import { EdgeStoreProvider } from "@/config/edgestore";
 import { ThemeProvider } from "@/providers/theme-provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -21,9 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
-          <div className="mt-32 mb-16">
-            <EdgeStoreProvider>{children}</EdgeStoreProvider>
-          </div>
+          <div className="mt-32 mb-16">{children}</div>
           <Footer />
           <ErrorHandler />
           <Toaster />

@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/Layout";
+import { EdgeStoreProvider } from "@/config/edgestore";
 import { CreateAccount } from "@/features/create-account";
 import { TOrganizationWithClassroomsWithStudentsWithTeachers } from "@/types/typings";
 import { Profile } from "@prisma/client";
@@ -17,6 +18,8 @@ export function DashboardView({ profile, organizations }: TProps) {
   return profile.role === "GUEST" ? (
     <CreateAccount profile={profile} />
   ) : (
-    <DashboardLayout contextValue={contextValue} />
+    <EdgeStoreProvider>
+      <DashboardLayout contextValue={contextValue} />
+    </EdgeStoreProvider>
   );
 }
