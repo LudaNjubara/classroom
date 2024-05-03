@@ -4,11 +4,11 @@ import { TSelectedTeacherItem, TTeacherWithProfile, TTeachersFetchFilterParams }
 import { TeacherCard } from "@/features/teachers/components/TeacherCard";
 import { useTeachers } from "@/features/teachers/hooks/useTeachers";
 import { cn } from "@/utils/cn";
-import { memo, useCallback, useState } from "react";
+import { Dispatch, SetStateAction, memo, useCallback, useState } from "react";
 
 type TTeachersFormFieldProps = {
   selectedTeacherItems: TSelectedTeacherItem[];
-  setSelectedTeacherItems: React.Dispatch<React.SetStateAction<TSelectedTeacherItem[]>>;
+  setSelectedTeacherItems: Dispatch<SetStateAction<TSelectedTeacherItem[]>>;
   className?: string;
 };
 

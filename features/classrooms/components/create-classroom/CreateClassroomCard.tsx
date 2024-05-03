@@ -17,6 +17,7 @@ import { useEdgeStore } from "@/config/edgestore";
 import { TSelectedStudentItem } from "@/features/students";
 import { TSelectedTeacherItem } from "@/features/teachers";
 import { useDashboardStore } from "@/stores";
+import { sanitizeInput } from "@/utils/misc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
@@ -24,7 +25,8 @@ import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
 import { createClassroom, updateClassroom } from "../../api";
-import { TFileUploadResponseWithFilename, TScheduleItem } from "../../types";
+import { TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem } from "../../types";
+import { ClassroomSettingsFormField } from "./ClassroomSettingsFormField";
 import { ResourcesFormField } from "./ResourcesFormField";
 import { ScheduleFormField } from "./ScheduleFormField";
 import { StudentsFormField } from "./StudentsFormField";
@@ -57,6 +59,7 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
   const [selectedTeacherItems, setSelectedTeacherItems] = useState<TSelectedTeacherItem[]>([]);
   const [fileStates, setFileStates] = useState<FileState[]>([]);
   const [scheduleItems, setScheduleItems] = useState<TScheduleItem[]>([initialScheduleItem]);
+  const [classroomSettings, setClassroomSettings] = useState<TClassroomSettings>();
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
 
   // hooks
@@ -123,19 +126,22 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
       const classroomRes = await createClassroom({
         studentItems: selectedStudentItems,
         teacherItems: selectedTeacherItems,
+        classroomSettings,
         scheduleItems,
         organizationId: selectedOrganization?.id,
         classroom: {
-          name: formData.name,
-          description: formData.description,
+          name: sanitizeInput(formData.name),
+          description: sanitizeInput(formData.description),
         },
       });
 
       const uploadResponses = await handleFileUpload({ classroomId: classroomRes.classroom.id });
 
-      await updateClassroom({
-        resources: uploadResponses,
-      });
+      if (uploadResponses.length) {
+        await updateClassroom({
+          resources: uploadResponses,
+        });
+      }
 
       toast({
         title: "Classroom created successfully",
@@ -191,6 +197,12 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
           fileStates={fileStates}
           setFileStates={setFileStates}
           className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
+        />
+
+        <ClassroomSettingsFormField
+          className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
+          classroomSettings={classroomSettings}
+          setClassroomSettings={setClassroomSettings}
         />
 
         <ScheduleFormField

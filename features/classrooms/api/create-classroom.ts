@@ -6,11 +6,12 @@ import { TSelectedTeacherItem } from "@/features/teachers";
 import { handleError } from "@/utils/handle-error";
 import { Classroom } from "@prisma/client";
 import { cookies } from "next/headers";
-import { TScheduleItem } from "../types";
+import { TClassroomSettings, TScheduleItem } from "../types";
 
 type TCreateClassroomParams = {
     studentItems: TSelectedStudentItem[];
     teacherItems: TSelectedTeacherItem[];
+    classroomSettings?: TClassroomSettings;
     scheduleItems: TScheduleItem[];
     organizationId: string;
     classroom: {
@@ -22,6 +23,7 @@ type TCreateClassroomParams = {
 export async function createClassroom({
     studentItems,
     teacherItems,
+    classroomSettings,
     scheduleItems,
     organizationId,
     classroom
@@ -35,6 +37,7 @@ export async function createClassroom({
         body: JSON.stringify({
             studentItems,
             teacherItems,
+            classroomSettings,
             scheduleItems,
             organizationId,
             classroom

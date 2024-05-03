@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
     },
     CLASSROOM: {
         CREATE: `${BASE_API_ENDPOINT}/entity/classroom`,
+        GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/get-all`,
     },
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,

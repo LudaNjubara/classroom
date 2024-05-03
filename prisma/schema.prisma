@@ -35,6 +35,17 @@ enum NotificationStatus {
   REJECTED
 }
 
+enum ClassroomSetting {
+  ACCENT_COLOR
+}
+
+enum SettingType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+}
+
 // DATABASE MODELS
 model Profile {
   id      String @id @unique @default(cuid())
@@ -164,11 +175,27 @@ model Classroom {
   teachers ClassroomTeacher[]
   students ClassroomStudent[]
 
+  settings ClassroomSettings[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([organizationId], name: "organizationId")
   @@map("classrooms")
+}
+
+model ClassroomSettings {
+  id String @id @unique @default(cuid())
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+
+  key   ClassroomSetting
+  value String
+  type  SettingType
+
+  @@index([classroomId], name: "classroomId")
+  @@map("classroom_settings")
 }
 
 model ClassroomTeacher {

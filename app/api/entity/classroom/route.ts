@@ -1,8 +1,9 @@
 import { db } from "@/config";
-import { TFileUploadResponseWithFilename, TScheduleItem } from "@/features/classrooms/types";
+import { TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem } from "@/features/classrooms/types";
 import { TSelectedStudentItem } from "@/features/students";
 import { TSelectedTeacherItem } from "@/features/teachers";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { ClassroomSetting, ClassroomSettings } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -13,9 +14,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-        const { studentItems, teacherItems, scheduleItems, organizationId, classroom: classroomData }: {
+        const { studentItems, teacherItems, classroomSettings, scheduleItems, organizationId, classroom: classroomData }: {
             studentItems: TSelectedStudentItem[];
             teacherItems: TSelectedTeacherItem[];
+            classroomSettings: TClassroomSettings;
             scheduleItems: TScheduleItem[];
             organizationId: string;
             classroom: {
@@ -23,6 +25,16 @@ export async function POST(req: Request) {
                 description: string;
             };
         } = await req.json();
+
+        let classroomSettingsCreateClause: Omit<ClassroomSettings, "classroomId" | "id">[] = []
+
+        if (classroomSettings) {
+            classroomSettingsCreateClause = Object.entries(classroomSettings).map(([key, value]) => ({
+                key: key as ClassroomSetting,
+                value: value.value,
+                type: value.metadata.type
+            }))
+        }
 
         // Create classroom
         const classroom = await db.classroom.create({
@@ -51,6 +63,9 @@ export async function POST(req: Request) {
                             }
                         }
                     }))
+                },
+                settings: {
+                    create: classroomSettingsCreateClause
                 },
                 schedule: {
                     create: scheduleItems.map((scheduleItem) => ({
@@ -90,8 +105,6 @@ export async function PUT(req: Request) {
         if (!resources) {
             return NextResponse.json({ error: "Invalid request" }, { status: 400 })
         }
-
-        console.log("resources", resources);
 
         // Update classroom
         const classroom = await db.classroom.update({
