@@ -24,6 +24,11 @@ enum NotificationUserType {
   STUDENT
 }
 
+enum MessageSenderType {
+  TEACHER
+  STUDENT
+}
+
 enum NotificationType {
   ORGANIZATION_INVITE_TEACHER
   ORGANIZATION_INVITE_STUDENT
@@ -298,15 +303,19 @@ enum MessageType {
 }
 
 model Message {
-  id         String      @id @unique @default(cuid())
-  type       MessageType
-  content    String      @db.VarChar(255)
+  id String @id @unique @default(cuid())
+
+  content   String   @db.VarChar(255)
+  timestamp DateTime @default(now())
+  fileUrl   String?  @db.Text
+
   senderId   String
-  senderName String      @db.VarChar(255)
-  timestamp  DateTime    @default(now())
+  senderRole MessageSenderType
 
   channelId String
   channel   ClassroomChannel @relation(fields: [channelId], references: [id])
+
+  deleted Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
