@@ -10,8 +10,8 @@ export function TeacherNotificationCard({ toggleModal }: TTeacherNotificationCar
     <div>
       <div className="flex justify-between">
         <div>
-          <h2 className="text-2xl font-medium">Organization notifications</h2>
-          <p className="text-slate-600">View and interact with notifications related to organizations</p>
+          <h2 className="text-2xl font-medium">Teacher notifications</h2>
+          <p className="text-slate-600">View and interact with notifications related to teachers</p>
         </div>
 
         <div>
