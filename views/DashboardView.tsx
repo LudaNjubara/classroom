@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/Layout";
 import { EdgeStoreProvider } from "@/config/edgestore";
 import { CreateAccount } from "@/features/create-account";
+import { SocketProvider } from "@/providers/socket-provider";
 import { TOrganizationWithClassroomsWithStudentsWithTeachers } from "@/types/typings";
 import { Profile } from "@prisma/client";
 
@@ -19,7 +20,9 @@ export function DashboardView({ profile, organizations }: TProps) {
     <CreateAccount profile={profile} />
   ) : (
     <EdgeStoreProvider>
-      <DashboardLayout contextValue={contextValue} />
+      <SocketProvider>
+        <DashboardLayout contextValue={contextValue} />
+      </SocketProvider>
     </EdgeStoreProvider>
   );
 }

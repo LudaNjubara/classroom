@@ -1,6 +1,9 @@
 import { KindePermissions } from "@kinde-oss/kinde-auth-nextjs";
 import { KindeOrganization, KindeUser } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Classroom, Organization, Teacher } from "@prisma/client";
+import { Server as NetServer, Socket } from "net";
+import { NextApiResponse } from "next";
+import { Server as SocketIOServer } from "socket.io";
 
 type TPaginatedResponse<T> = {
     count: number;
@@ -38,5 +41,13 @@ type TOrderBy = "asc" | "desc";
 
 type TRole = "ADMIN" | "GUEST" | "ORGANIZATION" | "TEACHER" | "STUDENT"
 
-export { TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TUser, TUserSession };
+type NextApiResponseServerIo = NextApiResponse & {
+    socket: Socket & {
+        server: NetServer & {
+            io: SocketIOServer
+        }
+    }
+}
+
+export { NextApiResponseServerIo, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TUser, TUserSession };
 

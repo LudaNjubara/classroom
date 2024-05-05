@@ -8,6 +8,7 @@ import {
   TOrganizationWithClassroomsWithStudentsWithTeachers,
   TRole,
 } from "@/types/typings";
+import { SocketIndicator } from "@components/Socket";
 import { Profile, Role } from "@prisma/client";
 import { Bell, BookOpen, FlaskConical, GraduationCap, Settings } from "lucide-react";
 import { useEffect, useMemo } from "react";
@@ -161,6 +162,10 @@ export function DashboardLayout({ contextValue }: TDashboardLayoutProps) {
             <>
               <DashboardSidebar />
               <DashboardContentLayout />
+
+              <div className="fixed bottom-4 right-2">
+                <SocketIndicator />
+              </div>
             </>
           )}
         </div>
