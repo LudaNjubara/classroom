@@ -2,7 +2,7 @@ import { CustomModal, GridView } from "@/components/Elements";
 import { ClassroomCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import { useDashboardStore, useMiscStore } from "@/stores";
+import { useDashboardStore } from "@/stores";
 import dayjs from "dayjs";
 import { CalendarDaysIcon, XIcon } from "lucide-react";
 import { useMemo } from "react";
@@ -80,13 +80,13 @@ type TViewClassroomsCardProps = {
 
 export function ViewClassroomsCard({ toggleModal }: TViewClassroomsCardProps) {
   // zustand state and actions
-  const numOfModalsOpen = useMiscStore((state) => state.numOfModalsOpen);
+  const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
   const setSelectedClassroom = useDashboardStore((state) => state.setSelectedClassroom);
   const setAccentColors = useDashboardStore((state) => state.setAccentColors);
 
   // hooks
-  const { data: classrooms, isLoading } = useClassrooms();
+  const { data: classrooms, isLoading } = useClassrooms(selectedOrganization?.id);
   const { isOpen: isCardModalOpen, toggle: toggleCardModal } = useDisclosure();
 
   // state

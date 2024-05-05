@@ -5,9 +5,14 @@ import { handleError } from "@/utils/handle-error";
 import { cookies } from "next/headers";
 import { TClassroomWithSettings } from "../types";
 
-export async function fetchClassrooms(): Promise<{ data: TClassroomWithSettings[] }> {
+type TFetchClassroomsProps = {
+    organizationId: string;
+};
 
-    const response = await fetch(API_ENDPOINTS.CLASSROOM.GET_ALL, {
+export async function fetchClassrooms({ organizationId }: TFetchClassroomsProps): Promise<{ data: TClassroomWithSettings[] }> {
+    const urlSearchParams = new URLSearchParams({ organizationId });
+
+    const response = await fetch(`${API_ENDPOINTS.CLASSROOM.GET_ALL}?${urlSearchParams}`, {
         headers: { Cookie: cookies().toString() },
     });
 

@@ -52,7 +52,7 @@ const queryStrategies: {
     }
 }
 
-const constructWhereClause = (role: TAllowedRoles, tenantId: string) => {
+const constructWhereClause = (role: TAllowedRoles, tenantId: string, organizationId: string) => {
     let whereClause = {}
 
     switch (role) {
@@ -62,7 +62,8 @@ const constructWhereClause = (role: TAllowedRoles, tenantId: string) => {
                     some: {
                         teacherId: tenantId
                     }
-                }
+                },
+                organizationId
             }
             break;
         case "STUDENT":
@@ -71,7 +72,8 @@ const constructWhereClause = (role: TAllowedRoles, tenantId: string) => {
                     some: {
                         studentId: tenantId
                     }
-                }
+                },
+                organizationId
             }
             break;
         case "ORGANIZATION":
@@ -113,12 +115,23 @@ export async function GET(request: NextRequest) {
         const allowedRoles: TAllowedRoles[] = ["STUDENT", "TEACHER", "ORGANIZATION"];
 
         if (!allowedRoles.includes(profile.role as TAllowedRoles)) {
-            handleError(ERROR_MESSAGES.CLIENT_ERROR.UNAUTHORIZED.CODE)
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        const { searchParams } = new URL(request.url);
+        const organizationId = searchParams.get("organizationId");
+
+        if (!organizationId) {
+            return NextResponse.json({ error: "Invalid query parameter 'organizationId'" }, { status: 400 })
         }
 
         const tenant = await queryStrategies[profile!.role as TAllowedRoles](profile!.kindeId);
 
-        const whereClause = constructWhereClause(profile.role as TAllowedRoles, tenant.id);
+        const whereClause = constructWhereClause(
+            profile.role as TAllowedRoles,
+            tenant.id,
+            organizationId
+        );
 
         const classrooms = await db.classroom.findMany({
             where: whereClause,
