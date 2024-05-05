@@ -9,13 +9,18 @@ type TViewClassroomProps = {
 
 export function ViewClassroom({ toggleModal }: TViewClassroomProps) {
   // zustand state and actions
+  const setSelectedChannel = useDashboardStore((state) => state.setSelectedChannel);
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
 
   useEffect(() => {
     if (!selectedClassroom) {
       toggleModal();
     }
-  }, [selectedClassroom, toggleModal]);
+
+    return () => {
+      setSelectedChannel(null);
+    };
+  }, [selectedClassroom, toggleModal, setSelectedChannel]);
 
   return (
     <div className="pr-2">

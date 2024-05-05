@@ -29,7 +29,7 @@ import { cn } from "@/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ClassroomChannel } from "@prisma/client";
 import { HashIcon, PlusIcon, SparklesIcon } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMediaQuery } from "usehooks-ts";
 import * as z from "zod";
@@ -131,8 +131,18 @@ type TChannelItemProps = {
 };
 
 const ChannelItem = ({ data }: TChannelItemProps) => {
+  // zusatnd state and actions
+  const selectedChannel = useDashboardStore((state) => state.selectedChannel);
+  const setSelectedChannel = useDashboardStore((state) => state.setSelectedChannel);
+
   return (
-    <Button className="justify-start w-full dark:text-slate-500" variant={"ghost"}>
+    <Button
+      className={`justify-start w-full ${
+        data.id === selectedChannel?.id ? "dark:bg-slate-900 dark:text-slate-300" : "dark:text-slate-500"
+      }`}
+      variant={"ghost"}
+      onClick={() => setSelectedChannel(data)}
+    >
       <span className="text-sm">{data.name}</span>
     </Button>
   );
@@ -141,6 +151,8 @@ const ChannelItem = ({ data }: TChannelItemProps) => {
 export function SidebarChannelSection() {
   // zustand state and actions
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
+  const selectedChannel = useDashboardStore((state) => state.selectedChannel);
+  const setSelectedChannel = useDashboardStore((state) => state.setSelectedChannel);
 
   // state
   const [isOpen, setIsOpen] = useState(false);
@@ -148,6 +160,12 @@ export function SidebarChannelSection() {
   // hooks
   const { data: channels, isLoading } = useClassroomChannels(selectedClassroom?.id);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  useEffect(() => {
+    if (channels.length && !selectedChannel) {
+      setSelectedChannel(channels[0]);
+    }
+  }, [channels, selectedChannel, setSelectedChannel]);
 
   return (
     <div>
