@@ -1,10 +1,39 @@
 import { db } from "@/config";
-import { TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem } from "@/features/classrooms/types";
+import { TChannelRequest, TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem } from "@/features/classrooms/types";
 import { TSelectedStudentItem } from "@/features/students";
 import { TSelectedTeacherItem } from "@/features/teachers";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ClassroomSetting, ClassroomSettings } from "@prisma/client";
 import { NextResponse } from "next/server";
+
+type TWhereClauseParams = {
+    resources?: TFileUploadResponseWithFilename[];
+    channel?: TChannelRequest;
+};
+
+type TWhereClause = {
+    id: string;
+};
+
+const contructWhereClause = ({ channel, resources }: TWhereClauseParams): TWhereClause => {
+    let whereClause = { id: "" };
+
+    if (channel) {
+        whereClause = {
+            ...whereClause,
+            id: channel.metadata.classroomId
+        }
+    }
+
+    if (resources) {
+        whereClause = {
+            ...whereClause,
+            id: resources[0].metadata.classroomId!
+        }
+    }
+
+    return whereClause;
+}
 
 export async function POST(req: Request) {
     try {
@@ -98,36 +127,58 @@ export async function PUT(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-        const { resources }: {
+        const requestBody: {
             resources?: TFileUploadResponseWithFilename[];
+            channel?: TChannelRequest;
         } = await req.json();
 
-        if (!resources) {
+        // Prepare data for update
+        const data: any = {};
+
+        for (const key in requestBody) {
+            if (requestBody.hasOwnProperty(key)) {
+                switch (key) {
+                    case 'resources':
+                        data.resources = {
+                            create: requestBody.resources!.map((resource: TFileUploadResponseWithFilename) => ({
+                                url: resource.url,
+                                name: resource.filename,
+                                size: resource.size,
+                                metadata: {
+                                    create: {
+                                        profileId: resource.metadata.profileId,
+                                        userId: resource.metadata.userId,
+                                        userRole: resource.metadata.userRole,
+                                        classroomId: resource.metadata.classroomId,
+                                    }
+                                }
+                            }))
+                        };
+                        break;
+                    case 'channel':
+                        data.channels = {
+                            create: {
+                                name: requestBody.channel!.name,
+                            },
+                        };
+                        break;
+                    // Add more cases here for other request keys
+                    default:
+                        break;
+                }
+            }
+        }
+
+        const whereClause = contructWhereClause(requestBody);
+
+        if (!whereClause.id) {
             return NextResponse.json({ error: "Invalid request" }, { status: 400 })
         }
 
         // Update classroom
         const classroom = await db.classroom.update({
-            where: {
-                id: resources[0].metadata.classroomId
-            },
-            data: {
-                resources: {
-                    create: resources.map((resource) => ({
-                        url: resource.url,
-                        name: resource.filename,
-                        size: resource.size,
-                        metadata: {
-                            create: {
-                                profileId: resource.metadata.profileId,
-                                userId: resource.metadata.userId,
-                                userRole: resource.metadata.userRole,
-                                classroomId: resource.metadata.classroomId,
-                            }
-                        }
-                    }))
-                }
-            }
+            where: whereClause,
+            data
         });
 
         return NextResponse.json({ classroom }, { status: 200 })
