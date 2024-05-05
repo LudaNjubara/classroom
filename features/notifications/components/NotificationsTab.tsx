@@ -71,7 +71,7 @@ export function NotificationsTab() {
   };
 
   return (
-    <div>
+    <>
       <div>
         <h2 className="text-2xl font-medium">Notifications</h2>
         <p className="text-slate-600">
@@ -83,13 +83,9 @@ export function NotificationsTab() {
 
         <GridView>
           {allowedNotificationCards.map((card) => (
-            <div
-              tabIndex={0}
-              role="button"
-              aria-label={card.title}
-              aria-roledescription="button"
+            <button
               key={card.title}
-              className="p-5 cursor-pointer hover:bg-slate-100 hover:dark:bg-slate-800 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-200 dark:bg-slate-900 transition-colors duration-300 ease-in-out"
+              className="p-5 text-start cursor-pointer hover:bg-slate-100 hover:dark:bg-slate-800 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-200 dark:bg-slate-900 transition-colors duration-300 ease-in-out"
               onClick={() => handleCardClick(card.id)}
             >
               <div className="flex items-center gap-4 rounded-lg py-2 px-2 bg-slate-300/50 dark:bg-slate-950/30">
@@ -100,7 +96,7 @@ export function NotificationsTab() {
               <div className="mt-3">
                 <p className="text-sm text-slate-500 dark:text-slate-500">{card.description}</p>
               </div>
-            </div>
+            </button>
           ))}
         </GridView>
       </div>
@@ -112,6 +108,6 @@ export function NotificationsTab() {
           })}
         </CustomModal>
       )}
-    </div>
+    </>
   );
 }

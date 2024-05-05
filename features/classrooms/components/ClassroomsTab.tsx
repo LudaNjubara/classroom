@@ -4,6 +4,7 @@ import { CustomModal, GridView } from "@/components/Elements";
 import { Separator } from "@/components/ui/separator";
 import { useDashboardContext } from "@/context";
 import { useDisclosure } from "@/hooks/useDisclosure";
+import { useMiscStore } from "@/stores";
 import { Role } from "@prisma/client";
 import { EyeIcon, HammerIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -45,6 +46,9 @@ export function ClassroomsTab() {
   // context
   const { profile } = useDashboardContext();
 
+  // zustand state and actions
+  const numOfModalsOpen = useMiscStore((state) => state.numOfModalsOpen);
+
   // state
   const [selectedCard, setSelectedCard] = useState<TClassroomCardType | null>(null);
   const allowedClassroomCards = useMemo(
@@ -77,13 +81,9 @@ export function ClassroomsTab() {
 
         <GridView>
           {allowedClassroomCards.map((card) => (
-            <div
-              tabIndex={0}
-              role="button"
-              aria-label={card.title}
-              aria-roledescription="button"
+            <button
               key={card.title}
-              className="p-5 cursor-pointer hover:bg-slate-100 hover:dark:bg-slate-800 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-200 dark:bg-slate-900 transition-colors duration-300 ease-in-out"
+              className="p-5 cursor-pointer text-start hover:bg-slate-100 hover:dark:bg-slate-800 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-200 dark:bg-slate-900 transition-colors duration-300 ease-in-out"
               onClick={() => handleCardClick(card.id)}
             >
               <div className="flex items-center gap-4 rounded-lg py-2 px-2 bg-slate-300/50 dark:bg-slate-950/30">
@@ -94,16 +94,18 @@ export function ClassroomsTab() {
               <div className="mt-3">
                 <p className="text-sm text-slate-500 dark:text-slate-500">{card.description}</p>
               </div>
-            </div>
+            </button>
           ))}
         </GridView>
       </div>
 
       {cardToRender && isModalOpen && (
         <CustomModal>
-          {cardToRender.renderComponent({
-            toggleModal,
-          })}
+          <div className={`${numOfModalsOpen > 1 && "h-0 overflow-hidden"}`}>
+            {cardToRender.renderComponent({
+              toggleModal,
+            })}
+          </div>
         </CustomModal>
       )}
     </div>

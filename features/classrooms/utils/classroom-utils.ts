@@ -1,6 +1,7 @@
+import { TAccentColor } from "../types";
 
 // generate { dark, darker, light, lighter } colors from a seed color
-export const generateAccentColorsFromSeed = (seed: string) => {
+export const generateAccentColorsFromSeed = (seed: string): TAccentColor => {
     const seedColor = seed.replace("#", "");
     const seedColorNumber = parseInt(seedColor, 16);
 
@@ -16,6 +17,7 @@ export const generateAccentColorsFromSeed = (seed: string) => {
     return {
         dark,
         darker,
+        base: seed,
         light,
         lighter,
     };

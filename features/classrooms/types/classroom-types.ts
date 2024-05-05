@@ -43,4 +43,12 @@ export type TClassroomWithSettings = Classroom & {
     settings: ClassroomSettings[];
 }
 
+export type TAccentColor = {
+    dark: string;
+    darker: string;
+    base: string;
+    light: string;
+    lighter: string;
+}
+
 export type TFileUploadResponseWithFilename = TFileUploadResponse & { filename: string };
