@@ -221,10 +221,14 @@ model ClassroomStudent {
   @@index([studentId])
 }
 
+// TODO: add messages and figure out web sockets for rt communication
+
 model ClassroomChannel {
   id String @id @unique @default(cuid())
 
   name String @db.VarChar(255)
+
+  messages Message[]
 
   classroomId String
   classroom   Classroom @relation(fields: [classroomId], references: [id])
@@ -284,6 +288,31 @@ model ResourcesMetadata {
   classroomId String?
 
   @@map("resources_metadata")
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  FILE
+}
+
+model Message {
+  id         String      @id @unique @default(cuid())
+  type       MessageType
+  content    String      @db.VarChar(255)
+  senderId   String
+  senderName String      @db.VarChar(255)
+  timestamp  DateTime    @default(now())
+
+  channelId String
+  channel   ClassroomChannel @relation(fields: [channelId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([channelId], name: "channelId")
+  @@map("messages")
 }
 
 model Notification {

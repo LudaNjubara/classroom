@@ -146,7 +146,7 @@ export function SidebarChannelSection() {
   const [isOpen, setIsOpen] = useState(false);
 
   // hooks
-  const { data: classroom, isLoading } = useClassroomChannels(selectedClassroom?.id);
+  const { data: channels, isLoading } = useClassroomChannels(selectedClassroom?.id);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
@@ -159,15 +159,14 @@ export function SidebarChannelSection() {
       <ul className="flex flex-col gap-1 mt-2">
         {isLoading && Array.from({ length: 5 }).map((_, i) => <ClassroomChannelSkeleton key={i} />)}
 
-        {!isLoading && !classroom?.channels.length && (
-          <li className="flex items-center gap-2 mt-2 text-sm">
+        {!isLoading && !channels.length && (
+          <li className="mt-2 text-center text-sm dark:text-slate-500">
             <p>No channels yet</p>
           </li>
         )}
 
         {!isLoading &&
-          !!classroom?.channels.length &&
-          classroom?.channels.map((channel) => (
+          channels.map((channel) => (
             <li key={channel.id} className="flex items-center gap-2 mt-2 text-sm">
               <ChannelItem data={channel} />
             </li>

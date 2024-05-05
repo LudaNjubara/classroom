@@ -1,10 +1,10 @@
 import observableError from "@/services/ErrorObserver";
+import { ClassroomChannel } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { fetchClassroomChannels } from "../api";
-import { TClassroomWithChannels } from "../types";
 
 export function useClassroomChannels(classroomId?: string) {
-    const [classrooms, setClassrooms] = useState<TClassroomWithChannels>();
+    const [classrooms, setClassrooms] = useState<ClassroomChannel[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ export function useClassroomChannels(classroomId?: string) {
                 setClassrooms(data);
             } catch (error) {
                 if (error instanceof Error) {
-                    observableError.notify({ title: "Failed to fetch classrooms", description: error.message });
+                    observableError.notify({ title: "Failed to fetch classroom channels", description: error.message });
                 }
             } finally {
                 setIsLoading(false);

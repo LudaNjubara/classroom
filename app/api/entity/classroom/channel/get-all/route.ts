@@ -42,13 +42,10 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "Invalid query parameter 'classroomId'" }, { status: 400 })
         }
 
-        const classroom = await db.classroom.findUnique({
+        const classroom = await db.classroomChannel.findMany({
             where: {
-                id: classroomId
+                classroomId
             },
-            include: {
-                channels: true
-            }
         });
 
         return NextResponse.json({ data: classroom }, { status: 200 })
