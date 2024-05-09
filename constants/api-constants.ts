@@ -6,6 +6,9 @@ export const API_ENDPOINTS = {
     ORGANIZATION: `${BASE_API_ENDPOINT}/entity/organization`,
     STUDENT: `${BASE_API_ENDPOINT}/entity/student`,
     TEACHER: `${BASE_API_ENDPOINT}/entity/teacher`,
+    MESSAGES: {
+        CREATE: `${BASE_API_ENDPOINT}/socket/messages`,
+    },
     NOTIFICATION: {
         DISMISS: `${BASE_API_ENDPOINT}/entity/notification/dismiss`,
         ACCEPT: {
