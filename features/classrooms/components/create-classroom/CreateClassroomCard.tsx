@@ -1,3 +1,5 @@
+"use client";
+
 import { type FileState } from "@/components/Elements/dropzone/MultiFileDropzone";
 import { Spinner } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";

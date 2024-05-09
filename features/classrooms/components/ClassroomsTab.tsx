@@ -8,8 +8,8 @@ import { useMiscStore } from "@/stores";
 import { Role } from "@prisma/client";
 import { EyeIcon, HammerIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CreateClassroomCard } from "./create-classroom/CreateClassroomCard";
-import { ViewClassroomsCard } from "./view-classrooms/ViewClassroomsCard";
+import { CreateClassroomCard } from "./create-classroom";
+import { ViewClassroomsCard } from "./view-classrooms";
 
 type TClassroomCardType = "create" | "view";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { CustomModal, GridView } from "@/components/Elements";
 import { ClassroomCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
