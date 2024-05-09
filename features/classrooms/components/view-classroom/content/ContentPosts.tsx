@@ -1,3 +1,4 @@
+import { ChatMessages } from "@/components/Chat";
 import { MessageInput } from "@/components/Elements";
 import { useToast } from "@/components/ui/use-toast";
 import { sendMessage } from "@/features/classrooms/api";
@@ -53,13 +54,18 @@ export function ContentPosts() {
     }
   };
 
+  if (!selectedChannel)
+    return (
+      <div>
+        <p className="text-base font-semibold text-slate-700">Select a channel to view posts</p>
+      </div>
+    );
+
   return (
     <div className="flex flex-col gap-5">
-      {/* Content */}
-      <div className="flex-1 bg-red-500"></div>
+      <div className="relative flex-1">
+        <ChatMessages channelId={selectedChannel.id} />
 
-      {/* Input for creating a message */}
-      <div className="">
         <MessageInput handleSubmit={handleSendMessage} isDisabled={isFormSubmitting} />
       </div>
     </div>

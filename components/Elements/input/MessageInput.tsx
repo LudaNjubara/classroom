@@ -11,7 +11,7 @@ type TMessageInputProps = {
 
 export function MessageInput({ handleSubmit, isDisabled }: TMessageInputProps) {
   return (
-    <div className="flex gap-2">
+    <div className="absolute bottom-0 left-0 right-0 flex gap-2 bg-slate-900 py-2">
       <Button variant={"outline"} className="w-10 h-10 rounded-full" disabled={isDisabled}>
         <PlusIcon size={16} className="flex-shrink-0 opacity-70" />
       </Button>
