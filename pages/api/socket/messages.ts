@@ -155,14 +155,14 @@ export default async function handler(
             },
         });
 
-        const channelKey = `classroom:${classroom.id}:channel:${channel.id}:messages`;
+        const channelKey = `chat:${channel.id}:add-message`;
 
-        res?.socket?.server?.io?.emit(channelKey, {
-            data: {
-                message,
-                sender: tenant,
-            }
-        });
+        const messageToSend = {
+            ...message,
+            senderData: tenant,
+        }
+
+        res?.socket?.server?.io?.emit(channelKey, messageToSend);
 
         return res.status(200).json({
             data: {

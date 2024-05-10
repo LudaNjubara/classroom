@@ -35,10 +35,5 @@ export async function sendMessage({ message, query }: TSendMessageProps) {
         }),
     });
 
-    /*   if (!response.ok) {
-          console.log()
-          throw new Error("Failed to send message");
-      } */
-
     return await response.json();
 }

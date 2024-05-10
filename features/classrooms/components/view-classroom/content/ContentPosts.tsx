@@ -4,7 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { sendMessage } from "@/features/classrooms/api";
 import { useDashboardStore } from "@/stores";
 import { sanitizeInput } from "@/utils/misc";
-import { FormEvent, useState } from "react";
+import { FormEvent, RefObject, useState } from "react";
 
 export function ContentPosts() {
   // zustand state and actions
@@ -18,7 +18,7 @@ export function ContentPosts() {
   const { toast } = useToast();
 
   // handlers
-  const handleSendMessage = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = async (e: FormEvent<HTMLFormElement>, inputRef: RefObject<HTMLInputElement>) => {
     e.preventDefault();
 
     if (!selectedClassroom || !selectedChannel) return;
@@ -30,6 +30,8 @@ export function ContentPosts() {
 
       const messageContent = formData.get("message") as string;
 
+      if (!messageContent) return;
+
       const messageData = await sendMessage({
         message: {
           content: sanitizeInput(messageContent),
@@ -40,7 +42,11 @@ export function ContentPosts() {
         },
       });
 
-      console.log(messageData);
+      if (messageData && inputRef.current) {
+        console.log("Message sent successfully");
+        inputRef.current.value = "";
+        inputRef.current.focus();
+      }
     } catch (error) {
       console.log("Error sending message", error);
 

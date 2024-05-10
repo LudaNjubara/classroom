@@ -5,12 +5,12 @@ import { cookies } from "next/headers";
 
 type TFetchMessagesProps = {
     channelId: string;
-    pageParam?: number;
+    pageParam?: string;
 };
 
 export async function fetchMessages({ channelId, pageParam }: TFetchMessagesProps) {
     const queryParams = new URLSearchParams({
-        cursor: pageParam?.toString() ?? "",
+        cursor: pageParam || "",
         channelId,
     })
 

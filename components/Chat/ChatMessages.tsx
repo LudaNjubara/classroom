@@ -1,10 +1,12 @@
 import { useDashboardContext } from "@/context";
 import { useChatQuery } from "@/features/classrooms/hooks/useChatQuery";
+import { useChatScroll } from "@/features/classrooms/hooks/useChatScroll";
+import { useChatSocket } from "@/features/classrooms/hooks/useChatSocket";
 import { TMessageWithSender } from "@/features/classrooms/types";
 import { useDashboardStore } from "@/stores";
 import { Spinner } from "@components/Loaders";
 import { ServerCrashIcon } from "lucide-react";
-import { memo } from "react";
+import { Fragment, memo, useRef } from "react";
 import { Button } from "../ui/button";
 import { Message } from "./Message";
 
@@ -20,13 +22,33 @@ export const ChatMessages = memo(({ channelId }: TChatMessagesProps) => {
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
   const accentColors = useDashboardStore((state) => state.accentColors);
 
+  // state
+  const chatRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
   // derived state
-  const queryKey = `chat:${channelId}`;
+  const addKey = `chat:${channelId}:add-message`;
+  const updateKey = `chat:${channelId}:update-message`;
+  const queryKey = `chat:${channelId}:messages`;
 
   // hooks
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, refetch } = useChatQuery({
     queryKey,
     channelId,
+  });
+
+  useChatSocket({
+    addKey,
+    updateKey,
+    queryKey,
+  });
+
+  useChatScroll({
+    shouldLoadMore: !isFetchingNextPage && !!hasNextPage,
+    chatRef: chatRef,
+    bottomRef: bottomRef,
+    loadMore: fetchNextPage,
+    count: data?.pages?.[0]?.messages?.length || 0,
   });
 
   if (status === "pending") {
@@ -54,22 +76,7 @@ export const ChatMessages = memo(({ channelId }: TChatMessagesProps) => {
   }
 
   return (
-    <div className="max-h-[390px] overflow-y-auto flex flex-col gap-4 flex-1 pb-16 pr-2">
-      {data?.pages.map((page, index) => {
-        return (
-          <div key={index} className="flex flex-col gap-2">
-            {page.messages.map((message: TMessageWithSender) => (
-              <Message
-                key={message.id}
-                data={message}
-                accentColor={accentColors[selectedClassroom!.id]}
-                isCurrentUser={message.senderData.profileId === profile.kindeId}
-              />
-            ))}
-          </div>
-        );
-      })}
-
+    <div ref={chatRef} className="max-h-[390px] overflow-y-auto flex flex-col gap-4 flex-1 pb-16 pr-2">
       {hasNextPage && (
         <div className="flex justify-center">
           <button
@@ -81,6 +88,23 @@ export const ChatMessages = memo(({ channelId }: TChatMessagesProps) => {
           </button>
         </div>
       )}
+
+      <div className="flex flex-col-reverse gap-2">
+        {data?.pages?.map((page, i) => (
+          <Fragment key={i}>
+            {page.messages.map((message: TMessageWithSender) => (
+              <Message
+                key={message.id}
+                data={message}
+                accentColor={accentColors[selectedClassroom!.id]}
+                isCurrentUser={message.senderData.profileId === profile.kindeId}
+              />
+            ))}
+          </Fragment>
+        ))}
+      </div>
+
+      <div ref={bottomRef} />
     </div>
   );
 });
