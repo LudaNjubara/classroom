@@ -41,9 +41,10 @@ const formSchema = z.object({
 type TAddChannelFormProps = {
   className?: string;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  onSuccess: () => void;
 };
 
-const AddChannelForm = ({ className, setIsModalOpen }: TAddChannelFormProps) => {
+const AddChannelForm = ({ className, setIsModalOpen, onSuccess }: TAddChannelFormProps) => {
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
   // hooks
   const { toast } = useToast();
@@ -70,6 +71,8 @@ const AddChannelForm = ({ className, setIsModalOpen }: TAddChannelFormProps) => 
           },
         },
       });
+
+      onSuccess();
 
       form.reset();
 
@@ -158,7 +161,7 @@ export function SidebarChannelSection() {
   const [isOpen, setIsOpen] = useState(false);
 
   // hooks
-  const { data: channels, isLoading } = useClassroomChannels(selectedClassroom?.id);
+  const { data: channels, isLoading, refetch: refetchChannels } = useClassroomChannels(selectedClassroom?.id);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
@@ -214,7 +217,7 @@ export function SidebarChannelSection() {
                 </DialogDescription>
               </DialogHeader>
 
-              <AddChannelForm setIsModalOpen={setIsOpen} />
+              <AddChannelForm setIsModalOpen={setIsOpen} onSuccess={refetchChannels} />
             </DialogContent>
           </Dialog>
         ) : (
@@ -239,7 +242,7 @@ export function SidebarChannelSection() {
                 </DrawerDescription>
               </DrawerHeader>
 
-              <AddChannelForm className="p-4" setIsModalOpen={setIsOpen} />
+              <AddChannelForm className="p-4" setIsModalOpen={setIsOpen} onSuccess={refetchChannels} />
 
               <DrawerFooter className="pt-2">
                 <DrawerClose asChild>

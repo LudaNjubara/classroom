@@ -6,6 +6,7 @@ import { fetchClassroomChannels } from "../api";
 export function useClassroomChannels(classroomId?: string) {
     const [classrooms, setClassrooms] = useState<ClassroomChannel[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [refetchIndex, setRefetchIndex] = useState(0);
 
     useEffect(() => {
         if (!classroomId) return;
@@ -29,8 +30,10 @@ export function useClassroomChannels(classroomId?: string) {
         };
 
         getClassroomChannels();
-    }, [classroomId]);
+    }, [classroomId, refetchIndex]);
 
-    return { data: classrooms, isLoading };
+    const refetch = () => setRefetchIndex((prev) => prev + 1);
+
+    return { data: classrooms, isLoading, refetch };
 }
 
