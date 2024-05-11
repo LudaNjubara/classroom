@@ -1,63 +1,7 @@
 import { TAccentColor, TMessageWithSender } from "@/features/classrooms/types";
 import { isToday } from "@/utils/misc";
 import dayjs from "dayjs";
-
-/* 
-
-    model Message {
-  id String @id @unique @default(cuid())
-
-  content   String   @db.VarChar(255)
-  timestamp DateTime @default(now())
-  fileUrl   String?  @db.Text
-
-  senderId   String
-  senderRole MessageSenderType
-
-  channelId String
-  channel   ClassroomChannel @relation(fields: [channelId], references: [id])
-
-  deleted Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([channelId], name: "channelId")
-  @@map("messages")
-}
-
-TMessageWithSender = Message & {
-    senderData: Teacher | Student;
-}
-
-model Teacher {
-  id String @id @unique @default(cuid())
-
-  name    String @db.VarChar(255)
-  address String @db.VarChar(255)
-  phone   String @db.VarChar(255)
-  city    String @db.VarChar(255)
-  state   String @db.VarChar(255)
-  country String @db.VarChar(255)
-  email   String @unique @db.VarChar(255)
-
-  profileId String
-  profile   Profile @relation(fields: [profileId], references: [kindeId])
-
-  organizations OrganizationTeacher[]
-
-  classrooms ClassroomTeacher[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([profileId], name: "profileId")
-  @@map("teachers")
-}
-
-Student is the same as Teacher
-
-*/
+import Linkify from "linkify-react";
 
 type TMessageProps = {
   data: TMessageWithSender;
@@ -97,7 +41,19 @@ export function Message({ data, isCurrentUser, accentColor }: TMessageProps) {
             {data.senderData.name}
           </p>
         )}
-        <p className={`text-sm font-medium ${isCurrentUser ? "text-black" : "text-white"}`}>{data.content}</p>
+        <p className={`text-sm font-medium ${isCurrentUser ? "text-black" : "text-white"}`}>
+          <Linkify
+            options={{
+              attributes: {
+                target: "_blank",
+                rel: "noopener noreferrer",
+              },
+              className: `${isCurrentUser ? "text-black" : "text-white"} font-extrabold hover:underline`,
+            }}
+          >
+            {data.content}
+          </Linkify>
+        </p>
       </div>
     </div>
   );
