@@ -4,7 +4,7 @@ import { getDownloadUrl } from "@edgestore/react/utils";
 import dayjs from "dayjs";
 import Linkify from "linkify-react";
 import { DownloadIcon, FileIcon } from "lucide-react";
-import Link from "next/link";
+import { Button } from "../ui/button";
 
 type TMessageProps = {
   data: TMessageWithSender;
@@ -73,9 +73,14 @@ export function Message({ data, isCurrentUser, accentColor }: TMessageProps) {
             <div className="flex w-full items-center justify-between gap-5">
               <span className="font-bold text-sm tracking-wide">File</span>
 
-              <Link
-                href={getDownloadUrl(data.fileUrl)}
-                className="grid place-items-center rounded-lg p-1 dark:bg-slate-600 bg-slate-900 hover:brightness-110 transition-colors duration-300 shadow-lg w-9 h-9"
+              <Button
+                size={"icon"}
+                className="p-1 dark:bg-slate-600 bg-slate-900 hover:brightness-110 transition-colors duration-300"
+                onClick={() => {
+                  if (data.fileUrl) {
+                    window.location.href = getDownloadUrl(data.fileUrl);
+                  }
+                }}
                 style={
                   isCurrentUser && accentColor
                     ? {
@@ -85,7 +90,7 @@ export function Message({ data, isCurrentUser, accentColor }: TMessageProps) {
                 }
               >
                 <DownloadIcon size={16} className="dark:text-slate-200 text-slate-950" />
-              </Link>
+              </Button>
             </div>
           </div>
         )}

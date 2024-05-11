@@ -33,13 +33,13 @@ export function ResourceItem({ data, className }: TResourceItemProps) {
             </div>
 
             <Button
-              asChild
               size={"icon"}
               className="p-1 dark:bg-slate-600 bg-slate-900 hover:brightness-110 transition-colors duration-300"
+              onClick={() => {
+                window.location.href = getDownloadUrl(data.url, data.name);
+              }}
             >
-              <Link href={getDownloadUrl(data.url, data.name)}>
-                <DownloadIcon size={16} className="dark:text-slate-200 text-slate-950" />
-              </Link>
+              <DownloadIcon size={16} className="dark:text-slate-200 text-slate-950" />
             </Button>
           </div>
         </div>
