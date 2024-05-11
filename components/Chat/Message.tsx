@@ -12,7 +12,7 @@ type TMessageProps = {
 export function Message({ data, isCurrentUser, accentColor }: TMessageProps) {
   return (
     <div
-      className={`inline-flex w-fit gap-2 py-2 px-4 rounded-lg bg-slate-950 ${
+      className={`inline-flex w-fit max-w-[65%] m gap-2 py-2 px-4 rounded-lg bg-slate-950 ${
         isCurrentUser ? "ml-auto bg-white" : ""
       }`}
       style={
