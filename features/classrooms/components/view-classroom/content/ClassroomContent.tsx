@@ -20,7 +20,7 @@ export function ClassroomContent({ className }: TClassroomContentProps) {
   const channelResourcesState = useChannelResources(selectedChannel?.id);
 
   return (
-    <div className={cn("w-full bg-slate-900 rounded-lg py-2 px-4", className)}>
+    <div className={cn("w-full bg-slate-400 dark:bg-slate-900 rounded-lg py-2 px-4", className)}>
       {/* Channel name */}
       <div className="mb-8">
         <h3 className="text-xl font-thin tracking-wide">#{selectedChannel?.name}</h3>

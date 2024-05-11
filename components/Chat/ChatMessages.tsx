@@ -8,6 +8,7 @@ import { Spinner } from "@components/Loaders";
 import { ServerCrashIcon } from "lucide-react";
 import { Fragment, memo, useRef } from "react";
 import { Button } from "../ui/button";
+import { ChatWelcome } from "./ChatWelcome";
 import { Message } from "./Message";
 
 type TChatMessagesProps = {
@@ -20,6 +21,7 @@ export const ChatMessages = memo(({ channelId }: TChatMessagesProps) => {
 
   // zustand state and actions
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
+  const selectedChannel = useDashboardStore((state) => state.selectedChannel);
   const accentColors = useDashboardStore((state) => state.accentColors);
 
   // state
@@ -88,6 +90,8 @@ export const ChatMessages = memo(({ channelId }: TChatMessagesProps) => {
           </button>
         </div>
       )}
+
+      {selectedChannel && !hasNextPage && <ChatWelcome channelName={selectedChannel.name} />}
 
       <div className="flex flex-col-reverse gap-2">
         {data?.pages?.map((page, i) => (
