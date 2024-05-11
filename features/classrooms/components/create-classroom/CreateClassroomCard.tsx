@@ -150,6 +150,8 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
         description: "The classroom has been created successfully.",
         variant: "default",
       });
+
+      toggleModal();
     } catch (err) {
       console.error(err);
 
