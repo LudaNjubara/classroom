@@ -1,5 +1,6 @@
 "use client";
 
+import { BASE_URL } from "@/constants";
 import { createContext, useContext, useEffect, useState } from "react";
 import { io as ClientIO } from "socket.io-client";
 
@@ -22,7 +23,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const socketInstance = new (ClientIO as any)(process.env.NEXT_PUBLIC_SITE_URL!, {
+    const socketInstance = new (ClientIO as any)(BASE_URL, {
       path: "/api/socket/io",
       addTrailingSlash: false,
     });
