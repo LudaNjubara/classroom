@@ -156,7 +156,7 @@ export default async function handler(
             },
         });
 
-        let fileConfirmedSuccessfully = false;
+        let fileConfirmedSuccessfully = true;
         if (fileUrl) {
             const { success } = await backendClient.publicFiles.confirmUpload({
                 url: fileUrl,
