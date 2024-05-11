@@ -34,6 +34,9 @@ export const API_ENDPOINTS = {
         GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/get-all`,
         CHANNEL: {
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/channel/get-all`,
+            RESOURCE: {
+                GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/channel/resource/get-all`,
+            },
         },
         RESOURCE: {
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/resource/get-all`,

@@ -1,37 +1,80 @@
 import { GridView } from "@/components/Elements";
 import { ResourceItemSkeleton } from "@/components/Loaders";
 import { ResourceItem } from "@/components/Resource";
-import { useClassroomResources } from "@/features/classrooms/hooks/useClassroomResources";
-import { useDashboardStore } from "@/stores";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { TResourceWithMetadata } from "@/features/classrooms/types";
 
-export function ContentFiles() {
-  // zustand state and actions
-  const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
+type TContentFilesProps = {
+  classroomResourcesState: {
+    isLoading: boolean;
+    data: TResourceWithMetadata[];
+    refetch: () => void;
+  };
+  channelResourcesState: {
+    isLoading: boolean;
+    data: TResourceWithMetadata[];
+    refetch: () => void;
+  };
+};
 
-  // hooks
-  const {
-    data: resources,
-    isLoading,
-    refetch: refetchResources,
-  } = useClassroomResources(selectedClassroom?.id);
-
+export function ContentFiles({ classroomResourcesState, channelResourcesState }: TContentFilesProps) {
   return (
     <div>
-      {isLoading && (
-        <GridView className="md:grid-cols-1 lg:grid-cols-1 gap-2">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <ResourceItemSkeleton key={i} />
-          ))}
-        </GridView>
-      )}
+      <Accordion type="multiple" defaultValue={["classroom-resources"]}>
+        <AccordionItem value="classroom-resources">
+          <AccordionTrigger>Classroom resources</AccordionTrigger>
+          <AccordionContent>
+            <div>
+              {classroomResourcesState.isLoading && (
+                <GridView className="md:grid-cols-1 lg:grid-cols-1 gap-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <ResourceItemSkeleton key={i} />
+                  ))}
+                </GridView>
+              )}
 
-      {!isLoading && resources.length === 0 && (
-        <div className="text-center text-slate-500 dark:text-slate-400">No resources found</div>
-      )}
+              {!classroomResourcesState.isLoading && classroomResourcesState.data.length === 0 && (
+                <div className="text-center text-slate-500 dark:text-slate-400">
+                  No classroom resources found
+                </div>
+              )}
 
-      {!isLoading &&
-        resources.length > 0 &&
-        resources.map((resource) => <ResourceItem key={resource.id} data={resource} />)}
+              {!classroomResourcesState.isLoading &&
+                classroomResourcesState.data.length > 0 &&
+                classroomResourcesState.data.map((resource) => (
+                  <ResourceItem key={resource.id} data={resource} />
+                ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="channel-resources">
+          <AccordionTrigger>Channel resources</AccordionTrigger>
+          <AccordionContent>
+            <div>
+              {channelResourcesState.isLoading && (
+                <GridView className="md:grid-cols-1 lg:grid-cols-1 gap-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <ResourceItemSkeleton key={i} />
+                  ))}
+                </GridView>
+              )}
+
+              {!channelResourcesState.isLoading && channelResourcesState.data.length === 0 && (
+                <div className="text-center text-slate-500 dark:text-slate-400">
+                  No channel resources found
+                </div>
+              )}
+
+              {!channelResourcesState.isLoading &&
+                channelResourcesState.data.length > 0 &&
+                channelResourcesState.data.map((resource) => (
+                  <ResourceItem key={resource.id} data={resource} />
+                ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 }

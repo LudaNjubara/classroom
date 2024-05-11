@@ -233,7 +233,8 @@ model ClassroomChannel {
 
   name String @db.VarChar(255)
 
-  messages Message[]
+  messages  Message[]
+  resources Resource[]
 
   classroomId String
   classroom   Classroom @relation(fields: [classroomId], references: [id])
@@ -274,10 +275,14 @@ model Resource {
   classroomId String
   classroom   Classroom @relation(fields: [classroomId], references: [id])
 
+  channelId String?
+  channel   ClassroomChannel? @relation(fields: [channelId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([classroomId], name: "classroomId")
+  @@index([channelId], name: "channelId")
   @@index([metadataId], name: "metadataId")
   @@map("resources")
 }

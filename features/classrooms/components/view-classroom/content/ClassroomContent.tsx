@@ -1,4 +1,6 @@
 import { TabsContent } from "@/components/ui/tabs";
+import { useChannelResources } from "@/features/classrooms/hooks/useChannelResources";
+import { useClassroomResources } from "@/features/classrooms/hooks/useClassroomResources";
 import { useDashboardStore } from "@/stores";
 import { cn } from "@/utils/cn";
 import { ContentFiles } from "./ContentFiles";
@@ -11,6 +13,11 @@ type TClassroomContentProps = {
 export function ClassroomContent({ className }: TClassroomContentProps) {
   // zustand state and actions
   const selectedChannel = useDashboardStore((state) => state.selectedChannel);
+  const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
+
+  // hooks
+  const classroomResourcesState = useClassroomResources(selectedClassroom?.id);
+  const channelResourcesState = useChannelResources(selectedChannel?.id);
 
   return (
     <div className={cn("w-full bg-slate-900 rounded-lg py-2 px-4", className)}>
@@ -24,7 +31,10 @@ export function ClassroomContent({ className }: TClassroomContentProps) {
         <ContentPosts />
       </TabsContent>
       <TabsContent value="files">
-        <ContentFiles />
+        <ContentFiles
+          classroomResourcesState={classroomResourcesState}
+          channelResourcesState={channelResourcesState}
+        />
       </TabsContent>
     </div>
   );
