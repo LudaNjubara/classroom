@@ -1,7 +1,10 @@
 import { TAccentColor, TMessageWithSender } from "@/features/classrooms/types";
 import { isToday } from "@/utils/misc";
+import { getDownloadUrl } from "@edgestore/react/utils";
 import dayjs from "dayjs";
 import Linkify from "linkify-react";
+import { DownloadIcon, FileIcon } from "lucide-react";
+import Link from "next/link";
 
 type TMessageProps = {
   data: TMessageWithSender;
@@ -54,6 +57,38 @@ export function Message({ data, isCurrentUser, accentColor }: TMessageProps) {
             {data.content}
           </Linkify>
         </p>
+
+        {data.fileUrl && (
+          <div
+            className="mt-3 py-1 px-4 flex items-center gap-3 rounded-lg dark:bg-slate-800 bg-slate-500 shadow-lg"
+            style={
+              isCurrentUser && accentColor
+                ? {
+                    background: `linear-gradient(145deg, ${accentColor.dark}, ${accentColor.darker})`,
+                  }
+                : undefined
+            }
+          >
+            <FileIcon size={24} />
+            <div className="flex w-full items-center justify-between gap-5">
+              <span className="font-bold text-sm tracking-wide">File</span>
+
+              <Link
+                href={getDownloadUrl(data.fileUrl)}
+                className="grid place-items-center rounded-lg p-1 dark:bg-slate-600 bg-slate-900 hover:brightness-110 transition-colors duration-300 shadow-lg w-9 h-9"
+                style={
+                  isCurrentUser && accentColor
+                    ? {
+                        background: `linear-gradient(145deg, ${accentColor.dark}, ${accentColor.darker})`,
+                      }
+                    : undefined
+                }
+              >
+                <DownloadIcon size={16} className="dark:text-slate-200 text-slate-950" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

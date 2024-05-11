@@ -1,5 +1,6 @@
 import { db } from "@/config";
 import { ERROR_MESSAGES } from "@/constants";
+import { backendClient } from "@/lib/edgestore-server";
 import { NextApiResponseServerIo } from "@/types/typings";
 import { handleError } from "@/utils/handle-error";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -154,6 +155,25 @@ export default async function handler(
                 channelId: channelId as string,
             },
         });
+
+        let fileConfirmedSuccessfully = false;
+        if (fileUrl) {
+            const { success } = await backendClient.publicFiles.confirmUpload({
+                url: fileUrl,
+            })
+
+            fileConfirmedSuccessfully = success;
+        }
+
+        if (!fileConfirmedSuccessfully) {
+            await db.message.delete({
+                where: {
+                    id: message.id
+                }
+            });
+
+            return res.status(500).json({ message: "Error confirming file upload" });
+        }
 
         const channelKey = `chat:${channel.id}:add-message`;
 

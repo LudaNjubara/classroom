@@ -112,12 +112,14 @@ const edgeStoreRouter = es.router({
     })
         .input(z.object({
             classroomId: z.string().optional(),
+            channelId: z.string().optional(),
         }))
         .metadata(({ ctx, input }) => ({
             profileId: ctx.profileId,
             userId: ctx.id,
             userRole: ctx.role,
             classroomId: input.classroomId,
+            channelId: input.channelId,
         })),
 });
 

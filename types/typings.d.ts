@@ -49,5 +49,7 @@ type NextApiResponseServerIo = NextApiResponse & {
     }
 }
 
-export { NextApiResponseServerIo, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TUser, TUserSession };
+type TAttachmentLabel = "File" | "Image" | "Video" | "Audio" | "Location" | "Contact";
+
+export { NextApiResponseServerIo, TAttachmentLabel, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TUser, TUserSession };
 
