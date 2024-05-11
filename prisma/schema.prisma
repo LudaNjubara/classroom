@@ -305,7 +305,7 @@ enum MessageType {
 model Message {
   id String @id @unique @default(cuid())
 
-  content   String   @db.VarChar(255)
+  content   String   @db.Text
   timestamp DateTime @default(now())
   fileUrl   String?  @db.Text
 
