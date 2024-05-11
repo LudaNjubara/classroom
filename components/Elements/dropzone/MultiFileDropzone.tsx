@@ -1,5 +1,6 @@
 "use client";
 
+import { formatFileSize } from "@/utils/misc";
 import { CheckCircleIcon, FileIcon, LucideFileWarning, Trash2Icon, UploadCloudIcon } from "lucide-react";
 import * as React from "react";
 import { useDropzone, type DropzoneOptions } from "react-dropzone";
@@ -179,18 +180,3 @@ export const MultiFileDropzone = React.forwardRef<HTMLInputElement, InputProps>(
   }
 );
 MultiFileDropzone.displayName = "MultiFileDropzone";
-
-function formatFileSize(bytes?: number) {
-  if (!bytes) {
-    return "0 Bytes";
-  }
-  bytes = Number(bytes);
-  if (bytes === 0) {
-    return "0 Bytes";
-  }
-  const k = 1024;
-  const dm = 2;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-}

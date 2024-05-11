@@ -25,13 +25,19 @@ export const API_ENDPOINTS = {
             ORGANIZATION: `${BASE_API_ENDPOINT}/entity/notification/organization/for-organization`,
         },
     },
+    RESOURCE: {
+        GET_ONE: `${BASE_API_ENDPOINT}/entity/resource`,
+    },
     CLASSROOM: {
         CREATE: `${BASE_API_ENDPOINT}/entity/classroom`,
         UPDATE: `${BASE_API_ENDPOINT}/entity/classroom`,
         GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/get-all`,
         CHANNEL: {
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/channel/get-all`,
-        }
+        },
+        RESOURCE: {
+            GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/resource/get-all`,
+        },
     },
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,
