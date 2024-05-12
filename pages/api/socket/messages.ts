@@ -111,7 +111,7 @@ export default async function handler(
             return res.status(400).json({ message: "Classroom ID or Channel ID is missing" });
         }
 
-        if (!content) {
+        if (!content && !fileUrl) {
             return res.status(400).json({ message: "Message content is missing" });
         }
 
@@ -158,11 +158,12 @@ export default async function handler(
 
         let fileConfirmedSuccessfully = true;
         if (fileUrl) {
-            const { success } = await backendClient.publicFiles.confirmUpload({
+            backendClient.publicFiles.confirmUpload({
                 url: fileUrl,
-            })
-
-            fileConfirmedSuccessfully = success;
+            }).catch((error) => {
+                console.log("MESSAGES_POST_CONFIRM_UPLOAD", error);
+                fileConfirmedSuccessfully = false;
+            });
         }
 
         if (!fileConfirmedSuccessfully) {
