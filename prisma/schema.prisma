@@ -81,7 +81,7 @@ model Organization {
   email   String @unique @db.VarChar(255)
 
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [kindeId])
+  profile   Profile @relation(fields: [profileId], references: [kindeId], onDelete: Cascade)
 
   teachers   OrganizationTeacher[]
   students   OrganizationStudent[]
@@ -106,7 +106,7 @@ model Teacher {
   email   String @unique @db.VarChar(255)
 
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [kindeId])
+  profile   Profile @relation(fields: [profileId], references: [kindeId], onDelete: Cascade)
 
   organizations OrganizationTeacher[]
 
@@ -121,10 +121,10 @@ model Teacher {
 
 model OrganizationTeacher {
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   teacherId String
-  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   @@id([organizationId, teacherId])
   @@index([teacherId])
@@ -142,7 +142,7 @@ model Student {
   email   String @unique @db.VarChar(255)
 
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [kindeId])
+  profile   Profile @relation(fields: [profileId], references: [kindeId], onDelete: Cascade)
 
   organizations OrganizationStudent[]
 
@@ -157,10 +157,10 @@ model Student {
 
 model OrganizationStudent {
   organizationId String       @unique
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   studentId String  @unique
-  student   Student @relation(fields: [studentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@id([organizationId, studentId])
   @@index([studentId])
@@ -194,7 +194,7 @@ model ClassroomSettings {
   id String @id @unique @default(cuid())
 
   classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
   key   ClassroomSetting
   value String
@@ -206,7 +206,7 @@ model ClassroomSettings {
 
 model ClassroomTeacher {
   classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
   teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id])
@@ -217,7 +217,7 @@ model ClassroomTeacher {
 
 model ClassroomStudent {
   classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
   studentId String
   student   Student @relation(fields: [studentId], references: [id])
@@ -225,8 +225,6 @@ model ClassroomStudent {
   @@id([classroomId, studentId])
   @@index([studentId])
 }
-
-// TODO: add messages and figure out web sockets for rt communication
 
 model ClassroomChannel {
   id String @id @unique @default(cuid())
@@ -237,7 +235,7 @@ model ClassroomChannel {
   resources Resource[]
 
   classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -256,7 +254,7 @@ model Schedule {
   endTimeAmPm   String
 
   classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
   @@index([classroomId], name: "classroomId")
   @@map("schedules")
@@ -273,10 +271,10 @@ model Resource {
   metadata   ResourcesMetadata @relation(fields: [metadataId], references: [id])
 
   classroomId String
-  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
   channelId String?
-  channel   ClassroomChannel? @relation(fields: [channelId], references: [id])
+  channel   ClassroomChannel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -319,7 +317,7 @@ model Message {
   senderRole MessageSenderType
 
   channelId String
-  channel   ClassroomChannel @relation(fields: [channelId], references: [id])
+  channel   ClassroomChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
   deleted Boolean @default(false)
 
