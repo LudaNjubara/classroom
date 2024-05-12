@@ -4,7 +4,7 @@ import { CustomModal, GridView } from "@/components/Elements";
 import { Separator } from "@/components/ui/separator";
 import { useDashboardContext } from "@/context";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import { useMiscStore } from "@/stores";
+import { useDashboardStore, useMiscStore } from "@/stores";
 import { Role } from "@prisma/client";
 import { EyeIcon, HammerIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -47,6 +47,7 @@ export function ClassroomsTab() {
   const { profile } = useDashboardContext();
 
   // zustand state and actions
+  const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
   const numOfModalsOpen = useMiscStore((state) => state.numOfModalsOpen);
 
   // state
@@ -64,6 +65,8 @@ export function ClassroomsTab() {
 
   // handlers
   const handleCardClick = (cardId: TClassroomCardType) => {
+    if (!selectedOrganization) return;
+
     setSelectedCard(cardId);
     toggleModal();
   };
@@ -79,24 +82,33 @@ export function ClassroomsTab() {
 
         <Separator className="my-4" />
 
-        <GridView>
-          {allowedClassroomCards.map((card) => (
-            <button
-              key={card.title}
-              className="p-5 cursor-pointer text-start hover:bg-slate-100 hover:dark:bg-slate-800 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-200 dark:bg-slate-900 transition-colors duration-300 ease-in-out"
-              onClick={() => handleCardClick(card.id)}
-            >
-              <div className="flex items-center gap-4 rounded-lg py-2 px-2 bg-slate-300/50 dark:bg-slate-950/30">
-                <span>{card.icon}</span>
-                <h3 className="text-base font-medium">{card.title}</h3>
-              </div>
+        {!selectedOrganization && (
+          <p className="text-slate-500">
+            Select an organization to view classrooms. If no organizations are available check your
+            notifications.
+          </p>
+        )}
 
-              <div className="mt-3">
-                <p className="text-sm text-slate-500 dark:text-slate-500">{card.description}</p>
-              </div>
-            </button>
-          ))}
-        </GridView>
+        {selectedOrganization && (
+          <GridView>
+            {allowedClassroomCards.map((card) => (
+              <button
+                key={card.title}
+                className="p-5 cursor-pointer text-start hover:bg-slate-100 hover:dark:bg-slate-800 rounded-xl border-2 border-slate-100 dark:border-slate-800 bg-slate-200 dark:bg-slate-900 transition-colors duration-300 ease-in-out"
+                onClick={() => handleCardClick(card.id)}
+              >
+                <div className="flex items-center gap-4 rounded-lg py-2 px-2 bg-slate-300/50 dark:bg-slate-950/30">
+                  <span>{card.icon}</span>
+                  <h3 className="text-base font-medium">{card.title}</h3>
+                </div>
+
+                <div className="mt-3">
+                  <p className="text-sm text-slate-500 dark:text-slate-500">{card.description}</p>
+                </div>
+              </button>
+            ))}
+          </GridView>
+        )}
       </div>
 
       {cardToRender && isModalOpen && (
