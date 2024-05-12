@@ -147,13 +147,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
         </div>
       )}
 
-      <Popover
-        onOpenChange={(isOpen) => {
-          if (!isOpen) {
-            openFiles();
-          }
-        }}
-      >
+      <Popover>
         <PopoverTrigger disabled={isDisabled || isFilesOpen} asChild>
           <Button variant={"outline"} className="w-10 h-10 rounded-full disabled:cursor-not-allowed">
             <PlusIcon size={16} className="flex-shrink-0 opacity-70" />
