@@ -89,7 +89,11 @@ export function OrganizationNotificationCard({ toggleModal }: TOrganizationNotif
   const { profile } = useDashboardContext();
   // hooks
   const { toast } = useToast();
-  const { data: paginatedNotifications, isLoading } = useOrganizationNotifications(profile.role);
+  const {
+    data: paginatedNotifications,
+    isLoading,
+    refetch: refetchOrganizationNotifications,
+  } = useOrganizationNotifications(profile.role);
 
   // handlers
   const handleAction = useCallback(
@@ -102,6 +106,8 @@ export function OrganizationNotificationCard({ toggleModal }: TOrganizationNotif
             title: "Welcome to the organization",
             description: "You have successfully joined the organization",
           });
+
+          refetchOrganizationNotifications();
           break;
         case "DISMISS":
           await dismissNotification(notification);
@@ -110,13 +116,15 @@ export function OrganizationNotificationCard({ toggleModal }: TOrganizationNotif
             title: "Notification dismissed",
             description: "You have successfully dismissed the notification",
           });
+
+          refetchOrganizationNotifications();
           break;
         default:
           const _exhaustiveCheck: never = action;
           break;
       }
     },
-    [toast]
+    [toast, refetchOrganizationNotifications]
   );
 
   return (
