@@ -10,6 +10,7 @@ const ALLOWED_ROLES: TNotificationForType[] = ["ORGANIZATION", "TEACHER", "STUDE
 export function useOrganizationNotifications(profileRole: Role) {
     const [data, setData] = useState<TPaginatedResponse<Notification>>({ data: [], count: 0 });
     const [isLoading, setIsLoading] = useState(false);
+    const [refetchIndex, setRefetchIndex] = useState(0);
 
     useEffect(() => {
         const getOrganizationNotifications = async () => {
@@ -30,7 +31,11 @@ export function useOrganizationNotifications(profileRole: Role) {
         if (!ALLOWED_ROLES.includes(profileRole as TNotificationForType)) return
 
         getOrganizationNotifications();
-    }, [profileRole]);
+    }, [profileRole, refetchIndex]);
 
-    return { data, isLoading };
+    const refetch = () => {
+        setRefetchIndex((prev) => prev + 1);
+    }
+
+    return { data, isLoading, refetch };
 }
