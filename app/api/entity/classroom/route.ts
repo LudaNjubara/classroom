@@ -150,6 +150,7 @@ export async function PUT(req: Request) {
                                         userId: resource.metadata.userId,
                                         userRole: resource.metadata.userRole,
                                         classroomId: resource.metadata.classroomId,
+                                        channelId: resource.metadata.channelId,
                                     }
                                 }
                             }))
@@ -175,6 +176,7 @@ export async function PUT(req: Request) {
             return NextResponse.json({ error: "Invalid request" }, { status: 400 })
         }
 
+        console.log("data", data)
         // Update classroom
         const classroom = await db.classroom.update({
             where: whereClause,

@@ -296,6 +296,7 @@ model ResourcesMetadata {
   userId      String
   userRole    Role
   classroomId String?
+  channelId   String?
 
   @@map("resources_metadata")
 }
