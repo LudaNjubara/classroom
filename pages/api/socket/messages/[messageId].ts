@@ -1,5 +1,6 @@
 import { db } from "@/config";
 import { ERROR_MESSAGES } from "@/constants";
+import { backendClient } from "@/lib/edgestore-server";
 import { NextApiResponseServerIo } from "@/types/typings";
 import { handleError } from "@/utils/handle-error";
 import { sanitizeInput } from "@/utils/misc";
@@ -155,8 +156,16 @@ export default async function handler(
                 data: {
                     content: "This mesaage has been deleted",
                     deleted: true,
+                    fileUrl: null,
                 }
             });
+
+            /* Delete file from the edgestore */
+            if (deletedMessage && message?.fileUrl) {
+                await backendClient.publicFiles.deleteFile({
+                    url: message.fileUrl
+                })
+            }
 
             const channelKey = `chat:${channelId}:update-message`;
 
