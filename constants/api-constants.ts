@@ -9,6 +9,8 @@ export const API_ENDPOINTS = {
     MESSAGES: {
         CREATE: `${BASE_API_ENDPOINT}/socket/messages`,
         GET: `${BASE_API_ENDPOINT}/entity/message`,
+        UPDATE: `${BASE_API_ENDPOINT}/socket/messages`,
+        DELETE: `${BASE_API_ENDPOINT}/socket/messages`,
     },
     NOTIFICATION: {
         DISMISS: `${BASE_API_ENDPOINT}/entity/notification/dismiss`,
