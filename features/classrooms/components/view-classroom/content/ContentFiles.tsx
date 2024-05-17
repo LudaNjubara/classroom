@@ -24,7 +24,7 @@ export function ContentFiles({ classroomResourcesState, channelResourcesState }:
         <AccordionItem value="classroom-resources">
           <AccordionTrigger>Classroom resources</AccordionTrigger>
           <AccordionContent>
-            <div>
+            <div className="flex flex-col gap-1">
               {classroomResourcesState.isLoading && (
                 <GridView className="md:grid-cols-1 lg:grid-cols-1 gap-2">
                   {Array.from({ length: 3 }).map((_, i) => (
@@ -51,7 +51,7 @@ export function ContentFiles({ classroomResourcesState, channelResourcesState }:
         <AccordionItem value="channel-resources">
           <AccordionTrigger>Channel resources</AccordionTrigger>
           <AccordionContent>
-            <div>
+            <div className="flex flex-col gap-1">
               {channelResourcesState.isLoading && (
                 <GridView className="md:grid-cols-1 lg:grid-cols-1 gap-2">
                   {Array.from({ length: 3 }).map((_, i) => (

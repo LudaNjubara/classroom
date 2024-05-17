@@ -44,7 +44,9 @@ export async function GET(req: NextRequest) {
 
         const resources = await db.resource.findMany({
             where: {
-                channelId,
+                metadata: {
+                    channelId
+                }
             },
             include: {
                 metadata: true

@@ -3,7 +3,7 @@ import { MessageInput } from "@/components/Elements";
 import { FileState } from "@/components/Elements/dropzone/MultiFileDropzone";
 import { useToast } from "@/components/ui/use-toast";
 import { useEdgeStore } from "@/config/edgestore";
-import { sendMessage } from "@/features/classrooms/api";
+import { sendMessage, updateClassroom } from "@/features/classrooms/api";
 import { TFileUploadResponseWithFilename } from "@/features/classrooms/types";
 import { useDashboardStore } from "@/stores";
 import { sanitizeInput } from "@/utils/misc";
@@ -75,19 +75,24 @@ export function ContentPosts() {
 
     if (!selectedClassroom || !selectedChannel) return;
 
-    setIsFormSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    const messageContent = formData.get("message") as string;
+
+    if (!fileStates.length && !messageContent) return;
 
     try {
-      const formData = new FormData(e.currentTarget);
-
-      const messageContent = formData.get("message") as string;
-
-      if (!fileStates.length && !messageContent) return;
+      setIsFormSubmitting(true);
 
       /* Upload files as temporary files. Backend will confirm them if message is successfully created. */
       let uploadResponses: TFileUploadResponseWithFilename[] = [];
       if (fileStates.length) {
         uploadResponses = await handleFileUpload({ channelId: selectedChannel.id });
+
+        console.log("uploadResponses", uploadResponses);
+
+        await updateClassroom({
+          resources: uploadResponses,
+        });
       }
 
       /* Create the message and confirm uploaded files */

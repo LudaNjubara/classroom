@@ -21,6 +21,7 @@ export type TFileUploadResponse = {
         userId: string;
         userRole: Role;
         classroomId?: string;
+        channelId?: string;
     };
     path: Record<string, never>;
     pathOrder: string[];

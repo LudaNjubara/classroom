@@ -6,7 +6,17 @@ import { useDisclosure } from "@/hooks/useDisclosure";
 import { TAttachmentLabel } from "@/types/typings";
 import { FileState, MultiFileDropzone } from "@components/Elements/dropzone/MultiFileDropzone";
 import { GridView } from "@components/Elements/grid/GridView";
-import { FilePlus2Icon, PlusIcon, SendIcon, XIcon } from "lucide-react";
+import {
+  FileAudio2Icon,
+  FileIcon,
+  FileImageIcon,
+  FileVideoIcon,
+  MapPinIcon,
+  PlusIcon,
+  SendIcon,
+  UserRoundIcon,
+  XIcon,
+} from "lucide-react";
 import { FormEvent, RefObject, useRef, useState } from "react";
 
 type TMessageInputProps = {
@@ -24,7 +34,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
   const [selectedAttachmentOption, setSelectedAttachmentOption] = useState<TAttachmentLabel>();
 
   // hooks
-  const { isOpen: isFilesOpen, open: openFiles, toggle: toggleFiles } = useDisclosure();
+  const { isOpen: isFilesOpen, toggle: toggleFiles } = useDisclosure();
 
   // constants
   const attachmentItems: {
@@ -33,7 +43,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
     onClick: () => void;
   }[] = [
     {
-      icon: <FilePlus2Icon className="shrink-0" size={20} />,
+      icon: <FileIcon className="shrink-0" size={20} />,
       label: "File",
       onClick: () => {
         setSelectedAttachmentOption("File");
@@ -41,7 +51,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
       },
     },
     {
-      icon: <FilePlus2Icon className="shrink-0" size={20} />,
+      icon: <FileImageIcon className="shrink-0" size={20} />,
       label: "Image",
       onClick: () => {
         setSelectedAttachmentOption("Image");
@@ -49,7 +59,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
       },
     },
     {
-      icon: <FilePlus2Icon className="shrink-0" size={20} />,
+      icon: <FileVideoIcon className="shrink-0" size={20} />,
       label: "Video",
       onClick: () => {
         setSelectedAttachmentOption("Video");
@@ -57,7 +67,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
       },
     },
     {
-      icon: <FilePlus2Icon className="shrink-0" size={20} />,
+      icon: <FileAudio2Icon className="shrink-0" size={20} />,
       label: "Audio",
       onClick: () => {
         setSelectedAttachmentOption("Audio");
@@ -65,7 +75,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
       },
     },
     {
-      icon: <FilePlus2Icon className="shrink-0" size={20} />,
+      icon: <MapPinIcon className="shrink-0" size={20} />,
       label: "Location",
       onClick: () => {
         setSelectedAttachmentOption("Location");
@@ -73,7 +83,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
       },
     },
     {
-      icon: <FilePlus2Icon className="shrink-0" size={20} />,
+      icon: <UserRoundIcon className="shrink-0" size={20} />,
       label: "Contact",
       onClick: () => {
         setSelectedAttachmentOption("Contact");

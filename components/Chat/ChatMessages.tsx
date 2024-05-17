@@ -102,6 +102,7 @@ export const ChatMessages = memo(({ channelId }: TChatMessagesProps) => {
                 data={message}
                 accentColor={accentColors[selectedClassroom!.id]}
                 isCurrentUser={message.senderData.profileId === profile.kindeId}
+                channelId={selectedChannel!.id}
               />
             ))}
           </Fragment>
