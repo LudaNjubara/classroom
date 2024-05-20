@@ -50,7 +50,19 @@ export async function CreateAccount({ profile }: TProps) {
           <OrganizationCard profile={profile} countries={countries} />
         </TabsContent>
         <TabsContent value="teacher">
-          <TeacherCard profile={profile} countries={countries} />
+          <TeacherCard
+            profile={profile}
+            countries={[
+              {
+                name: { common: "Croatia" },
+                cca2: "HR",
+                flags: {
+                  png: "https://flagcdn.com/w320/hr.png",
+                  svg: "https://flagcdn.com/hr.svg",
+                },
+              },
+            ]}
+          />
         </TabsContent>
         <TabsContent value="student">
           <StudentCard profile={profile} countries={countries} />
