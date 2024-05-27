@@ -47,7 +47,19 @@ export async function CreateAccount({ profile }: TProps) {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="organization">
-          <OrganizationCard profile={profile} countries={countries} />
+          <OrganizationCard
+            profile={profile}
+            countries={[
+              {
+                name: { common: "Croatia" },
+                cca2: "HR",
+                flags: {
+                  png: "https://flagcdn.com/w320/hr.png",
+                  svg: "https://flagcdn.com/hr.svg",
+                },
+              },
+            ]}
+          />
         </TabsContent>
         <TabsContent value="teacher">
           <TeacherCard
@@ -65,7 +77,19 @@ export async function CreateAccount({ profile }: TProps) {
           />
         </TabsContent>
         <TabsContent value="student">
-          <StudentCard profile={profile} countries={countries} />
+          <StudentCard
+            profile={profile}
+            countries={[
+              {
+                name: { common: "Croatia" },
+                cca2: "HR",
+                flags: {
+                  png: "https://flagcdn.com/w320/hr.png",
+                  svg: "https://flagcdn.com/hr.svg",
+                },
+              },
+            ]}
+          />
         </TabsContent>
       </Tabs>
     </div>
