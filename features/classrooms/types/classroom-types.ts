@@ -73,3 +73,19 @@ export type TMessageWithSender = Message & {
 export type TResourceWithMetadata = Resource & {
     metadata: ResourcesMetadata;
 }
+
+export type TClassroomSettingsItemType = "general" | "members" | "resources" | "customization";
+
+export type TClassroomSettingsItem = {
+    id: TClassroomSettingsItemType;
+    title: string;
+    description: string;
+    icon: JSX.Element;
+}
+
+export type TUpdateClassroomRequestBody = Omit<Classroom, "organizationId" | "createdAt" | "updatedAt">
+
+export type TUpdateClassroomParams = {
+    classroom?: TUpdateClassroomRequestBody;
+    resources?: TFileUploadResponseWithFilename[]
+};

@@ -29,7 +29,7 @@ export function ViewClassroom({ toggleModal }: TViewClassroomProps) {
   }, [selectedClassroom, toggleModal, setSelectedChannel]);
 
   return (
-    <div className="pr-2">
+    <div className="pr-2" id="view-classroom-container">
       <ClassroomHeader toggleModal={toggleModal} />
 
       <Separator className="my-4" />

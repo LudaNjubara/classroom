@@ -1,5 +1,5 @@
 import { db } from "@/config";
-import { TChannelRequest, TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem } from "@/features/classrooms/types";
+import { TChannelRequest, TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem, TUpdateClassroomRequestBody } from "@/features/classrooms/types";
 import { TSelectedStudentItem } from "@/features/students";
 import { TSelectedTeacherItem } from "@/features/teachers";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -9,13 +9,14 @@ import { NextResponse } from "next/server";
 type TWhereClauseParams = {
     resources?: TFileUploadResponseWithFilename[];
     channel?: TChannelRequest;
+    classroom?: TUpdateClassroomRequestBody;
 };
 
 type TWhereClause = {
     id: string;
 };
 
-const contructWhereClause = ({ channel, resources }: TWhereClauseParams): TWhereClause => {
+const contructWhereClause = ({ channel, resources, classroom }: TWhereClauseParams): TWhereClause => {
     let whereClause = { id: "" };
 
     if (channel) {
@@ -29,6 +30,13 @@ const contructWhereClause = ({ channel, resources }: TWhereClauseParams): TWhere
         whereClause = {
             ...whereClause,
             id: resources[0].metadata.classroomId!
+        }
+    }
+
+    if (classroom) {
+        whereClause = {
+            ...whereClause,
+            id: classroom.id
         }
     }
 
@@ -130,6 +138,7 @@ export async function PUT(req: Request) {
         const requestBody: {
             resources?: TFileUploadResponseWithFilename[];
             channel?: TChannelRequest;
+            classroom?: TUpdateClassroomRequestBody;
         } = await req.json();
 
         // Prepare data for update
@@ -163,7 +172,10 @@ export async function PUT(req: Request) {
                             },
                         };
                         break;
-                    // Add more cases here for other request keys
+                    case 'classroom':
+                        data.name = requestBody.classroom!.name;
+                        data.description = requestBody.classroom!.description;
+                        break;
                     default:
                         break;
                 }
@@ -176,7 +188,6 @@ export async function PUT(req: Request) {
             return NextResponse.json({ error: "Invalid request" }, { status: 400 })
         }
 
-        console.log("data", data)
         // Update classroom
         const classroom = await db.classroom.update({
             where: whereClause,
