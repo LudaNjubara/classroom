@@ -85,7 +85,23 @@ export type TClassroomSettingsItem = {
 
 export type TUpdateClassroomRequestBody = Omit<Classroom, "organizationId" | "createdAt" | "updatedAt">
 
+export type TClassroomSettingsWithId = {
+    [key in ClassroomSetting]?: {
+        id: string;
+        value: string;
+        metadata: {
+            type: SettingType;
+        }
+    }
+}
+
+export type TUpdateClassroomSettingsRequestBody = {
+    settings: TClassroomSettingsWithId;
+    classroomId: string;
+}
+
 export type TUpdateClassroomParams = {
     classroom?: TUpdateClassroomRequestBody;
     resources?: TFileUploadResponseWithFilename[]
+    classroomSettings?: TUpdateClassroomSettingsRequestBody;
 };

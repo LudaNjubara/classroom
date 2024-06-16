@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, memo } from "react";
 import { CLASSROOM_ACCENT_COLORS } from "../../constants";
 import { TClassroomSettings } from "../../types";
 
-const AccentColorSetting = ({
+export const AccentColorSetting = ({
   classroomSettings,
   setClassroomSettings,
 }: TClassroomSettingsFormFieldProps) => {

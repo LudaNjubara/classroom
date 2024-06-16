@@ -1,5 +1,5 @@
 import { db } from "@/config";
-import { TChannelRequest, TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem, TUpdateClassroomRequestBody } from "@/features/classrooms/types";
+import { TChannelRequest, TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem, TUpdateClassroomRequestBody, TUpdateClassroomSettingsRequestBody } from "@/features/classrooms/types";
 import { TSelectedStudentItem } from "@/features/students";
 import { TSelectedTeacherItem } from "@/features/teachers";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -10,13 +10,14 @@ type TWhereClauseParams = {
     resources?: TFileUploadResponseWithFilename[];
     channel?: TChannelRequest;
     classroom?: TUpdateClassroomRequestBody;
+    classroomSettings?: TUpdateClassroomSettingsRequestBody;
 };
 
 type TWhereClause = {
     id: string;
 };
 
-const contructWhereClause = ({ channel, resources, classroom }: TWhereClauseParams): TWhereClause => {
+const contructWhereClause = ({ channel, resources, classroom, classroomSettings }: TWhereClauseParams): TWhereClause => {
     let whereClause = { id: "" };
 
     if (channel) {
@@ -37,6 +38,13 @@ const contructWhereClause = ({ channel, resources, classroom }: TWhereClausePara
         whereClause = {
             ...whereClause,
             id: classroom.id
+        }
+    }
+
+    if (classroomSettings) {
+        whereClause = {
+            ...whereClause,
+            id: classroomSettings.classroomId
         }
     }
 
@@ -139,6 +147,7 @@ export async function PUT(req: Request) {
             resources?: TFileUploadResponseWithFilename[];
             channel?: TChannelRequest;
             classroom?: TUpdateClassroomRequestBody;
+            classroomSettings?: TUpdateClassroomSettingsRequestBody;
         } = await req.json();
 
         // Prepare data for update
@@ -176,6 +185,14 @@ export async function PUT(req: Request) {
                         data.name = requestBody.classroom!.name;
                         data.description = requestBody.classroom!.description;
                         break;
+                    case 'classroomSettings':
+                        data.settings = Object.entries(requestBody.classroomSettings!.settings).map(([key, value]) => ({
+                            id: value.id,
+                            key: key as ClassroomSetting,
+                            value: value.value,
+                            type: value.metadata.type
+                        }))
+                        break;
                     default:
                         break;
                 }
@@ -189,12 +206,25 @@ export async function PUT(req: Request) {
         }
 
         // Update classroom
-        const classroom = await db.classroom.update({
-            where: whereClause,
-            data
-        });
+        if (!data.settings) {
+            const classroom = await db.classroom.update({
+                where: whereClause,
+                data: data
+            });
+        } else {
+            // @ts-ignore-next-line
+            const a = data.settings.forEach(async (setting) => {
+                await db.classroomSettings.update({
+                    where: {
+                        id: setting.id
+                    },
+                    data: setting
+                })
+            });
+        }
 
-        return NextResponse.json({ classroom }, { status: 200 })
+
+        return NextResponse.json({ message: "Classroom updated successfully" }, { status: 200 })
     } catch (error) {
         console.log(error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 })
