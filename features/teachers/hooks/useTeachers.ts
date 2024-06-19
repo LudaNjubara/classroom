@@ -1,3 +1,4 @@
+"use client"
 
 import observableError from "@/services/ErrorObserver";
 import { TPaginatedResponse } from "@/types/typings";

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TClassroomSettingsItem } from "@/features/classrooms/types";
-import { useDashboardStore } from "@/stores";
+import { useDashboardStore, useMiscStore } from "@/stores";
 import { FileCogIcon, PaletteIcon, UserCogIcon, WrenchIcon, XIcon } from "lucide-react";
 import { CustomizationSettingsItem } from "./CustomizationSettingsItem";
 import { GeneralSettingsItem } from "./GeneralSettingsItem";
@@ -44,9 +44,10 @@ export function ClassroomSettings({ toggleModal }: TClassroomSettingsProps) {
   // zustand state and actions
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
   const accentColors = useDashboardStore((state) => state.accentColors);
+  const numOfModalsOpen = useMiscStore((state) => state.numOfModalsOpen);
 
   return (
-    <div>
+    <div id="classroom-settings-container" className={`${numOfModalsOpen > 3 && "h-0 overflow-hidden"}`}>
       <div className="flex justify-between">
         <div>
           <h2 className="text-2xl font-medium">
