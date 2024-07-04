@@ -2,6 +2,7 @@ import { CustomPagination, GridView, SearchBox } from "@/components/Elements";
 import { TeacherCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { updateClassroom } from "@/features/classrooms/api";
 import { TStudentsFetchFilterParams, useStudents } from "@/features/students";
 import { StudentCard } from "@/features/students/components/StudentCard";
 import { useDashboardStore } from "@/stores";
@@ -41,9 +42,12 @@ export function AddClassroomStudentModal({ toggleOpen }: TAddClassroomStudentMod
   const handleAddStudents = async () => {
     if (!selectedStudentItems.length) return;
 
-    /* await updateClassroom({
-      classroomStudents: selectedStudentItems.map((item) => item.studentId),
-    }); */
+    await updateClassroom({
+      classroomStudents: {
+        students: selectedStudentItems.map((item) => item.studentId),
+        classroomId: selectedClassroom!.id,
+      },
+    });
 
     toast({
       title: "Students added successfully",

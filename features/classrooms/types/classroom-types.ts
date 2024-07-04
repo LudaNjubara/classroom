@@ -100,8 +100,20 @@ export type TUpdateClassroomSettingsRequestBody = {
     classroomId: string;
 }
 
+export type TUpdateClassroomTeachersRequestBody = {
+    teachers: string[];
+    classroomId: string;
+}
+
+export type TUpdateClassroomStudentsRequestBody = {
+    students: string[];
+    classroomId: string;
+}
+
 export type TUpdateClassroomParams = {
     classroom?: TUpdateClassroomRequestBody;
     resources?: TFileUploadResponseWithFilename[]
     classroomSettings?: TUpdateClassroomSettingsRequestBody;
+    classroomTeachers?: TUpdateClassroomTeachersRequestBody;
+    classroomStudents?: TUpdateClassroomStudentsRequestBody;
 };

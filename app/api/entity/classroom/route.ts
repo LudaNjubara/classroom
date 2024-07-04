@@ -1,5 +1,5 @@
 import { db } from "@/config";
-import { TChannelRequest, TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem, TUpdateClassroomRequestBody, TUpdateClassroomSettingsRequestBody } from "@/features/classrooms/types";
+import { TChannelRequest, TClassroomSettings, TFileUploadResponseWithFilename, TScheduleItem, TUpdateClassroomRequestBody, TUpdateClassroomSettingsRequestBody, TUpdateClassroomStudentsRequestBody, TUpdateClassroomTeachersRequestBody } from "@/features/classrooms/types";
 import { TSelectedStudentItem } from "@/features/students";
 import { TSelectedTeacherItem } from "@/features/teachers";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
@@ -11,13 +11,15 @@ type TWhereClauseParams = {
     channel?: TChannelRequest;
     classroom?: TUpdateClassroomRequestBody;
     classroomSettings?: TUpdateClassroomSettingsRequestBody;
+    classroomTeachers?: TUpdateClassroomTeachersRequestBody;
+    classroomStudents?: TUpdateClassroomStudentsRequestBody;
 };
 
 type TWhereClause = {
     id: string;
 };
 
-const contructWhereClause = ({ channel, resources, classroom, classroomSettings }: TWhereClauseParams): TWhereClause => {
+const contructWhereClause = ({ channel, resources, classroom, classroomSettings, classroomTeachers, classroomStudents }: TWhereClauseParams): TWhereClause => {
     let whereClause = { id: "" };
 
     if (channel) {
@@ -45,6 +47,20 @@ const contructWhereClause = ({ channel, resources, classroom, classroomSettings 
         whereClause = {
             ...whereClause,
             id: classroomSettings.classroomId
+        }
+    }
+
+    if (classroomTeachers) {
+        whereClause = {
+            ...whereClause,
+            id: classroomTeachers.classroomId
+        }
+    }
+
+    if (classroomStudents) {
+        whereClause = {
+            ...whereClause,
+            id: classroomStudents.classroomId
         }
     }
 
@@ -148,6 +164,8 @@ export async function PUT(req: Request) {
             channel?: TChannelRequest;
             classroom?: TUpdateClassroomRequestBody;
             classroomSettings?: TUpdateClassroomSettingsRequestBody;
+            classroomTeachers?: TUpdateClassroomTeachersRequestBody;
+            classroomStudents?: TUpdateClassroomStudentsRequestBody;
         } = await req.json();
 
         // Prepare data for update
@@ -193,6 +211,18 @@ export async function PUT(req: Request) {
                             type: value.metadata.type
                         }))
                         break;
+                    case 'classroomTeachers':
+                        data.teachers = requestBody.classroomTeachers!.teachers.map((teacherId) => ({
+                            classroomId: requestBody.classroomTeachers!.classroomId,
+                            teacherId: teacherId
+                        }))
+                        break;
+                    case 'classroomStudents':
+                        data.students = requestBody.classroomStudents!.students.map((studentId) => ({
+                            classroomId: requestBody.classroomStudents!.classroomId,
+                            studentId: studentId
+                        }))
+                        break;
                     default:
                         break;
                 }
@@ -206,12 +236,7 @@ export async function PUT(req: Request) {
         }
 
         // Update classroom
-        if (!data.settings) {
-            const classroom = await db.classroom.update({
-                where: whereClause,
-                data: data
-            });
-        } else {
+        if (data.settings) {
             // @ts-ignore-next-line
             const a = data.settings.forEach(async (setting) => {
                 await db.classroomSettings.update({
@@ -220,6 +245,19 @@ export async function PUT(req: Request) {
                     },
                     data: setting
                 })
+            });
+        } else if (data.teachers) {
+            const classroom = await db.classroomTeacher.createMany({
+                data: data.teachers
+            });
+        } else if (data.students) {
+            const classroom = await db.classroomStudent.createMany({
+                data: data.students
+            });
+        } else {
+            const classroom = await db.classroom.update({
+                where: whereClause,
+                data: data
             });
         }
 

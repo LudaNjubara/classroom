@@ -2,6 +2,7 @@ import { CustomPagination, GridView, SearchBox } from "@/components/Elements";
 import { TeacherCardSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { updateClassroom } from "@/features/classrooms/api";
 import { TTeachersFetchFilterParams, useTeachers } from "@/features/teachers";
 import { TeacherCard } from "@/features/teachers/components/TeacherCard";
 import { useDashboardStore } from "@/stores";
@@ -41,9 +42,12 @@ export function AddClassroomTeacherModal({ toggleOpen }: TAddClassroomTeacherMod
   const handleAddTeachers = async () => {
     if (!selectedTeacherItems.length) return;
 
-    /* await updateClassroom({
-      classroomTeachers: selectedTeacherItems.map((item) => item.teacherId),
-    }); */
+    await updateClassroom({
+      classroomTeachers: {
+        teachers: selectedTeacherItems.map((item) => item.teacherId),
+        classroomId: selectedClassroom!.id,
+      },
+    });
 
     toast({
       title: "Teachers added successfully",
