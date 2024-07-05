@@ -34,7 +34,7 @@ import { ScheduleFormField } from "./ScheduleFormField";
 import { StudentsFormField } from "./StudentsFormField";
 import { TeachersFormField } from "./TeachersFormField";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   name: z.string().min(1, { message: "Please enter a name." }),
   description: z.string().min(1, { message: "Please enter a description." }),
 });

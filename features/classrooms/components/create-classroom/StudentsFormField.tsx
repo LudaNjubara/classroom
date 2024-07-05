@@ -3,6 +3,7 @@ import { TeacherCardSkeleton } from "@/components/Loaders";
 import { TSelectedStudentItem, TStudentWithProfile, TStudentsFetchFilterParams } from "@/features/students";
 import { StudentCard } from "@/features/students/components/StudentCard";
 import { useStudents } from "@/features/students/hooks/useStudents";
+import { useDashboardStore } from "@/stores";
 import { cn } from "@/utils/cn";
 import { memo, useCallback, useState } from "react";
 
@@ -14,11 +15,17 @@ type TStudentsFormFieldProps = {
 
 export const StudentsFormField = memo(
   ({ selectedStudentItems, setSelectedStudentItems, className }: TStudentsFormFieldProps) => {
+    // zustand state and actions
+    const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
+
     // state
     const [filterParams, setFilterParams] = useState<TStudentsFetchFilterParams>();
 
     // hooks
-    const { data: paginatedStudents, isLoading: isStudentsLoading } = useStudents(filterParams);
+    const { data: paginatedStudents, isLoading: isStudentsLoading } = useStudents(
+      filterParams,
+      selectedOrganization?.id
+    );
 
     // handlers
     const handleSelectStudent = useCallback(

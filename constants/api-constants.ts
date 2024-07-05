@@ -43,6 +43,14 @@ export const API_ENDPOINTS = {
         RESOURCE: {
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/resource/get-all`,
         },
+        TEACHER: {
+            GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/teacher/get-all`,
+            REMOVE: `${BASE_API_ENDPOINT}/entity/classroom/teacher/remove`,
+        },
+        STUDENT: {
+            GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/student/get-all`,
+            REMOVE: `${BASE_API_ENDPOINT}/entity/classroom/student/remove`,
+        },
     },
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,

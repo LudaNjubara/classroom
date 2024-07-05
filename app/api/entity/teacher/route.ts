@@ -40,7 +40,16 @@ function constructWhereClause({ organizationId, query, searchByArray }: TWhereCl
     let whereClause: TWhereClause = {};
 
     if (organizationId) {
-        whereClause = { ...whereClause, organizationId };
+        whereClause = {
+            ...whereClause,
+            organizations: {
+                some: {
+                    organization: {
+                        id: organizationId,
+                    }
+                }
+            }
+        };
     }
 
     if (query && searchByArray) {

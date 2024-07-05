@@ -73,3 +73,57 @@ export type TMessageWithSender = Message & {
 export type TResourceWithMetadata = Resource & {
     metadata: ResourcesMetadata;
 }
+
+export type TClassroomSettingsItemType = "general" | "members" | "resources" | "customization";
+
+export type TClassroomSettingsItem = {
+    id: TClassroomSettingsItemType;
+    title: string;
+    description: string;
+    icon: JSX.Element;
+}
+
+export type TUpdateClassroomRequestBody = Omit<Classroom, "organizationId" | "createdAt" | "updatedAt">
+
+export type TClassroomSettingsWithId = {
+    [key in ClassroomSetting]?: {
+        id: string;
+        value: string;
+        metadata: {
+            type: SettingType;
+        }
+    }
+}
+
+export type TUpdateClassroomSettingsRequestBody = {
+    settings: TClassroomSettingsWithId;
+    classroomId: string;
+}
+
+export type TUpdateClassroomTeachersRequestBody = {
+    teachers: string[];
+    classroomId: string;
+}
+
+export type TUpdateClassroomStudentsRequestBody = {
+    students: string[];
+    classroomId: string;
+}
+
+export type TUpdateClassroomParams = {
+    classroom?: TUpdateClassroomRequestBody;
+    resources?: TFileUploadResponseWithFilename[]
+    classroomSettings?: TUpdateClassroomSettingsRequestBody;
+    classroomTeachers?: TUpdateClassroomTeachersRequestBody;
+    classroomStudents?: TUpdateClassroomStudentsRequestBody;
+};
+
+export type TDeleteClassroomStudentRequestBody = {
+    studentId: string;
+    classroomId: string;
+}
+
+export type TDeleteClassroomTeacherRequestBody = {
+    teacherId: string;
+    classroomId: string;
+}
