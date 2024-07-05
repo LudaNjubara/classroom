@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -60,13 +61,23 @@ export const studentTableColumns: ColumnDef<Student>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(student.id)}>
-              Copy student ID
-            </DropdownMenuItem>
+            <DropdownMenuLabel>{student.name}</DropdownMenuLabel>
+
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View student</DropdownMenuItem>
-            <DropdownMenuItem>View student details</DropdownMenuItem>
+
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(student.id)}>
+                Copy student ID
+              </DropdownMenuItem>
+              <DropdownMenuItem>View student</DropdownMenuItem>
+              <DropdownMenuItem>View student details</DropdownMenuItem>
+            </DropdownMenuGroup>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuGroup>
+              <DropdownMenuItem>Delete student</DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       );

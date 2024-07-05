@@ -117,3 +117,13 @@ export type TUpdateClassroomParams = {
     classroomTeachers?: TUpdateClassroomTeachersRequestBody;
     classroomStudents?: TUpdateClassroomStudentsRequestBody;
 };
+
+export type TDeleteClassroomStudentRequestBody = {
+    studentId: string;
+    classroomId: string;
+}
+
+export type TDeleteClassroomTeacherRequestBody = {
+    teacherId: string;
+    classroomId: string;
+}

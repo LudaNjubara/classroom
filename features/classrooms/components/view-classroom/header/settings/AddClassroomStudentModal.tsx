@@ -9,11 +9,13 @@ import { useDashboardStore } from "@/stores";
 import { useEffect, useState } from "react";
 
 type TAddClassroomStudentModalProps = {
+  onSuccess: () => void;
   toggleOpen: () => void;
 };
 
-export function AddClassroomStudentModal({ toggleOpen }: TAddClassroomStudentModalProps) {
+export function AddClassroomStudentModal({ onSuccess, toggleOpen }: TAddClassroomStudentModalProps) {
   // zustand state and actions
+  const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
   const accentColors = useDashboardStore((state) => state.accentColors);
   const selectedStudentItems = useDashboardStore((state) => state.selectedStudentItems);
@@ -23,7 +25,10 @@ export function AddClassroomStudentModal({ toggleOpen }: TAddClassroomStudentMod
   const [filterParams, setFilterParams] = useState<TStudentsFetchFilterParams>();
 
   // hooks
-  const { data: paginatedStudents, isLoading: isStudentsLoading } = useStudents(filterParams);
+  const { data: paginatedStudents, isLoading: isStudentsLoading } = useStudents(
+    filterParams,
+    selectedOrganization?.id
+  );
   const { toast } = useToast();
 
   // handlers
@@ -55,6 +60,8 @@ export function AddClassroomStudentModal({ toggleOpen }: TAddClassroomStudentMod
         "Selected students have been added to the classroom. You can view them in the members tab.",
       variant: "default",
     });
+
+    onSuccess();
   };
 
   useEffect(() => {

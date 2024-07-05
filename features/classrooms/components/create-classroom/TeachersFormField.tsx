@@ -3,6 +3,7 @@ import { TeacherCardSkeleton } from "@/components/Loaders";
 import { TSelectedTeacherItem, TTeacherWithProfile, TTeachersFetchFilterParams } from "@/features/teachers";
 import { TeacherCard } from "@/features/teachers/components/TeacherCard";
 import { useTeachers } from "@/features/teachers/hooks/useTeachers";
+import { useDashboardStore } from "@/stores";
 import { cn } from "@/utils/cn";
 import { Dispatch, SetStateAction, memo, useCallback, useState } from "react";
 
@@ -14,11 +15,17 @@ type TTeachersFormFieldProps = {
 
 export const TeachersFormField = memo(
   ({ selectedTeacherItems, setSelectedTeacherItems, className }: TTeachersFormFieldProps) => {
+    // zustand state and actions
+    const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
+
     // state
     const [filterParams, setFilterParams] = useState<TTeachersFetchFilterParams>();
 
     // hooks
-    const { data: paginatedTeachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
+    const { data: paginatedTeachers, isLoading: isTeachersLoading } = useTeachers(
+      filterParams,
+      selectedOrganization?.id
+    );
 
     // handlers
     const handleSelectTeacher = useCallback(

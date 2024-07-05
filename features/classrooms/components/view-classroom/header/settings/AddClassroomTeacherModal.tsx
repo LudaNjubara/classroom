@@ -9,11 +9,13 @@ import { useDashboardStore } from "@/stores";
 import { useEffect, useState } from "react";
 
 type TAddClassroomTeacherModalProps = {
+  onSuccess: () => void;
   toggleOpen: () => void;
 };
 
-export function AddClassroomTeacherModal({ toggleOpen }: TAddClassroomTeacherModalProps) {
+export function AddClassroomTeacherModal({ onSuccess, toggleOpen }: TAddClassroomTeacherModalProps) {
   // zustand state and actions
+  const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
   const accentColors = useDashboardStore((state) => state.accentColors);
   const selectedTeacherItems = useDashboardStore((state) => state.selectedTeacherItems);
@@ -23,7 +25,10 @@ export function AddClassroomTeacherModal({ toggleOpen }: TAddClassroomTeacherMod
   const [filterParams, setFilterParams] = useState<TTeachersFetchFilterParams>();
 
   // hooks
-  const { data: paginatedTeachers, isLoading: isTeachersLoading } = useTeachers(filterParams);
+  const { data: paginatedTeachers, isLoading: isTeachersLoading } = useTeachers(
+    filterParams,
+    selectedOrganization?.id
+  );
   const { toast } = useToast();
 
   // handlers
@@ -55,6 +60,8 @@ export function AddClassroomTeacherModal({ toggleOpen }: TAddClassroomTeacherMod
         "Selected teachers have been added to the classroom. You can view them in the members tab.",
       variant: "default",
     });
+
+    onSuccess();
   };
 
   useEffect(() => {
