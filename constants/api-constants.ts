@@ -40,6 +40,10 @@ export const API_ENDPOINTS = {
                 GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/channel/resource/get-all`,
             },
         },
+        ASSIGNMENT: {
+            CREATE: `${BASE_API_ENDPOINT}/entity/classroom/assignment`,
+            GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/assignment/get-all`,
+        },
         RESOURCE: {
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/resource/get-all`,
         },

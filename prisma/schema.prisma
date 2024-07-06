@@ -40,6 +40,7 @@ enum NotificationStatus {
   REJECTED
 }
 
+// CLASSROOM SETTINGS
 enum ClassroomSetting {
   ACCENT_COLOR
 }
@@ -49,6 +50,13 @@ enum SettingType {
   NUMBER
   BOOLEAN
   JSON
+}
+
+// CLASSROOM HOMEWORK
+enum AssignmentSolutionStatus {
+  SUBMITTED
+  RETURNED
+  LOCKED
 }
 
 // DATABASE MODELS
@@ -109,8 +117,8 @@ model Teacher {
   profile   Profile @relation(fields: [profileId], references: [kindeId], onDelete: Cascade)
 
   organizations OrganizationTeacher[]
-
-  classrooms ClassroomTeacher[]
+  classrooms    ClassroomTeacher[]
+  assignments   ClassroomAssignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -145,8 +153,8 @@ model Student {
   profile   Profile @relation(fields: [profileId], references: [kindeId], onDelete: Cascade)
 
   organizations OrganizationStudent[]
-
-  classrooms ClassroomStudent[]
+  classrooms    ClassroomStudent[]
+  solutions     AssignmentSolution[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -177,11 +185,11 @@ model Classroom {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  teachers ClassroomTeacher[]
-  students ClassroomStudent[]
-  channels ClassroomChannel[]
-
-  settings ClassroomSettings[]
+  teachers    ClassroomTeacher[]
+  students    ClassroomStudent[]
+  channels    ClassroomChannel[]
+  settings    ClassroomSettings[]
+  assignments ClassroomAssignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -346,4 +354,62 @@ model Notification {
   @@index([senderId, senderType], name: "sender")
   @@index([recipientId, recipientType], name: "recipient")
   @@map("notifications")
+}
+
+model ClassroomAssignment {
+  id String @id @unique @default(cuid())
+
+  title       String
+  description String               @db.Text
+  dueDate     String
+  solutions   AssignmentSolution[]
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teacherId], name: "assignmentTeacherId")
+  @@index([classroomId], name: "assignmentClassroomId")
+}
+
+model AssignmentSolution {
+  id String @id @unique @default(cuid())
+
+  note   String?                  @db.Text
+  grade  Int?
+  status AssignmentSolutionStatus
+  files  AssignmentSolutionFile[]
+
+  assignmentId String
+  assignment   ClassroomAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assignmentId], name: "solutionAssignmentId")
+  @@index([studentId], name: "solutionStudentId")
+}
+
+model AssignmentSolutionFile {
+  id String @id @unique @default(cuid())
+
+  name String @db.VarChar(255)
+  size Int
+  url  String @db.VarChar(255)
+
+  solutionId String
+  solution   AssignmentSolution @relation(fields: [solutionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([solutionId], name: "solutionFileSolutionId")
 }
