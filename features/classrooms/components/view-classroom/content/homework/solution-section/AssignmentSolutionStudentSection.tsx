@@ -17,6 +17,7 @@ import { createAssignmentSolution } from "@/features/classrooms/api/create-class
 import { ResourcesFormField } from "@/features/classrooms/components/create-classroom/ResourcesFormField";
 import { TFileUploadResponseWithFilename } from "@/features/classrooms/types";
 import { useDashboardStore } from "@/stores";
+import { sanitizeInput } from "@/utils/misc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -116,7 +117,7 @@ export function AssignmentSolutionStudentSection({
 
       const res = await createAssignmentSolution({
         assignmentId,
-        note: values.note,
+        note: values.note ? sanitizeInput(values.note) : undefined,
         resources: uploadResponses,
       });
 

@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { createClassroomAssignment } from "@/features/classrooms/api/create-classroom-assignment";
+import { sanitizeInput } from "@/utils/misc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
@@ -60,9 +61,9 @@ export function CreateNewAssignmentModal({
       // create assignment
       await createClassroomAssignment({
         classroomId,
-        title: formData.title,
-        description: formData.description,
-        dueDate: formData.dueDate,
+        title: sanitizeInput(formData.title),
+        description: sanitizeInput(formData.description),
+        dueDate: sanitizeInput(formData.dueDate),
       });
 
       toast({
