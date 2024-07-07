@@ -198,6 +198,8 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
         />
 
         <ResourcesFormField
+          description="Here you can upload resources for the classroom. Files that could help everyone involved getting
+          started with the classroom."
           fileStates={fileStates}
           setFileStates={setFileStates}
           className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"

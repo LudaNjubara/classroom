@@ -1,5 +1,4 @@
-import { CustomModal, GridView } from "@/components/Elements";
-import { NotificationSkeleton, Spinner } from "@/components/Loaders";
+import { Spinner } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,19 +11,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
-import { useDashboardContext } from "@/context";
 import { createClassroomAssignment } from "@/features/classrooms/api/create-classroom-assignment";
-import { useClassroomAssignments } from "@/features/classrooms/hooks/useClassroomAssignments";
-import { TClassroomAssignmentWithTeacher } from "@/features/classrooms/types";
-import { useDisclosure } from "@/hooks/useDisclosure";
-import { useDashboardStore } from "@/stores";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusIcon, RotateCwIcon, XIcon } from "lucide-react";
-import Image from "next/image";
+import { XIcon } from "lucide-react";
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -40,7 +31,7 @@ type TCreateNewAssignmentModalProps = {
   onAssignmentCreated: () => void;
 };
 
-function CreateNewAssignmentModal({
+export function CreateNewAssignmentModal({
   onClose,
   classroomId,
   onAssignmentCreated,
@@ -181,122 +172,6 @@ function CreateNewAssignmentModal({
           </form>
         </Form>
       </div>
-    </div>
-  );
-}
-
-type TCLassroomAssignmentListProps = {
-  assignments: TClassroomAssignmentWithTeacher[];
-  onRefetch: () => void;
-};
-
-function ClassroomAssignmentList({ assignments, onRefetch }: TCLassroomAssignmentListProps) {
-  return (
-    <div className="flex flex-col gap-4 p-5 rounded-lg border border-slate-700/50">
-      <div className="flex justify-between items-center gap-2">
-        <h2 className="text-xl font-semibold">Assignments</h2>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button onClick={onRefetch} className="self-end rounded-full" variant="ghost" size="icon">
-                <RotateCwIcon size={24} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Refresh assignments</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-
-      {/* Assignment list */}
-      <ul>
-        {assignments.map((assignment) => (
-          <li key={assignment.id}>
-            <p>{assignment.title}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export function ContentHomework() {
-  // context
-  const { profile } = useDashboardContext();
-  // zustand state and actions
-  const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
-
-  // hooks
-  const {
-    data: classroomAssignments,
-    isLoading: isClassroomAssignmentsLoading,
-    refetch: refetchClassroomAssign,
-  } = useClassroomAssignments(selectedClassroom?.id);
-
-  const { isOpen: isCreateNewAssignmentModalOpen, toggle: toggleCreateNewAssignmentModal } = useDisclosure();
-
-  return (
-    <div className="relative pb-4">
-      {/* Homework content */}
-      {isClassroomAssignmentsLoading && (
-        <GridView className="md:grid-cols-1 lg:grid-cols-1 gap-2">
-          {[...Array(5)].map((_, index) => (
-            <NotificationSkeleton key={index} />
-          ))}
-        </GridView>
-      )}
-
-      {!isClassroomAssignmentsLoading && classroomAssignments.length === 0 && (
-        <div className="flex flex-col items-center justify-center gap-5 py-8 tracking-wide">
-          <Image src="/no-assignments.svg" alt="No assignments" width={300} height={300} />
-          <p className="text-slate-500 text-lg font-semibold">No assignments yet</p>
-        </div>
-      )}
-
-      {!isClassroomAssignmentsLoading && classroomAssignments.length > 0 && (
-        <ClassroomAssignmentList assignments={classroomAssignments} onRefetch={refetchClassroomAssign} />
-      )}
-
-      {/* New assignment button container */}
-      {profile.role === "TEACHER" && (
-        <div className="absolute bottom-4 right-4">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={toggleCreateNewAssignmentModal}
-                  size="icon"
-                  variant="default"
-                  className="rounded-full"
-                >
-                  <PlusIcon size={24} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Create new assignment</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      )}
-
-      {/* Create new assignment modal */}
-      {isCreateNewAssignmentModalOpen &&
-        createPortal(
-          <CustomModal>
-            <CreateNewAssignmentModal
-              onClose={toggleCreateNewAssignmentModal}
-              classroomId={selectedClassroom?.id!}
-              onAssignmentCreated={() => {
-                refetchClassroomAssign();
-                toggleCreateNewAssignmentModal();
-              }}
-            />
-          </CustomModal>,
-          document.getElementById("view-classroom-container")!
-        )}
     </div>
   );
 }

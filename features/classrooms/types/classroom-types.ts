@@ -138,3 +138,9 @@ export type TCreateClassroomAssignmentRequestBody = {
     description: string;
     dueDate: string;
 };
+
+export type TCreateClassroomAssignmentSolutionRequestBody = {
+    assignmentId: string;
+    note?: string;
+    resources: TFileUploadResponseWithFilename[];
+}

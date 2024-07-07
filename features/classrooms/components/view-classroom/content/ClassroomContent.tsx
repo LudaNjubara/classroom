@@ -4,8 +4,8 @@ import { useClassroomResources } from "@/features/classrooms/hooks/useClassroomR
 import { useDashboardStore } from "@/stores";
 import { cn } from "@/utils/cn";
 import { ContentFiles } from "./ContentFiles";
-import { ContentHomework } from "./ContentHomework";
 import { ContentPosts } from "./ContentPosts";
+import { ContentHomework } from "./homework/ContentHomework";
 
 type TClassroomContentProps = {
   className?: string;
