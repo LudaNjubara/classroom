@@ -4,8 +4,8 @@ import { useDashboardContext } from "@/context";
 import { TClassroomAssignmentWithTeacher } from "@/features/classrooms/types";
 import { formatDateTime } from "@/utils/misc";
 import { Edit2Icon, Trash2Icon, XIcon } from "lucide-react";
-import { AssignmentHistorySection } from "./assignment-history/AssignmentHistorySection";
 import { AssignmentSolutionSection } from "./solution-section/AssignmentSolutionSection";
+import { AssignmentHistorySection } from "./tracking-history-section/AssignmentHistorySection";
 
 type TAssignmentDetailsModalProps = {
   assignment: TClassroomAssignmentWithTeacher;

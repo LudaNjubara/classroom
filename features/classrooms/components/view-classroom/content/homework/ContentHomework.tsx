@@ -11,9 +11,9 @@ import { PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { AssignmentDetailsModal } from "./AssignmentDetailsModal";
-import { ClassroomAssignmentList } from "./ClassroomAssignmentList";
-import { CreateNewAssignmentModal } from "./CreateNewAssignmentModal";
+import { CreateNewAssignmentModal } from "./create-assignment/CreateNewAssignmentModal";
+import { AssignmentDetailsModal } from "./view-assignment/AssignmentDetailsModal";
+import { ClassroomAssignmentList } from "./view-assignments/ClassroomAssignmentList";
 
 export function ContentHomework() {
   // context
