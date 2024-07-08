@@ -1,20 +1,28 @@
-import { AssignmentSolutionStudentSection } from "./AssignmentSolutionStudentSection";
-import { AssignmentSolutionTeacherSection } from "./AssignmentSolutionTeacherSection";
+import { TClassroomAssignmentWithTeacher } from "@/features/classrooms/types";
+import { CreateAssignmentSolutionForm } from "./create-solution/CreateAssignmentSolutionForm";
+import { ViewAssignmentSolutions } from "./view-solutions/ViewAssignmentSolutions";
 
-type TassignmentSolutionSectionProps = {
+// Props common to both student and teacher
+type TCommonProps = {
   viewFor: "student" | "teacher";
   assignmentId: string;
   onClose: () => void;
 };
 
-export function AssignmentSolutionSection({
-  viewFor,
-  assignmentId,
-  onClose,
-}: TassignmentSolutionSectionProps) {
+// Props specific to teacher
+type TConditionalProps =
+  | { viewFor: "teacher"; classroomAssignment: TClassroomAssignmentWithTeacher }
+  | { viewFor: "student" };
+
+type TAssignmentSolutionSectionProps = TCommonProps & TConditionalProps;
+
+export function AssignmentSolutionSection(props: TAssignmentSolutionSectionProps) {
+  // derived props
+  const { viewFor, assignmentId, onClose } = props;
+
   return viewFor === "student" ? (
-    <AssignmentSolutionStudentSection assignmentId={assignmentId} onClose={onClose} />
+    <CreateAssignmentSolutionForm assignmentId={assignmentId} onClose={onClose} />
   ) : (
-    <AssignmentSolutionTeacherSection />
+    <ViewAssignmentSolutions assignmentId={assignmentId} classroomAssignment={props.classroomAssignment} />
   );
 }

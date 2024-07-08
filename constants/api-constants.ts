@@ -46,7 +46,12 @@ export const API_ENDPOINTS = {
         },
         ASSIGNMENT_SOLUTION: {
             CREATE: `${BASE_API_ENDPOINT}/entity/classroom/assignment-solution`,
+            GRADE: `${BASE_API_ENDPOINT}/entity/classroom/assignment-solution/grade`,
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/assignment-solution/get-all`,
+            GET_LAST_UPLOADED: `${BASE_API_ENDPOINT}/entity/classroom/assignment-solution/last-uploaded`,
+            FILE: {
+                GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/assignment-solution/file/get-all`,
+            },
         },
         RESOURCE: {
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/resource/get-all`,

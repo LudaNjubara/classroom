@@ -4,8 +4,6 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-// TODO: srediti ovaj endpoint da kreira novi assignment solution
-
 type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST" | "ORGANIZATION" | "TEACHER">;
 
 export async function POST(req: NextRequest) {

@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useDashboardContext } from "@/context";
 import { TClassroomAssignmentWithTeacher } from "@/features/classrooms/types";
+import { useMiscStore } from "@/stores";
 import { formatDateTime } from "@/utils/misc";
 import { Edit2Icon, Trash2Icon, XIcon } from "lucide-react";
 import { AssignmentSolutionSection } from "./solution-section/AssignmentSolutionSection";
@@ -16,8 +17,14 @@ export function AssignmentDetailsModal({ assignment, onClose }: TAssignmentDetai
   // context
   const { profile } = useDashboardContext();
 
+  // zuustand state and actions
+  const numOfModalsOpen = useMiscStore((state) => state.numOfModalsOpen);
+
   return (
-    <div className="mt-2 px-5 pb-4">
+    <div
+      className={`${numOfModalsOpen > 3 && "h-0 overflow-hidden"} mt-2 px-5 pb-4`}
+      id="view-classroom-assignment-container"
+    >
       <div className="flex justify-end">
         <Button
           className="rounded-full bg-slate-500/30 hover:bg-slate-600/30 dark:bg-slate-600/30 hover:dark:bg-slate-500/30"
@@ -68,12 +75,18 @@ export function AssignmentDetailsModal({ assignment, onClose }: TAssignmentDetai
       {/* Solution section */}
       <div className="bg-slate-900 px-7 py-5 mt-10 rounded-xl overflow-hidden">
         <h2 className="text-2xl font-medium mb-6">
-          {profile.role === "STUDENT" ? "Upload your solution" : "View submitted solutions"}
+          {profile.role === "STUDENT" ? "Upload your solution" : "Submitted solutions"}
         </h2>
+
         {profile.role === "STUDENT" ? (
           <AssignmentSolutionSection viewFor="student" assignmentId={assignment.id} onClose={onClose} />
         ) : (
-          <AssignmentSolutionSection viewFor="teacher" assignmentId={assignment.id} onClose={onClose} />
+          <AssignmentSolutionSection
+            viewFor="teacher"
+            assignmentId={assignment.id}
+            classroomAssignment={assignment}
+            onClose={onClose}
+          />
         )}
       </div>
     </div>

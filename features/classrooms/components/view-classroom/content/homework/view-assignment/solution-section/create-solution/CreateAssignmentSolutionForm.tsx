@@ -13,8 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useEdgeStore } from "@/config/edgestore";
+import { MAX_ASSIGNMENT_SOLUTION_GRADE } from "@/constants";
 import { createAssignmentSolution } from "@/features/classrooms/api/create-classroom-assignment-solution";
 import { ResourcesFormField } from "@/features/classrooms/components/create-classroom/ResourcesFormField";
+import { useLastUploadedAssignmentSolution } from "@/features/classrooms/hooks/useLastUploadedAssignmentSolution";
 import { TFileUploadResponseWithFilename } from "@/features/classrooms/types";
 import { useDashboardStore } from "@/stores";
 import { sanitizeInput } from "@/utils/misc";
@@ -27,15 +29,12 @@ const formSchema = z.object({
   note: z.string().optional(),
 });
 
-type TAssignmentSolutionStudentSectionProps = {
+type TACreateAssignmentSolutionFormProps = {
   assignmentId: string;
   onClose: () => void;
 };
 
-export function AssignmentSolutionStudentSection({
-  assignmentId,
-  onClose,
-}: TAssignmentSolutionStudentSectionProps) {
+export function CreateAssignmentSolutionForm({ assignmentId, onClose }: TACreateAssignmentSolutionFormProps) {
   // zustand state and actions
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
 
@@ -44,6 +43,12 @@ export function AssignmentSolutionStudentSection({
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
 
   // hooks
+  const {
+    data: lastUploadedSolution,
+    isLoading: isLastUploadedSolutionLoading,
+    error: lastUploadedSolutionError,
+  } = useLastUploadedAssignmentSolution(assignmentId);
+
   const { edgestore } = useEdgeStore();
   const { toast } = useToast();
 
@@ -105,7 +110,13 @@ export function AssignmentSolutionStudentSection({
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!fileStates.length || !selectedClassroom) return;
+    if (
+      !fileStates.length ||
+      !selectedClassroom ||
+      lastUploadedSolution?.status === "LOCKED" ||
+      lastUploadedSolution?.status === "SUBMITTED"
+    )
+      return;
 
     try {
       setIsFormSubmitting(true);
@@ -142,6 +153,24 @@ export function AssignmentSolutionStudentSection({
       setIsFormSubmitting(false);
     }
   };
+
+  if (isLastUploadedSolutionLoading) return <Spinner />;
+
+  if (lastUploadedSolution?.status === "LOCKED" || lastUploadedSolution?.status === "SUBMITTED") {
+    return (
+      <div>
+        <div className="text-center">
+          <h1 className="text-2xl font-medium">You have already uploaded a solution</h1>
+          <p className="mt-2 text-lg text-slate-500">
+            {lastUploadedSolution?.status === "LOCKED" &&
+              `Your solution has been graded and locked for any further edits. You've scored ${lastUploadedSolution.grade} / ${MAX_ASSIGNMENT_SOLUTION_GRADE}.`}
+            {lastUploadedSolution?.status === "SUBMITTED" &&
+              "Your solution has been submitted. Please wait for the teacher to review it."}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
