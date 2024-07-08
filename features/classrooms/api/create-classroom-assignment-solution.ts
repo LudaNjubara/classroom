@@ -8,7 +8,6 @@ import { TCreateClassroomAssignmentSolutionRequestBody } from "../types";
 export async function createAssignmentSolution(
     classroomAssignmentSolution
         : TCreateClassroomAssignmentSolutionRequestBody) {
-    console.log(classroomAssignmentSolution)
     const response = await fetch(API_ENDPOINTS.CLASSROOM.ASSIGNMENT_SOLUTION.CREATE, {
         method: "POST",
         headers: {

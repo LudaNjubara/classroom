@@ -48,7 +48,6 @@ const queryStrategies: {
         return student;
     },
     ORGANIZATION: async (profileId: string) => {
-        console.log("profileId", profileId)
         const organization = await db.organization.findFirst({
             where: {
                 profileId

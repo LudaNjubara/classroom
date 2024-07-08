@@ -42,9 +42,6 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "Invalid query parameter 'assignmentId'" }, { status: 400 })
         }
 
-        console.log("assignmentId", assignmentId)
-        console.log("profile", profile)
-
         const assignmentSolution = await db.assignmentSolution.findFirst({
             where: {
                 assignmentId,

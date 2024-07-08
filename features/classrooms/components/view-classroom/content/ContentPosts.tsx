@@ -88,8 +88,6 @@ export function ContentPosts() {
       if (fileStates.length) {
         uploadResponses = await handleFileUpload({ channelId: selectedChannel.id });
 
-        console.log("uploadResponses", uploadResponses);
-
         await updateClassroom({
           resources: uploadResponses,
         });
