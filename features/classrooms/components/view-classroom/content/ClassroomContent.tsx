@@ -5,6 +5,7 @@ import { useDashboardStore } from "@/stores";
 import { cn } from "@/utils/cn";
 import { ContentFiles } from "./ContentFiles";
 import { ContentPosts } from "./ContentPosts";
+import { ContentHomework } from "./homework/ContentHomework";
 
 type TClassroomContentProps = {
   className?: string;
@@ -35,6 +36,9 @@ export function ClassroomContent({ className }: TClassroomContentProps) {
           classroomResourcesState={classroomResourcesState}
           channelResourcesState={channelResourcesState}
         />
+      </TabsContent>
+      <TabsContent value="homework">
+        <ContentHomework />
       </TabsContent>
     </div>
   );
