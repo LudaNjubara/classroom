@@ -41,7 +41,7 @@ export function ContentHomework() {
   };
 
   return (
-    <div className="relative pb-20">
+    <div className="relative pb-4 pr-2 max-h-[420px] overflow-y-auto">
       {/* Homework content */}
       {isClassroomAssignmentsLoading && (
         <GridView className="md:grid-cols-1 lg:grid-cols-1 gap-2">
@@ -68,7 +68,7 @@ export function ContentHomework() {
 
       {/* New assignment button container */}
       {profile.role === "TEACHER" && (
-        <div className="absolute bottom-4 right-4">
+        <div className="inline-block sticky bottom-0 left-full mr-4 mt-4">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
