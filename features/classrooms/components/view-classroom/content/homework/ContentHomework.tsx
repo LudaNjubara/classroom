@@ -7,6 +7,7 @@ import { useClassroomAssignments } from "@/features/classrooms/hooks/useClassroo
 import { TClassroomAssignmentWithTeacher } from "@/features/classrooms/types";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { useDashboardStore } from "@/stores";
+import { ClassroomAssignment } from "@prisma/client";
 import { PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -29,7 +30,7 @@ export function ContentHomework() {
   const {
     data: classroomAssignments,
     isLoading: isClassroomAssignmentsLoading,
-    refetch: refetchClassroomAssign,
+    refetch: refetchClassroomAssignments,
   } = useClassroomAssignments(selectedClassroom?.id);
 
   const { isOpen: isCreateNewAssignmentModalOpen, toggle: toggleCreateNewAssignmentModal } = useDisclosure();
@@ -60,7 +61,7 @@ export function ContentHomework() {
       {!isClassroomAssignmentsLoading && classroomAssignments.length > 0 && (
         <ClassroomAssignmentList
           assignments={classroomAssignments}
-          onRefetch={refetchClassroomAssign}
+          onRefetch={refetchClassroomAssignments}
           onItemClick={handleAssignmentItemClick}
         />
       )}
@@ -96,7 +97,7 @@ export function ContentHomework() {
               onClose={toggleCreateNewAssignmentModal}
               classroomId={selectedClassroom?.id!}
               onAssignmentCreated={() => {
-                refetchClassroomAssign();
+                refetchClassroomAssignments();
                 toggleCreateNewAssignmentModal();
               }}
             />
@@ -111,6 +112,19 @@ export function ContentHomework() {
             <AssignmentDetailsModal
               assignment={selectedAssignment}
               onClose={() => setSelectedAssignment(null)}
+              onAssignmentUpdated={(updatedAssignment: ClassroomAssignment) => {
+                refetchClassroomAssignments();
+                setSelectedAssignment({
+                  ...selectedAssignment,
+                  title: updatedAssignment.title,
+                  description: updatedAssignment.description,
+                  dueDate: updatedAssignment.dueDate,
+                });
+              }}
+              onAssignmentRevoked={() => {
+                refetchClassroomAssignments();
+                setSelectedAssignment(null);
+              }}
             />
           </CustomModal>,
           document.getElementById("view-classroom-container")!

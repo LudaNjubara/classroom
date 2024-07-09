@@ -1,4 +1,5 @@
-import { TAccentColor } from "../types";
+import { sanitizeInput } from "@/utils/misc";
+import { TAccentColor, TClassroomAssignmentWithTeacher, TEditedAssignment } from "../types";
 
 // generate { dark, darker, light, lighter } colors from a seed color
 export const generateAccentColorsFromSeed = (seed: string): TAccentColor => {
@@ -32,3 +33,32 @@ export const hexToRGBA = (hex: string, opacity: number) => {
 
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
+
+export const validateEditedClassroomAssignment = (
+    originalAssignment: TClassroomAssignmentWithTeacher,
+    editedAssignment: TEditedAssignment
+) => {
+    const errors: TEditedAssignment = {
+        title: "",
+        description: "",
+        dueDate: "",
+    };
+
+    if (!sanitizeInput(editedAssignment.title)) {
+        errors.title = "Title is required";
+    }
+
+    if (!sanitizeInput(editedAssignment.description)) {
+        errors.description = "Description is required";
+    }
+
+    if (!sanitizeInput(editedAssignment.dueDate)) {
+        errors.dueDate = "Due date is required";
+    }
+
+    if (new Date(sanitizeInput(editedAssignment.dueDate)) < new Date()) {
+        errors.dueDate = "Due date must be in the future";
+    }
+
+    return errors;
+};

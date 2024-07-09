@@ -153,3 +153,16 @@ export type TGradeClassroomAssignmentSolutionRequestBody = {
     solutionId: string;
     grade: number;
 }
+
+export type TDeleteClassroomAssignmentRequestBody = {
+    assignmentId: string;
+}
+
+export type TEditedAssignment = Pick<TClassroomAssignmentWithTeacher, "title" | "description" | "dueDate">;
+
+export type TUpdateClassroomAssignmentParams = {
+    id: string;
+    title: string;
+    description: string;
+    dueDate: string;
+}
