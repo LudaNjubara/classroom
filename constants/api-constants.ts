@@ -43,6 +43,8 @@ export const API_ENDPOINTS = {
         ASSIGNMENT: {
             CREATE: `${BASE_API_ENDPOINT}/entity/classroom/assignment`,
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/assignment/get-all`,
+            UPDATE: `${BASE_API_ENDPOINT}/entity/classroom/assignment`,
+            REMOVE: `${BASE_API_ENDPOINT}/entity/classroom/assignment/remove`,
         },
         ASSIGNMENT_SOLUTION: {
             CREATE: `${BASE_API_ENDPOINT}/entity/classroom/assignment-solution`,

@@ -78,7 +78,7 @@ export const ChatMessages = memo(({ channelId }: TChatMessagesProps) => {
   }
 
   return (
-    <div ref={chatRef} className="max-h-[390px] overflow-y-auto flex flex-col gap-4 flex-1 pb-16 pr-2">
+    <div ref={chatRef} className="max-h-[420px] overflow-y-auto flex flex-col gap-4 flex-1 pb-16 pr-2">
       {hasNextPage && (
         <div className="flex justify-center">
           <button

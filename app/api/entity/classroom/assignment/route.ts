@@ -78,3 +78,63 @@ export async function POST(req: NextRequest) {
     }
 
 }
+
+export async function PUT(req: NextRequest) {
+    try {
+        const { isAuthenticated, getUser } = getKindeServerSession();
+
+        if (!await isAuthenticated()) {
+            return NextResponse.json("Unauthorized", { status: 401 });
+        }
+
+        const user = await getUser();
+
+        if (!user) {
+            return NextResponse.json("Unauthorized", { status: 401 });
+        }
+
+        const profile = await db.profile.findUnique({
+            where: {
+                kindeId: user.id
+            }
+        });
+
+        if (!profile) {
+            return NextResponse.json({ error: "Profile not found" }, { status: 404 })
+        }
+
+        const allowedRoles: TAllowedRoles[] = ["TEACHER"];
+
+        if (!allowedRoles.includes(profile.role as TAllowedRoles)) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        const { classroomAssignment } = await req.json();
+        const { id, title, description, dueDate } = classroomAssignment;
+
+        if (!id || !title || !description || !dueDate) {
+            return NextResponse.json({ error: "Invalid request" }, { status: 400 })
+        }
+
+        const assignment = await db.classroomAssignment.update({
+            where: {
+                id
+            },
+            data: {
+                title,
+                description,
+                dueDate
+            }
+        });
+
+        if (!assignment) {
+            return NextResponse.json({ error: "Assignment not found" }, { status: 404 })
+        }
+
+        return NextResponse.json({ classroomAssignment: assignment }, { status: 200 })
+
+    } catch (error) {
+        console.log("error", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    }
+}

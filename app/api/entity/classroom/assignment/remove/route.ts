@@ -1,11 +1,12 @@
 import { db } from "@/config";
+import { TDeleteClassroomAssignmentRequestBody } from "@/features/classrooms/types";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST" | "TEACHER" | "ORGANIZATION">;
+type TAllowedRoles = Exclude<Role, "ADMIN" | "STUDENT" | "GUEST" | "ORGANIZATION">;
 
-export async function GET(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
     try {
         const { isAuthenticated, getUser } = getKindeServerSession();
 
@@ -29,36 +30,31 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "Profile not found" }, { status: 404 })
         }
 
-        const allowedRoles: TAllowedRoles[] = ["STUDENT"];
+        const allowedRoles: TAllowedRoles[] = ["TEACHER"];
 
         if (!allowedRoles.includes(profile.role as TAllowedRoles)) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-        const { searchParams } = new URL(request.url);
-        const assignmentId = searchParams.get("assignmentId");
+        const requestBody: {
+            classroomAssignment: TDeleteClassroomAssignmentRequestBody;
+        } = await request.json();
 
-        if (!assignmentId) {
-            return NextResponse.json({ error: "Invalid query parameter 'assignmentId'" }, { status: 400 })
+        if (!requestBody.classroomAssignment.assignmentId) {
+            return NextResponse.json({ error: "Request parameter 'assignmentId' is invalid" }, { status: 400 })
         }
 
-        const assignmentSolution = await db.assignmentSolution.findFirst({
+        const classroomAssignment = await db.classroomAssignment.delete({
             where: {
-                assignmentId,
-                student: {
-                    profileId: profile.kindeId
-                }
-            },
-            orderBy: {
-                createdAt: "desc"
+                id: requestBody.classroomAssignment.assignmentId
             }
         });
 
-        if (!assignmentSolution) {
-            return NextResponse.json({ error: "Assignment solution not found" }, { status: 404 })
+        if (!classroomAssignment) {
+            return NextResponse.json({ error: "Assignment not found" }, { status: 404 })
         }
 
-        return NextResponse.json({ data: assignmentSolution }, { status: 200 })
+        return NextResponse.json({ message: "Assignment successfuly revoked" }, { status: 200 })
     }
 
     catch (error) {
