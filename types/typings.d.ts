@@ -51,5 +51,14 @@ type NextApiResponseServerIo = NextApiResponse & {
 
 type TAttachmentLabel = "File" | "Image" | "Video" | "Audio" | "Location" | "Contact";
 
-export { NextApiResponseServerIo, TAttachmentLabel, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TUser, TUserSession };
+enum ECallType {
+    DEFAULT = "default",
+    AUDIOROOM = "audio_room",
+    LIVESTREAM = "livestream",
+    DEVELOPMENT = "development"
+}
+
+type TCallType = "default" | "audio_room" | "livestream" | "development";
+
+export { ECallType, NextApiResponseServerIo, TAttachmentLabel, TCallType, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TUser, TUserSession };
 
