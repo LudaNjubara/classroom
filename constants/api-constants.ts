@@ -67,6 +67,9 @@ export const API_ENDPOINTS = {
             REMOVE: `${BASE_API_ENDPOINT}/entity/classroom/student/remove`,
         },
     },
+    CALL: {
+        GENERATE_TOKEN: `${BASE_API_ENDPOINT}/entity/call/generate-client-token`,
+    },
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,
 } as const

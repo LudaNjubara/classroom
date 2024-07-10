@@ -1,4 +1,5 @@
 import { TabsContent } from "@/components/ui/tabs";
+import { CallActions } from "@/features/call";
 import { useChannelResources } from "@/features/classrooms/hooks/useChannelResources";
 import { useClassroomResources } from "@/features/classrooms/hooks/useClassroomResources";
 import { useDashboardStore } from "@/stores";
@@ -23,8 +24,8 @@ export function ClassroomContent({ className }: TClassroomContentProps) {
   return (
     <div className={cn("w-full bg-slate-400 dark:bg-slate-900 rounded-lg py-2 px-4", className)}>
       {/* Channel name */}
-      <div className="mb-8">
-        {/*  <h3 className="text-xl font-thin tracking-wide">#{selectedChannel?.name}</h3> */}
+      <div className="mb-4 flex items-center justify-end bg-slate-900">
+        <CallActions />
       </div>
 
       {/* Channel content */}
