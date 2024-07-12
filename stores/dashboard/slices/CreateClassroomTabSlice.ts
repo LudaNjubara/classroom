@@ -5,12 +5,13 @@ import { StateCreator } from 'zustand'
 
 export interface ClassroomTabSlice {
     selectedClassroom: TClassroomWithSettings | null
-    setSelectedClassroom: (classroom: TClassroomWithSettings) => void
+    setSelectedClassroom: (classroom: TClassroomWithSettings | null) => void
     selectedChannel: ClassroomChannel | null
     setSelectedChannel: (channel: ClassroomChannel | null) => void
     accentColors: { [key: string]: TAccentColor }
     setAccentColors: (accentColors: { [key: string]: TAccentColor }) => void
 
+    resetClassroomTabSlice: () => void
 }
 
 export const createClassroomTabSlice: StateCreator<
@@ -24,5 +25,7 @@ export const createClassroomTabSlice: StateCreator<
     selectedChannel: null,
     setSelectedChannel: (channel) => set({ selectedChannel: channel }),
     accentColors: {},
-    setAccentColors: (accentColors) => set({ accentColors })
+    setAccentColors: (accentColors) => set({ accentColors }),
+
+    resetClassroomTabSlice: () => set({ selectedClassroom: null, selectedChannel: null, accentColors: {} })
 })

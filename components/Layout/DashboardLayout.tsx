@@ -125,9 +125,12 @@ export function DashboardLayout({ contextValue }: TDashboardLayoutProps) {
   // zustand state and actions
   const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
   const setSelectedOrganization = useDashboardStore((state) => state.setSelectedOrganization);
+  const resetClassroomTabSlice = useDashboardStore((state) => state.resetClassroomTabSlice);
 
   const handleSelectedOrganizationClick = (org: TOrganizationWithClassroomsWithStudentsWithTeachers) => {
     if (org.id === selectedOrganization?.id) return;
+
+    resetClassroomTabSlice();
     setSelectedOrganization(org);
   };
 
