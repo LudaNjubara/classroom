@@ -24,7 +24,7 @@ export function ClassroomContent({ className }: TClassroomContentProps) {
   return (
     <div className={cn("w-full bg-slate-400 dark:bg-slate-900 rounded-lg py-2 px-4", className)}>
       {/* Channel name */}
-      <div className="mb-4 flex items-center justify-end bg-slate-900">
+      <div className="mb-4 pb-2 flex items-center justify-end bg-slate-900 border-b-2 border-slate-700/40">
         <CallActions />
       </div>
 
