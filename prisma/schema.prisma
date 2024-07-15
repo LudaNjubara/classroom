@@ -187,10 +187,10 @@ model Student {
 }
 
 model OrganizationStudent {
-  organizationId String       @unique
+  organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  studentId String  @unique
+  studentId String
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@id([organizationId, studentId])
