@@ -222,10 +222,8 @@ export function AssignmentDetailsModal({
                 <AlertDialogTitle>Revoke assignment</AlertDialogTitle>
 
                 <AlertDialogDescription>
-                  <p>
-                    Are you sure you want to revoke current assignment? All student submissions for current
-                    assignment will be removed as well.
-                  </p>
+                  Are you sure you want to revoke current assignment? All student submissions for current
+                  assignment will be removed as well.
                 </AlertDialogDescription>
               </AlertDialogHeader>
 
