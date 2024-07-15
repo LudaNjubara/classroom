@@ -17,7 +17,7 @@ type TAssignmentSolutionDetailsModalProps = {
   classroomAssignment: TClassroomAssignmentWithTeacher;
   assignmentSolution: TAssignmentSolutionWithStudent;
   onClose: () => void;
-  onSuccessfulGrade: () => void;
+  onSuccessfulGrade: (grade: number) => void;
 };
 
 export function AssignmentSolutionDetailsModal({
@@ -65,7 +65,7 @@ export function AssignmentSolutionDetailsModal({
         variant: "default",
       });
 
-      onSuccessfulGrade();
+      onSuccessfulGrade(value);
     } catch (error) {
       toast({
         title: "Error grading solution",

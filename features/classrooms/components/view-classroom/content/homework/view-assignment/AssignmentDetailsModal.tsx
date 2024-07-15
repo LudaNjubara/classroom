@@ -263,7 +263,12 @@ export function AssignmentDetailsModal({
         </h2>
 
         {profile.role === "STUDENT" ? (
-          <AssignmentSolutionSection viewFor="student" assignmentId={assignment.id} onClose={onClose} />
+          <AssignmentSolutionSection
+            viewFor="student"
+            assignmentId={assignment.id}
+            classroomAssignment={assignment}
+            onClose={onClose}
+          />
         ) : (
           <AssignmentSolutionSection
             viewFor="teacher"

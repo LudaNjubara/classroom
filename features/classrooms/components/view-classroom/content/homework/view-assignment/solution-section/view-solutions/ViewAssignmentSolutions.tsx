@@ -2,6 +2,8 @@ import { CustomModal, GridView } from "@/components/Elements";
 import { NotificationSkeleton } from "@/components/Loaders";
 import { useClassroomAssignmentSolutions } from "@/features/classrooms/hooks/useClassroomAssignmentSolutions";
 import { TAssignmentSolutionWithStudent, TClassroomAssignmentWithTeacher } from "@/features/classrooms/types";
+import { useStatistics } from "@/providers/statistics-provider";
+import { EAssignmentStatisticsEvent } from "@/types/enums";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { AssignmentSolutionDetailsModal } from "../view-solution/AssignmentSolutionDetailsModal";
@@ -16,6 +18,9 @@ export function ViewAssignmentSolutions({
   assignmentId,
   classroomAssignment,
 }: TViewAssignmentSolutionsProps) {
+  // context
+  const { trackEvent } = useStatistics();
+
   // state
   const [selectedAssignmentSolution, setSelectedAssignmentSolution] =
     useState<TAssignmentSolutionWithStudent | null>(null);
@@ -64,9 +69,18 @@ export function ViewAssignmentSolutions({
               classroomAssignment={classroomAssignment}
               assignmentSolution={selectedAssignmentSolution}
               onClose={() => setSelectedAssignmentSolution(null)}
-              onSuccessfulGrade={() => {
+              onSuccessfulGrade={(grade) => {
                 refetchSolutions();
                 setSelectedAssignmentSolution(null);
+
+                // track statistics
+                trackEvent(
+                  EAssignmentStatisticsEvent.LOCKED_SUBMISSIONS_COUNT,
+                  { assignmentId },
+                  { count: 1 }
+                );
+                trackEvent(EAssignmentStatisticsEvent.GRADE_COUNT, { assignmentId }, { count: 1 });
+                trackEvent(EAssignmentStatisticsEvent.GRADE_SUM_TOTAL, { assignmentId }, { sum: grade });
               }}
             />
           </CustomModal>,

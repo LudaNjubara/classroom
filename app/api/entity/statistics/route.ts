@@ -316,65 +316,73 @@ export async function PUT(req: NextRequest) {
 
         const { eventsQueue }: { eventsQueue: TEventQueue[] } = await req.json();
 
+        if (eventsQueue.length === 0) {
+            return NextResponse.json({ error: "No events to process" }, { status: 400 });
+        }
+
         const classroomEvents = eventsQueue.filter(isClassroomStatisticsEvent);
         const assignmentEvents = eventsQueue.filter(isAssignmentStatisticsEvent);
         const communicationEvents = eventsQueue.filter(isCommunicationStatisticsEvent);
 
-        console.log("classroomEvents", classroomEvents);
-
         // Check the integrity of the data for classroom events
-        classroomEvents.forEach((event) => {
+        classroomEvents.length > 0 && classroomEvents.forEach((event) => {
             checkClassroomEventDataIntegrity(event);
         });
 
         // Check the integrity of the data for assignment events
-        assignmentEvents.forEach((event) => {
+        assignmentEvents.length > 0 && assignmentEvents.forEach((event) => {
             checkAssignmentEventDataIntegrity(event);
         });
 
         // Check the integrity of the data for communication events
-        communicationEvents.forEach((event) => {
+        communicationEvents.length > 0 && communicationEvents.forEach((event) => {
             checkCommunicationEventDataIntegrity(event);
         });
 
-        await db.$transaction([
-            db.classroomStatistics.updateMany({
-                where: {
-                    classroomId: {
-                        in: classroomEvents.map((event) => event.metadata.classroomId!)
+        if (classroomEvents.length > 0) {
+            await db.$transaction([
+                db.classroomStatistics.updateMany({
+                    where: {
+                        classroomId: {
+                            in: classroomEvents.map((event) => event.metadata.classroomId!)
+                        }
+                    },
+                    data: {
+                        ...Object.assign({}, ...classroomEvents.map(constructClassroomEventUpdateClause))
                     }
-                },
-                data: {
-                    ...Object.assign({}, ...classroomEvents.map(constructClassroomEventUpdateClause))
-                }
-            })
-        ]);
+                })
+            ]);
+        }
 
-        await db.$transaction([
-            db.assignmentStatistics.updateMany({
-                where: {
-                    assignmentId: {
-                        in: assignmentEvents.map((event) => event.metadata.assignmentId!)
+        if (assignmentEvents.length > 0) {
+            await db.$transaction([
+                db.assignmentStatistics.updateMany({
+                    where: {
+                        assignmentId: {
+                            in: assignmentEvents.map((event) => event.metadata.assignmentId!)
+                        }
+                    },
+                    data: {
+                        ...Object.assign({}, ...assignmentEvents.map(constructAssignmentEventUpdateClause))
                     }
-                },
-                data: {
-                    ...Object.assign({}, ...assignmentEvents.map(constructAssignmentEventUpdateClause))
-                }
-            })
-        ]);
+                })
+            ]);
+        }
 
-        await db.$transaction([
-            db.communicationStatistics.updateMany({
-                where: {
-                    classroomId: {
-                        in: communicationEvents.map((event) => event.metadata.classroomId!)
+        if (communicationEvents.length > 0) {
+            await db.$transaction([
+                db.communicationStatistics.updateMany({
+                    where: {
+                        classroomId: {
+                            in: communicationEvents.map((event) => event.metadata.classroomId!)
+                        }
+                    },
+                    data: {
+                        ...Object.assign({}, ...communicationEvents.map(constructCommunicationEventUpdateClause))
                     }
-                },
-                data: {
-                    ...Object.assign({}, ...communicationEvents.map(constructCommunicationEventUpdateClause))
-                }
-            })
-        ]);
+                })
+            ]);
+        }
 
         return NextResponse.json({ success: true }, { status: 200 });
 

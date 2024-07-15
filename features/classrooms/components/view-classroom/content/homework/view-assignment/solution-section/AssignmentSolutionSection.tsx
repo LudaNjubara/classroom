@@ -12,7 +12,7 @@ type TCommonProps = {
 // Props specific to teacher
 type TConditionalProps =
   | { viewFor: "teacher"; classroomAssignment: TClassroomAssignmentWithTeacher }
-  | { viewFor: "student" };
+  | { viewFor: "student"; classroomAssignment: TClassroomAssignmentWithTeacher };
 
 type TAssignmentSolutionSectionProps = TCommonProps & TConditionalProps;
 
@@ -21,7 +21,11 @@ export function AssignmentSolutionSection(props: TAssignmentSolutionSectionProps
   const { viewFor, assignmentId, onClose } = props;
 
   return viewFor === "student" ? (
-    <CreateAssignmentSolutionForm assignmentId={assignmentId} onClose={onClose} />
+    <CreateAssignmentSolutionForm
+      assignmentId={assignmentId}
+      classroomAssignment={props.classroomAssignment}
+      onClose={onClose}
+    />
   ) : (
     <ViewAssignmentSolutions assignmentId={assignmentId} classroomAssignment={props.classroomAssignment} />
   );

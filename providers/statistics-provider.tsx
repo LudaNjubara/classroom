@@ -14,7 +14,7 @@ type StatisticsContextType = {
   trackEvent: (
     event: EAssignmentStatisticsEvent | EClassroomStatisticsEvent | ECommunicationStatisticsEvent,
     metadata: TStatisticsEventMetadata,
-    data?: any
+    data: any
   ) => void;
 };
 
@@ -37,7 +37,7 @@ export const StatisticsProvider = ({ children }: { children: React.ReactNode }) 
   const trackEvent = (
     event: EAssignmentStatisticsEvent | EClassroomStatisticsEvent | ECommunicationStatisticsEvent,
     metadata: TStatisticsEventMetadata,
-    data?: any
+    data: any
   ) => {
     setEventsQueue((prev) => [...prev, { event, metadata, data }]);
   };
