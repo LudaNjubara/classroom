@@ -24,7 +24,6 @@ import { BanIcon, Edit2Icon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { AssignmentDetailsSection } from "./details-section/AssignmentDetailsSection";
 import { AssignmentSolutionSection } from "./solution-section/AssignmentSolutionSection";
-import { AssignmentHistorySection } from "./tracking-history-section/AssignmentHistorySection";
 
 type TAssignmentDetailsModalProps = {
   assignment: TClassroomAssignmentWithTeacher;
@@ -246,13 +245,6 @@ export function AssignmentDetailsModal({
         editedAssignmentErrors={editedAssignmentErrors}
         isEditing={isEditing}
       />
-
-      {/* Tracking history */}
-      <div className="bg-slate-900 px-7 py-5 mt-10 rounded-xl overflow-hidden">
-        <h2 className="text-2xl font-medium mb-6">Tracking history</h2>
-
-        <AssignmentHistorySection assignmentId={assignment.id} />
-      </div>
 
       {/* Solution section */}
       <div className="bg-slate-900 px-7 py-5 mt-10 rounded-xl overflow-hidden">
