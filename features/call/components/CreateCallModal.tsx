@@ -3,7 +3,7 @@
 import { STREAMIO_API_KEY } from "@/constants";
 import { useDashboardContext } from "@/context";
 import { useDashboardStore } from "@/stores";
-import { TCallType } from "@/types/typings";
+import { ECallType } from "@/types/enums";
 import { Button } from "@components/ui/button";
 import {
   Call,
@@ -22,7 +22,7 @@ import { generateClientToken } from "../api/generate-client-token";
 
 type TCreateCallModalProps = {
   onClose: () => void;
-  callType: TCallType;
+  callType: ECallType;
 };
 
 export function CallModal({ onClose, callType }: TCreateCallModalProps) {

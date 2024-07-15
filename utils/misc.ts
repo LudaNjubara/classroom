@@ -39,3 +39,7 @@ export function formatDateTime(date: Date) {
         timeStyle: "short",
     }).format(date);
 }
+
+export function isInEnum<T extends object>(enumObj: T, key: string): boolean {
+    return Object.keys(enumObj).includes(key);
+}

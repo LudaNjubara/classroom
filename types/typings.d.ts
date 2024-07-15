@@ -4,6 +4,7 @@ import { Classroom, Organization, Teacher } from "@prisma/client";
 import { Server as NetServer, Socket } from "net";
 import { NextApiResponse } from "next";
 import { Server as SocketIOServer } from "socket.io";
+import { EAssignmentStatisticsEvent, EClassroomStatisticsEvent, ECommunicationStatisticsEvent } from "./enums";
 
 type TPaginatedResponse<T> = {
     count: number;
@@ -51,14 +52,16 @@ type NextApiResponseServerIo = NextApiResponse & {
 
 type TAttachmentLabel = "File" | "Image" | "Video" | "Audio" | "Location" | "Contact";
 
-enum ECallType {
-    DEFAULT = "default",
-    AUDIOROOM = "audio_room",
-    LIVESTREAM = "livestream",
-    DEVELOPMENT = "development"
+type TStatisticsEventMetadata = {
+    classroomId?: string;
+    assignmentId?: string;
 }
 
-type TCallType = "default" | "audio_room" | "livestream" | "development";
+type TEventQueue = {
+    event: EAssignmentStatisticsEvent | EClassroomStatisticsEvent | ECommunicationStatisticsEvent;
+    data: any;
+    metadata: TStatisticsEventMetadata;
+}
 
-export { ECallType, NextApiResponseServerIo, TAttachmentLabel, TCallType, TDashboardAsideTab, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TUser, TUserSession };
+export { NextApiResponseServerIo, TAttachmentLabel, TDashboardAsideTab, TEventQueue, TOrderBy, TOrganizationWithClassroomsWithStudentsWithTeachers, TPaginatedResponse, TRole, TStatisticsEventMetadata, TUser, TUserSession };
 

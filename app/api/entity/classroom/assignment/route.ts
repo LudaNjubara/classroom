@@ -70,6 +70,24 @@ export async function POST(req: NextRequest) {
             }
         });
 
+        if (!assignment) {
+            return NextResponse.json({ error: "Error creating assignment" }, { status: 500 })
+        }
+
+        const assignmentStatistics = await db.assignmentStatistics.create({
+            data: {
+                assignment: {
+                    connect: {
+                        id: assignment.id
+                    }
+                }
+            }
+        });
+
+        if (!assignmentStatistics) {
+            return NextResponse.json({ error: "Error creating assignment" }, { status: 500 })
+        }
+
         return NextResponse.json({ assignment }, { status: 201 })
 
     } catch (error) {

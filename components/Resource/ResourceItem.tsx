@@ -13,9 +13,10 @@ const DEFAULT_OPEN_DELAY = 1500;
 type TResourceItemProps = {
   data: TResourceWithMetadata;
   className?: string;
+  statisticsHandler?: () => void;
 };
 
-export function ResourceItem({ data, className }: TResourceItemProps) {
+export function ResourceItem({ data, className, statisticsHandler }: TResourceItemProps) {
   return (
     <HoverCard openDelay={DEFAULT_OPEN_DELAY}>
       <HoverCardTrigger>
@@ -36,6 +37,7 @@ export function ResourceItem({ data, className }: TResourceItemProps) {
               size={"icon"}
               className="p-1 dark:bg-slate-600 bg-slate-900 hover:brightness-110 transition-colors duration-300"
               onClick={() => {
+                statisticsHandler?.();
                 window.location.href = getDownloadUrl(data.url, data.name);
               }}
             >
@@ -55,6 +57,9 @@ export function ResourceItem({ data, className }: TResourceItemProps) {
             </p>
 
             <Link
+              onClick={() => {
+                statisticsHandler?.();
+              }}
               href={getDownloadUrl(data.url, data.name)}
               className="flex items-center gap-3 mt-5 font-semibold dark:bg-slate-200 bg-slate-900 rounded-md dark:text-slate-950 text-slate-200 py-2 px-4 "
             >

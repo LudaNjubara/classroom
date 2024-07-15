@@ -143,6 +143,43 @@ export async function POST(req: Request) {
             }
         });
 
+        if (!classroom) {
+            return NextResponse.json({ error: "Error creating classroom" }, { status: 500 })
+        }
+
+        // create initial classroom statistics
+        const classroomStatistics = await db.classroomStatistics.create({
+            data: {
+                classroom: {
+                    connect: {
+                        id: classroom.id
+                    }
+                },
+            }
+        });
+
+        // create initial communication statistics
+        const communicationStatistics = await db.communicationStatistics.create({
+            data: {
+                classroom: {
+                    connect: {
+                        id: classroom.id
+                    }
+                },
+            }
+        });
+
+        if (!classroomStatistics || !communicationStatistics) {
+            // delete classroom
+            await db.classroom.delete({
+                where: {
+                    id: classroom.id
+                }
+            });
+
+            return NextResponse.json({ error: "Error creating classroom" }, { status: 500 })
+        }
+
         return NextResponse.json({ classroom }, { status: 201 })
     } catch (error) {
         console.log(error);

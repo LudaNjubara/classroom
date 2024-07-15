@@ -3,6 +3,9 @@ import { ResourceItemSkeleton } from "@/components/Loaders";
 import { ResourceItem } from "@/components/Resource";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { TResourceWithMetadata } from "@/features/classrooms/types";
+import { useStatistics } from "@/providers/statistics-provider";
+import { useDashboardStore } from "@/stores";
+import { EClassroomStatisticsEvent } from "@/types/enums";
 
 type TContentFilesProps = {
   classroomResourcesState: {
@@ -18,6 +21,29 @@ type TContentFilesProps = {
 };
 
 export function ContentFiles({ classroomResourcesState, channelResourcesState }: TContentFilesProps) {
+  // context
+  const { trackEvent } = useStatistics();
+
+  // zustand state and actions
+  const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
+
+  // handlers
+  const handleStatistic = () => {
+    if (!selectedClassroom) return;
+
+    console.log("Sending classroom resource download count statistics");
+
+    trackEvent(
+      EClassroomStatisticsEvent.TOTAL_CLASSROOM_RESOURCE_DOWNLOAD_COUNT,
+      {
+        classroomId: selectedClassroom.id,
+      },
+      {
+        count: 1,
+      }
+    );
+  };
+
   return (
     <div>
       <Accordion type="multiple" defaultValue={["classroom-resources"]}>
@@ -42,7 +68,7 @@ export function ContentFiles({ classroomResourcesState, channelResourcesState }:
               {!classroomResourcesState.isLoading &&
                 classroomResourcesState.data.length > 0 &&
                 classroomResourcesState.data.map((resource) => (
-                  <ResourceItem key={resource.id} data={resource} />
+                  <ResourceItem key={resource.id} data={resource} statisticsHandler={handleStatistic} />
                 ))}
             </div>
           </AccordionContent>

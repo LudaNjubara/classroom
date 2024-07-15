@@ -59,6 +59,29 @@ enum AssignmentSolutionStatus {
   LOCKED
 }
 
+// STATISTICS
+enum StatisticsEvent {
+  // Platform events
+  LOGIN_FREQUENCY
+  SESSION_DURATION
+  ACTIVE_TIME
+
+  // Assignment events
+  SUBMISSION_TIMELINESS
+  ASSIGNMENT_COMPLETION_RATE
+  ASSIGNMENT_NOTE_USAGE
+  ASSIGNMENT_RESOURCE_USAGE
+  GRADE_DISTRIBUTION
+
+  // Communication events
+  CALL_DURATION
+  CALL_FREQUENCY
+  PREFERED_COMM_METHOD
+
+  // Misc events
+  RESOURCE_DOWNLOAD_RATE
+}
+
 // DATABASE MODELS
 model Profile {
   id      String @id @unique @default(cuid())
@@ -185,11 +208,13 @@ model Classroom {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  teachers    ClassroomTeacher[]
-  students    ClassroomStudent[]
-  channels    ClassroomChannel[]
-  settings    ClassroomSettings[]
-  assignments ClassroomAssignment[]
+  teachers                ClassroomTeacher[]
+  students                ClassroomStudent[]
+  channels                ClassroomChannel[]
+  settings                ClassroomSettings[]
+  assignments             ClassroomAssignment[]
+  classroomStatistics     ClassroomStatistics?
+  communicationStatistics CommunicationStatistics?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -360,9 +385,10 @@ model ClassroomAssignment {
   id String @id @unique @default(cuid())
 
   title       String
-  description String               @db.Text
+  description String                @db.Text
   dueDate     String
   solutions   AssignmentSolution[]
+  statistics  AssignmentStatistics?
 
   teacherId String
   teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
@@ -412,4 +438,72 @@ model AssignmentSolutionFile {
   updatedAt DateTime @updatedAt
 
   @@index([solutionId], name: "solutionFileSolutionId")
+}
+
+model AssignmentStatistics {
+  id String @id @unique @default(cuid())
+
+  assignmentId String              @unique
+  assignment   ClassroomAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  // SUBMISSION_TIMELINESS - calculated as (onTimeSubmissionsCount / submissionsCount)
+  submissionsCount       Int @default(0)
+  onTimeSubmissionsCount Int @default(0)
+
+  // ASSIGNMENT_NOTE_USAGE - calculated as (notesCount / submissionsCount)
+  notesCount Int @default(0)
+
+  // ASSIGNMENT_RESOURCE_USAGE - calculated as (downloadedResourcesCount / (totalNumberOfStudents * totalNumberOfResources)) -> totalNumberOfResources is the number of resources attached to all assignments in the classroom
+  downloadedResourcesCount Int @default(0)
+
+  // ASSIGNMENT_COMPLETION_RATE - calculated as (lockedSubmissionsCount / totalNumberOfStudents)
+  lockedSubmissionsCount Int @default(0)
+
+  // GRADE_DISTRIBUTION - calculated as (gradeSumTotal / gradeCount)
+  gradeSumTotal Int @default(0)
+  gradeCount    Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assignmentId], name: "assignmentStatisticAssignmentId")
+  @@map("assignment_statistics")
+}
+
+model CommunicationStatistics {
+  id String @id @unique @default(cuid())
+
+  classroomId String    @unique
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  // CALL_DURATION - calculated as (totalCallDuration / totalNumberOfCalls)
+  totalCallDuration  Int @default(0)
+  totalNumberOfCalls Int @default(0)
+
+  // CALL_FREQUENCY - calculated as (totalNumberOfCalls / numberOfDays) -> numberOfDays is the number of days since the classroom was created
+
+  // PREFERED_COMM_METHOD - calculated as (totalNumberOfCalls / totalNumberOfMessages)
+  totalNumberOfMessages Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([classroomId], name: "communicationStatisticClassroomId")
+  @@map("communication_statistics")
+}
+
+model ClassroomStatistics {
+  id String @id @unique @default(cuid())
+
+  classroomId String    @unique
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  // RESOURCE_DOWNLOAD_RATE - calculated as ((numOfClassroomResources * totalNumberOfStudents) / totalClassroomResourceDownloads) -> numOfClassroomResources is the number of classroom resources attached to a classroom
+  totalClassroomResourceDownloads Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([classroomId], name: "classroomStatisticClassroomId")
+  @@map("classroom_statistics")
 }
