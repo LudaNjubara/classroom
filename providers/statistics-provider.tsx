@@ -39,7 +39,49 @@ export const StatisticsProvider = ({ children }: { children: React.ReactNode }) 
     metadata: TStatisticsEventMetadata,
     data: any
   ) => {
-    setEventsQueue((prev) => [...prev, { event, metadata, data }]);
+    const newEvent = { event, metadata, data };
+
+    const eventIndex = eventsQueue.findIndex(
+      (event) =>
+        event.event === newEvent.event &&
+        (event.metadata.classroomId === newEvent.metadata.classroomId ||
+          event.metadata.assignmentId === newEvent.metadata.assignmentId)
+    );
+
+    switch (event) {
+      case ECommunicationStatisticsEvent.TOTAL_NUMBER_OF_MESSAGES:
+      case ECommunicationStatisticsEvent.TOTAL_NUMBER_OF_CALLS:
+      case EClassroomStatisticsEvent.TOTAL_CLASSROOM_RESOURCE_DOWNLOAD_COUNT:
+      case EAssignmentStatisticsEvent.NOTES_COUNT:
+      case EAssignmentStatisticsEvent.SUBMISSIONS_COUNT:
+      case EAssignmentStatisticsEvent.ON_TIME_SUBMISSIONS_COUNT:
+      case EAssignmentStatisticsEvent.LOCKED_SUBMISSIONS_COUNT:
+      case EAssignmentStatisticsEvent.GRADE_COUNT:
+      case EAssignmentStatisticsEvent.DOWNLOADED_RESOURCES_COUNT:
+        if (eventIndex !== -1) {
+          eventsQueue[eventIndex].data.count += data.count;
+        } else {
+          setEventsQueue((prevEventsQueue) => [...prevEventsQueue, newEvent]);
+        }
+        break;
+      case EAssignmentStatisticsEvent.GRADE_SUM_TOTAL:
+        if (eventIndex !== -1) {
+          eventsQueue[eventIndex].data.sum += data.sum;
+        } else {
+          setEventsQueue((prevEventsQueue) => [...prevEventsQueue, newEvent]);
+        }
+        break;
+      case ECommunicationStatisticsEvent.TOTAL_CALL_DURATION:
+        if (eventIndex !== -1) {
+          eventsQueue[eventIndex].data.duration += data.duration;
+        } else {
+          setEventsQueue((prevEventsQueue) => [...prevEventsQueue, newEvent]);
+        }
+        break;
+      default:
+        const _exhaustiveCheck: never = event;
+        return _exhaustiveCheck;
+    }
   };
 
   useEffect(() => {
