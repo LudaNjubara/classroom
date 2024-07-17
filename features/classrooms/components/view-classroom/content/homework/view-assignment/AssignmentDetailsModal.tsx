@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useDashboardContext } from "@/context";
 import { removeClassroomAssignment } from "@/features/classrooms/api/remove-classroom-assignment";
 import { updateClassroomAssignment } from "@/features/classrooms/api/update-classroom-assignment";
+import { useClassroomAssignmentResources } from "@/features/classrooms/hooks/useClassroomAssignmentResources";
 import { TClassroomAssignmentWithTeacher, TEditedAssignment } from "@/features/classrooms/types";
 import { validateEditedClassroomAssignment } from "@/features/classrooms/utils";
 import { useDisclosure } from "@/hooks/useDisclosure";
@@ -60,6 +61,12 @@ export function AssignmentDetailsModal({
   const [isRevokeAssignmentPending, setIsRevokeAssignmentPending] = useState(false);
 
   // hooks
+  const {
+    data: assignmentResources,
+    isLoading: isAssignmentResourcesLoading,
+    refetch: refetchAssignmentResources,
+  } = useClassroomAssignmentResources(assignment.id);
+
   const { toast } = useToast();
   const {
     isOpen: isRevokeAssignmentModalOpen,
@@ -110,10 +117,12 @@ export function AssignmentDetailsModal({
       setIsUpdateAssignmentPending(true);
 
       const res = await updateClassroomAssignment({
-        id: assignment.id,
-        title: editedAssignment.title,
-        description: editedAssignment.description,
-        dueDate: editedAssignment.dueDate,
+        classroomAssignment: {
+          id: assignment.id,
+          title: editedAssignment.title,
+          description: editedAssignment.description,
+          dueDate: editedAssignment.dueDate,
+        },
       });
 
       toast({
@@ -240,6 +249,8 @@ export function AssignmentDetailsModal({
       {/* Assignment details */}
       <AssignmentDetailsSection
         assignment={assignment}
+        assignmentResources={assignmentResources}
+        isAssignmentResourcesLoading={isAssignmentResourcesLoading}
         editedAssignment={editedAssignment}
         setEditedAssignment={setEditedAssignment}
         editedAssignmentErrors={editedAssignmentErrors}

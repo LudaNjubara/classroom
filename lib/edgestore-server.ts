@@ -120,6 +120,7 @@ const edgeStoreRouter = es.router({
             userRole: ctx.role,
             classroomId: input.classroomId,
             channelId: input.channelId,
+            assignmentId: input.assignmentId,
         })),
 });
 

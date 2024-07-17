@@ -1,7 +1,7 @@
 "use server";
 
 import { API_ENDPOINTS } from "@/constants";
-import { Classroom } from "@prisma/client";
+import { ClassroomAssignment } from "@prisma/client";
 import { cookies } from "next/headers";
 import { TCreateClassroomAssignmentRequestBody } from "../types";
 
@@ -23,5 +23,5 @@ export async function createClassroomAssignment(
         throw new Error(res.error)
     }
 
-    return response.json() as unknown as { classroom: Classroom }
+    return response.json() as unknown as { assignment: ClassroomAssignment }
 };

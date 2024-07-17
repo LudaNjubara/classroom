@@ -22,6 +22,7 @@ export type TFileUploadResponse = {
         userRole: Role;
         classroomId?: string;
         channelId?: string;
+        assignmentId?: string;
     };
     path: Record<string, never>;
     pathOrder: string[];
@@ -160,9 +161,19 @@ export type TDeleteClassroomAssignmentRequestBody = {
 
 export type TEditedAssignment = Pick<TClassroomAssignmentWithTeacher, "title" | "description" | "dueDate">;
 
-export type TUpdateClassroomAssignmentParams = {
+export type TUpdateClassroomAssignmentRequestBody = {
     id: string;
     title: string;
     description: string;
     dueDate: string;
+}
+
+export type TUpdateClassroomAssignmentResourcesRequestBody = {
+    assignmentId: string;
+    resources: TFileUploadResponseWithFilename[];
+}
+
+export type TUpdateClassroomAssignmentParams = {
+    classroomAssignment?: TUpdateClassroomAssignmentRequestBody;
+    assignmentResources?: TUpdateClassroomAssignmentResourcesRequestBody;
 }

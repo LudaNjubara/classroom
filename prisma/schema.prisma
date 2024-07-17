@@ -309,11 +309,15 @@ model Resource {
   channelId String?
   channel   ClassroomChannel? @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
+  assignmentId String?
+  assignment   ClassroomAssignment? @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([classroomId], name: "classroomId")
   @@index([channelId], name: "channelId")
+  @@index([assignmentId], name: "assignmentId")
   @@index([metadataId], name: "metadataId")
   @@map("resources")
 }
@@ -323,11 +327,12 @@ model ResourcesMetadata {
 
   resource Resource?
 
-  profileId   String
-  userId      String
-  userRole    Role
-  classroomId String?
-  channelId   String?
+  profileId    String
+  userId       String
+  userRole     Role
+  classroomId  String?
+  channelId    String?
+  assignmentId String?
 
   @@map("resources_metadata")
 }
@@ -387,6 +392,7 @@ model ClassroomAssignment {
   title       String
   description String                @db.Text
   dueDate     String
+  resources   Resource[]
   solutions   AssignmentSolution[]
   statistics  AssignmentStatistics?
 
