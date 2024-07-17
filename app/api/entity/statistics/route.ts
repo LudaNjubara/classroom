@@ -4,8 +4,6 @@ import { TEventQueue } from "@/types/typings";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-// TODO: make it so that based on an event it has a switch statement that determines to which table to insert the data. I should then split the events into respective arrays and then insert them into the respective tables. Use transactions.
-
 // Type guards
 function isClassroomStatisticsEvent(event: TEventQueue): event is TEventQueue & { event: EClassroomStatisticsEvent } {
     return EClassroomStatisticsEvent[event.event as keyof typeof EClassroomStatisticsEvent] !== undefined;
@@ -225,77 +223,6 @@ function constructCommunicationEventUpdateClause(event: TEventQueue & { event: E
                 totalNumberOfMessages: {
                     increment: event.data.count
                 }
-            }
-    }
-}
-
-// Create clauses
-function constructClassroomEventCreateClause(event: TEventQueue & { event: EClassroomStatisticsEvent }) {
-    switch (event.event) {
-        case EClassroomStatisticsEvent.TOTAL_CLASSROOM_RESOURCE_DOWNLOAD_COUNT:
-            return {
-                classroomId: event.metadata.classroomId!,
-                totalClassroomResourceDownloads: event.data.count
-            }
-    }
-}
-
-function constructAssignmentEventCreateClause(event: TEventQueue & { event: EAssignmentStatisticsEvent }) {
-    switch (event.event) {
-        case EAssignmentStatisticsEvent.SUBMISSIONS_COUNT:
-            return {
-                assignmentId: event.metadata.assignmentId!,
-                submissionsCount: event.data.count
-            }
-        case EAssignmentStatisticsEvent.ON_TIME_SUBMISSIONS_COUNT:
-            return {
-                assignmentId: event.metadata.assignmentId!,
-                onTimeSubmissionsCount: event.data.count
-            }
-        case EAssignmentStatisticsEvent.NOTES_COUNT:
-            return {
-                assignmentId: event.metadata.assignmentId!,
-                notesCount: event.data.count
-            }
-        case EAssignmentStatisticsEvent.DOWNLOADED_RESOURCES_COUNT:
-            return {
-                assignmentId: event.metadata.assignmentId!,
-                downloadedResourcesCount: event.data.count
-            }
-        case EAssignmentStatisticsEvent.LOCKED_SUBMISSIONS_COUNT:
-            return {
-                assignmentId: event.metadata.assignmentId!,
-                lockedSubmissionsCount: event.data.count
-            }
-        case EAssignmentStatisticsEvent.GRADE_SUM_TOTAL:
-            return {
-                assignmentId: event.metadata.assignmentId!,
-                gradeSumTotal: event.data.sum
-            }
-        case EAssignmentStatisticsEvent.GRADE_COUNT:
-            return {
-                assignmentId: event.metadata.assignmentId!,
-                gradeCount: event.data.count
-            }
-    }
-}
-
-function constructCommunicationEventCreateClause(event: TEventQueue & { event: ECommunicationStatisticsEvent }) {
-    switch (event.event) {
-        case ECommunicationStatisticsEvent.TOTAL_CALL_DURATION:
-            return {
-                classroomId: event.metadata.classroomId!,
-                totalCallDuration: event.data.duration
-            }
-        case ECommunicationStatisticsEvent.TOTAL_NUMBER_OF_CALLS:
-            return {
-                classroomId: event.metadata.classroomId!,
-                totalNumberOfCalls: event.data.count
-            }
-        case ECommunicationStatisticsEvent.TOTAL_NUMBER_OF_MESSAGES:
-            return {
-                classroomId: event.metadata.classroomId!,
-                totalNumberOfMessages: event.data.count
             }
     }
 }
