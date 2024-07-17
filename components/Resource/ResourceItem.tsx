@@ -26,11 +26,12 @@ export function ResourceItem({ data, className, statisticsHandler }: TResourceIt
             className
           )}
         >
-          <FileIcon size={24} />
-          <div className="flex w-full items-center justify-between gap-5">
-            <div>
-              <div className="font-bold">{data.name}</div>
-              <div className="text-sm text-slate-500">{formatFileSize(data.size)}</div>
+          <FileIcon size={24} className="shrink-0" />
+
+          <div className="flex flex-1 items-center justify-between gap-5">
+            <div className="flex-1">
+              <p className="font-bold max-w-32 truncate">{data.name}</p>
+              <p className="text-sm text-slate-500">{formatFileSize(data.size)}</p>
             </div>
 
             <Button
