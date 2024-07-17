@@ -3,6 +3,7 @@ import { EdgeStoreProvider } from "@/config/edgestore";
 import { CreateAccount } from "@/features/create-account";
 import { QueryProvider } from "@/providers/query-provider";
 import { SocketProvider } from "@/providers/socket-provider";
+import { StatisticsProvider } from "@/providers/statistics-provider";
 import { TOrganizationWithClassroomsWithStudentsWithTeachers } from "@/types/typings";
 import { Profile } from "@prisma/client";
 
@@ -23,7 +24,9 @@ export function DashboardView({ profile, organizations }: TProps) {
     <EdgeStoreProvider>
       <SocketProvider>
         <QueryProvider>
-          <DashboardLayout contextValue={contextValue} />
+          <StatisticsProvider>
+            <DashboardLayout contextValue={contextValue} />
+          </StatisticsProvider>
         </QueryProvider>
       </SocketProvider>
     </EdgeStoreProvider>

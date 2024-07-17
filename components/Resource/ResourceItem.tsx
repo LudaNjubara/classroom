@@ -13,9 +13,10 @@ const DEFAULT_OPEN_DELAY = 1500;
 type TResourceItemProps = {
   data: TResourceWithMetadata;
   className?: string;
+  statisticsHandler?: () => void;
 };
 
-export function ResourceItem({ data, className }: TResourceItemProps) {
+export function ResourceItem({ data, className, statisticsHandler }: TResourceItemProps) {
   return (
     <HoverCard openDelay={DEFAULT_OPEN_DELAY}>
       <HoverCardTrigger>
@@ -25,17 +26,19 @@ export function ResourceItem({ data, className }: TResourceItemProps) {
             className
           )}
         >
-          <FileIcon size={24} />
-          <div className="flex w-full items-center justify-between gap-5">
-            <div>
-              <div className="font-bold">{data.name}</div>
-              <div className="text-sm text-slate-500">{formatFileSize(data.size)}</div>
+          <FileIcon size={24} className="shrink-0" />
+
+          <div className="flex flex-1 items-center justify-between gap-5">
+            <div className="flex-1">
+              <p className="font-bold max-w-32 truncate">{data.name}</p>
+              <p className="text-sm text-slate-500">{formatFileSize(data.size)}</p>
             </div>
 
             <Button
               size={"icon"}
               className="p-1 dark:bg-slate-600 bg-slate-900 hover:brightness-110 transition-colors duration-300"
               onClick={() => {
+                statisticsHandler?.();
                 window.location.href = getDownloadUrl(data.url, data.name);
               }}
             >
@@ -55,6 +58,9 @@ export function ResourceItem({ data, className }: TResourceItemProps) {
             </p>
 
             <Link
+              onClick={() => {
+                statisticsHandler?.();
+              }}
               href={getDownloadUrl(data.url, data.name)}
               className="flex items-center gap-3 mt-5 font-semibold dark:bg-slate-200 bg-slate-900 rounded-md dark:text-slate-950 text-slate-200 py-2 px-4 "
             >

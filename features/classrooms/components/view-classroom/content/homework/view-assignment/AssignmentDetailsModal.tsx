@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useDashboardContext } from "@/context";
 import { removeClassroomAssignment } from "@/features/classrooms/api/remove-classroom-assignment";
 import { updateClassroomAssignment } from "@/features/classrooms/api/update-classroom-assignment";
+import { useClassroomAssignmentResources } from "@/features/classrooms/hooks/useClassroomAssignmentResources";
 import { TClassroomAssignmentWithTeacher, TEditedAssignment } from "@/features/classrooms/types";
 import { validateEditedClassroomAssignment } from "@/features/classrooms/utils";
 import { useDisclosure } from "@/hooks/useDisclosure";
@@ -24,7 +25,6 @@ import { BanIcon, Edit2Icon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { AssignmentDetailsSection } from "./details-section/AssignmentDetailsSection";
 import { AssignmentSolutionSection } from "./solution-section/AssignmentSolutionSection";
-import { AssignmentHistorySection } from "./tracking-history-section/AssignmentHistorySection";
 
 type TAssignmentDetailsModalProps = {
   assignment: TClassroomAssignmentWithTeacher;
@@ -61,6 +61,12 @@ export function AssignmentDetailsModal({
   const [isRevokeAssignmentPending, setIsRevokeAssignmentPending] = useState(false);
 
   // hooks
+  const {
+    data: assignmentResources,
+    isLoading: isAssignmentResourcesLoading,
+    refetch: refetchAssignmentResources,
+  } = useClassroomAssignmentResources(assignment.id);
+
   const { toast } = useToast();
   const {
     isOpen: isRevokeAssignmentModalOpen,
@@ -111,10 +117,12 @@ export function AssignmentDetailsModal({
       setIsUpdateAssignmentPending(true);
 
       const res = await updateClassroomAssignment({
-        id: assignment.id,
-        title: editedAssignment.title,
-        description: editedAssignment.description,
-        dueDate: editedAssignment.dueDate,
+        classroomAssignment: {
+          id: assignment.id,
+          title: editedAssignment.title,
+          description: editedAssignment.description,
+          dueDate: editedAssignment.dueDate,
+        },
       });
 
       toast({
@@ -222,10 +230,8 @@ export function AssignmentDetailsModal({
                 <AlertDialogTitle>Revoke assignment</AlertDialogTitle>
 
                 <AlertDialogDescription>
-                  <p>
-                    Are you sure you want to revoke current assignment? All student submissions for current
-                    assignment will be removed as well.
-                  </p>
+                  Are you sure you want to revoke current assignment? All student submissions for current
+                  assignment will be removed as well.
                 </AlertDialogDescription>
               </AlertDialogHeader>
 
@@ -243,18 +249,13 @@ export function AssignmentDetailsModal({
       {/* Assignment details */}
       <AssignmentDetailsSection
         assignment={assignment}
+        assignmentResources={assignmentResources}
+        isAssignmentResourcesLoading={isAssignmentResourcesLoading}
         editedAssignment={editedAssignment}
         setEditedAssignment={setEditedAssignment}
         editedAssignmentErrors={editedAssignmentErrors}
         isEditing={isEditing}
       />
-
-      {/* Tracking history */}
-      <div className="bg-slate-900 px-7 py-5 mt-10 rounded-xl overflow-hidden">
-        <h2 className="text-2xl font-medium mb-6">Tracking history</h2>
-
-        <AssignmentHistorySection assignmentId={assignment.id} />
-      </div>
 
       {/* Solution section */}
       <div className="bg-slate-900 px-7 py-5 mt-10 rounded-xl overflow-hidden">
@@ -263,7 +264,12 @@ export function AssignmentDetailsModal({
         </h2>
 
         {profile.role === "STUDENT" ? (
-          <AssignmentSolutionSection viewFor="student" assignmentId={assignment.id} onClose={onClose} />
+          <AssignmentSolutionSection
+            viewFor="student"
+            assignmentId={assignment.id}
+            classroomAssignment={assignment}
+            onClose={onClose}
+          />
         ) : (
           <AssignmentSolutionSection
             viewFor="teacher"

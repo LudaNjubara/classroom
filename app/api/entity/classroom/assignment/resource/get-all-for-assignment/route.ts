@@ -36,18 +36,16 @@ export async function GET(req: NextRequest) {
         }
 
         const { searchParams } = new URL(req.url)
-        const classroomId = searchParams.get('classroomId')
+        const assignmentId = searchParams.get('assignmentId')
 
-        if (!classroomId) {
-            return NextResponse.json({ error: "Invalid query parameter 'classroomId'" }, { status: 400 })
+        if (!assignmentId) {
+            return NextResponse.json({ error: "Invalid query parameter 'assignmentId'" }, { status: 400 })
         }
 
         const resources = await db.resource.findMany({
             where: {
                 metadata: {
-                    classroomId,
-                    channelId: null,
-                    assignmentId: null
+                    assignmentId
                 }
             },
             include: {

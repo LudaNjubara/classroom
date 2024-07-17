@@ -22,6 +22,7 @@ export type TFileUploadResponse = {
         userRole: Role;
         classroomId?: string;
         channelId?: string;
+        assignmentId?: string;
     };
     path: Record<string, never>;
     pathOrder: string[];
@@ -160,9 +161,66 @@ export type TDeleteClassroomAssignmentRequestBody = {
 
 export type TEditedAssignment = Pick<TClassroomAssignmentWithTeacher, "title" | "description" | "dueDate">;
 
-export type TUpdateClassroomAssignmentParams = {
+export type TUpdateClassroomAssignmentRequestBody = {
     id: string;
     title: string;
     description: string;
     dueDate: string;
+}
+
+export type TUpdateClassroomAssignmentResourcesRequestBody = {
+    assignmentId: string;
+    resources: TFileUploadResponseWithFilename[];
+}
+
+export type TUpdateClassroomAssignmentParams = {
+    classroomAssignment?: TUpdateClassroomAssignmentRequestBody;
+    assignmentResources?: TUpdateClassroomAssignmentResourcesRequestBody;
+}
+
+export type TAggregatedClassroomInsight = {
+    base: {
+        classroomResourceDownloads: number;
+    };
+    aggregated: {
+        resourceDownloadRate: number;
+    };
+}
+
+export type TAggregatedAssignmentInsight = {
+    total: {
+        submissionsCount: number;
+        onTimeSubmissionsCount: number;
+        notesCount: number;
+        downloadedResourcesCount: number;
+        lockedSubmissionsCount: number;
+        gradeSumTotal: number;
+        gradeCount: number;
+    };
+    aggregated: {
+        submissionTimeliness: number;
+        assignmentNoteUsage: number;
+        assignmentResourceUsage: number;
+        assignmentCompletionRate: number;
+        gradeDistribution: number;
+    };
+};
+
+export type TAggregatedCommunicationInsight = {
+    base: {
+        callDuration: number;
+        numberOfCalls: number;
+        numberOfMessages: number;
+    };
+    aggregated: {
+        callDuration: number;
+        callFrequency: number;
+        preferredCommMethod: number;
+    };
+};
+
+export type TClassroomInsight = {
+    classroomInsights: TAggregatedClassroomInsight;
+    assignmentInsights: TAggregatedAssignmentInsight;
+    communicationInsights: TAggregatedCommunicationInsight;
 }

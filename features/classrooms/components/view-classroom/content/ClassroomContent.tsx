@@ -7,6 +7,7 @@ import { cn } from "@/utils/cn";
 import { ContentFiles } from "./ContentFiles";
 import { ContentPosts } from "./ContentPosts";
 import { ContentHomework } from "./homework/ContentHomework";
+import { ContentInsights } from "./insights/ContentInsights";
 
 type TClassroomContentProps = {
   className?: string;
@@ -24,7 +25,7 @@ export function ClassroomContent({ className }: TClassroomContentProps) {
   return (
     <div className={cn("w-full bg-slate-400 dark:bg-slate-900 rounded-lg py-2 px-4", className)}>
       {/* Channel name */}
-      <div className="mb-4 flex items-center justify-end bg-slate-900">
+      <div className="mb-4 pb-2 flex items-center justify-end bg-slate-900 border-b-2 border-slate-700/40">
         <CallActions />
       </div>
 
@@ -32,14 +33,20 @@ export function ClassroomContent({ className }: TClassroomContentProps) {
       <TabsContent value="posts">
         <ContentPosts />
       </TabsContent>
+
       <TabsContent value="files">
         <ContentFiles
           classroomResourcesState={classroomResourcesState}
           channelResourcesState={channelResourcesState}
         />
       </TabsContent>
+
       <TabsContent value="homework">
         <ContentHomework />
+      </TabsContent>
+
+      <TabsContent value="insights">
+        <ContentInsights />
       </TabsContent>
     </div>
   );

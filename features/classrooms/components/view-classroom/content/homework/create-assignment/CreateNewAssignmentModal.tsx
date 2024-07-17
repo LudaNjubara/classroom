@@ -1,3 +1,4 @@
+import { FileState } from "@/components/Elements/dropzone/MultiFileDropzone";
 import { Spinner } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { useEdgeStore } from "@/config/edgestore";
 import { createClassroomAssignment } from "@/features/classrooms/api/create-classroom-assignment";
+import { updateClassroomAssignment } from "@/features/classrooms/api/update-classroom-assignment";
+import { ResourcesFormField } from "@/features/classrooms/components/create-classroom/ResourcesFormField";
+import { TFileUploadResponseWithFilename } from "@/features/classrooms/types";
 import { sanitizeInput } from "@/utils/misc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XIcon } from "lucide-react";
@@ -39,6 +44,7 @@ export function CreateNewAssignmentModal({
 }: TCreateNewAssignmentModalProps) {
   // state
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+  const [fileStates, setFileStates] = useState<FileState[]>([]);
 
   // hooks
   const form = useForm({
@@ -51,20 +57,83 @@ export function CreateNewAssignmentModal({
     },
   });
 
+  const { edgestore } = useEdgeStore();
   const { toast } = useToast();
 
   // handlers
+  const updateFileProgress = (key: string, progress: FileState["progress"]) => {
+    setFileStates((fileStates) => {
+      const newFileStates = structuredClone(fileStates);
+      const fileState = newFileStates.find((fileState) => fileState.key === key);
+      if (fileState) {
+        fileState.progress = progress;
+      }
+      return newFileStates;
+    });
+  };
+
+  const handleFileUpload = async ({
+    classroomId,
+    assignmentId,
+  }: {
+    classroomId: string;
+    assignmentId: string;
+  }) => {
+    const uploadResponses: TFileUploadResponseWithFilename[] = [];
+
+    await Promise.all(
+      fileStates.map(async (fileState) => {
+        try {
+          if (fileState.progress !== "PENDING") return;
+
+          const res = await edgestore.publicFiles.upload({
+            input: { classroomId, assignmentId },
+            file: fileState.file,
+            onProgressChange: async (progress) => {
+              updateFileProgress(fileState.key, progress);
+              if (progress === 100) {
+                // wait 1 second to set it to complete
+                // so that the user can see the progress bar
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                updateFileProgress(fileState.key, "COMPLETE");
+              }
+            },
+          });
+          uploadResponses.push({ ...res, filename: fileState.file.name });
+        } catch (err) {
+          updateFileProgress(fileState.key, "ERROR");
+        }
+      })
+    );
+
+    return uploadResponses;
+  };
+
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     setIsFormSubmitting(true);
 
     try {
       // create assignment
-      await createClassroomAssignment({
+      const classroomAssignmentRes = await createClassroomAssignment({
         classroomId,
         title: sanitizeInput(formData.title),
         description: sanitizeInput(formData.description),
         dueDate: sanitizeInput(formData.dueDate),
       });
+
+      const uploadResponses = await handleFileUpload({
+        classroomId,
+        assignmentId: classroomAssignmentRes.assignment.id,
+      });
+
+      if (uploadResponses.length) {
+        await updateClassroomAssignment({
+          assignmentResources: {
+            assignmentId: classroomAssignmentRes.assignment.id,
+            resources: uploadResponses,
+          },
+        });
+      }
 
       toast({
         title: "Assignment created",
@@ -158,6 +227,13 @@ export function CreateNewAssignmentModal({
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+
+              <ResourcesFormField
+                description="Add resources to help students complete the assignment."
+                fileStates={fileStates}
+                setFileStates={setFileStates}
+                className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
               />
             </div>
 

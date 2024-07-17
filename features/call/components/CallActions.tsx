@@ -1,7 +1,7 @@
 import { CustomModal } from "@/components/Elements";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useDisclosure } from "@/hooks/useDisclosure";
-import { TCallType } from "@/types/typings";
+import { ECallType } from "@/types/enums";
 import { Button } from "@components/ui/button";
 import { PhoneCallIcon, VideoIcon } from "lucide-react";
 import { useState } from "react";
@@ -12,13 +12,13 @@ type TCallActionsProps = {};
 
 export function CallActions({}: TCallActionsProps) {
   // state
-  const [callType, setCallType] = useState<TCallType>();
+  const [callType, setCallType] = useState<ECallType>();
 
   // hooks
   const { isOpen: isCallModalOopen, close: closeCallModal, toggle: toggleCallModalOpen } = useDisclosure();
 
   // handlers
-  const handleCreateCall = (callType: TCallType) => {
+  const handleCreateCall = (callType: ECallType) => {
     setCallType(callType);
     toggleCallModalOpen();
   };
@@ -33,7 +33,7 @@ export function CallActions({}: TCallActionsProps) {
                 variant="ghost"
                 size="icon"
                 className="rounded-lg"
-                onClick={() => handleCreateCall("development")}
+                onClick={() => handleCreateCall(ECallType.AUDIO_ROOM)}
               >
                 <PhoneCallIcon size={20} />
               </Button>
@@ -51,7 +51,7 @@ export function CallActions({}: TCallActionsProps) {
                 variant="ghost"
                 size="icon"
                 className="rounded-lg"
-                onClick={() => handleCreateCall("development")}
+                onClick={() => handleCreateCall(ECallType.DEVELOPMENT)}
               >
                 <VideoIcon size={24} />
               </Button>

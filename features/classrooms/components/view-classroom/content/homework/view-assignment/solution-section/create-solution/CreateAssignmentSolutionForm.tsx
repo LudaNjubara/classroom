@@ -17,8 +17,13 @@ import { MAX_ASSIGNMENT_SOLUTION_GRADE } from "@/constants";
 import { createAssignmentSolution } from "@/features/classrooms/api/create-classroom-assignment-solution";
 import { ResourcesFormField } from "@/features/classrooms/components/create-classroom/ResourcesFormField";
 import { useLastUploadedAssignmentSolution } from "@/features/classrooms/hooks/useLastUploadedAssignmentSolution";
-import { TFileUploadResponseWithFilename } from "@/features/classrooms/types";
+import {
+  TClassroomAssignmentWithTeacher,
+  TFileUploadResponseWithFilename,
+} from "@/features/classrooms/types";
+import { useStatistics } from "@/providers/statistics-provider";
 import { useDashboardStore } from "@/stores";
+import { EAssignmentStatisticsEvent } from "@/types/enums";
 import { sanitizeInput } from "@/utils/misc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -31,10 +36,18 @@ const formSchema = z.object({
 
 type TACreateAssignmentSolutionFormProps = {
   assignmentId: string;
+  classroomAssignment: TClassroomAssignmentWithTeacher;
   onClose: () => void;
 };
 
-export function CreateAssignmentSolutionForm({ assignmentId, onClose }: TACreateAssignmentSolutionFormProps) {
+export function CreateAssignmentSolutionForm({
+  assignmentId,
+  classroomAssignment,
+  onClose,
+}: TACreateAssignmentSolutionFormProps) {
+  // context
+  const { trackEvent } = useStatistics();
+
   // zustand state and actions
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
 
@@ -140,6 +153,35 @@ export function CreateAssignmentSolutionForm({ assignmentId, onClose }: TACreate
 
       setFileStates([]);
       form.reset();
+
+      // track statistics
+      trackEvent(
+        EAssignmentStatisticsEvent.SUBMISSIONS_COUNT,
+        { assignmentId },
+        {
+          count: 1,
+        }
+      );
+
+      if (new Date() < new Date(classroomAssignment.dueDate)) {
+        trackEvent(
+          EAssignmentStatisticsEvent.ON_TIME_SUBMISSIONS_COUNT,
+          { assignmentId },
+          {
+            count: 1,
+          }
+        );
+      }
+
+      if (values.note) {
+        trackEvent(
+          EAssignmentStatisticsEvent.NOTES_COUNT,
+          { assignmentId },
+          {
+            count: 1,
+          }
+        );
+      }
     } catch (error) {
       console.error(error);
 

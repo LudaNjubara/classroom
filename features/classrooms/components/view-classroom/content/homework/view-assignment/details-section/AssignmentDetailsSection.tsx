@@ -1,12 +1,23 @@
+import { GridView } from "@/components/Elements";
+import { ResourceItemSkeleton } from "@/components/Loaders";
+import { ResourceItem } from "@/components/Resource";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { TClassroomAssignmentWithTeacher, TEditedAssignment } from "@/features/classrooms/types";
+import {
+  TClassroomAssignmentWithTeacher,
+  TEditedAssignment,
+  TResourceWithMetadata,
+} from "@/features/classrooms/types";
+import { useStatistics } from "@/providers/statistics-provider";
+import { EAssignmentStatisticsEvent } from "@/types/enums";
 import { formatDateTime } from "@/utils/misc";
 
 type TAssignmentDetailsSectionProps = {
   assignment: TClassroomAssignmentWithTeacher;
+  isAssignmentResourcesLoading: boolean;
+  assignmentResources: TResourceWithMetadata[];
   editedAssignment: TEditedAssignment;
   setEditedAssignment: (editedAssignment: TEditedAssignment) => void;
   editedAssignmentErrors: TEditedAssignment;
@@ -15,11 +26,16 @@ type TAssignmentDetailsSectionProps = {
 
 export function AssignmentDetailsSection({
   assignment,
+  assignmentResources,
+  isAssignmentResourcesLoading,
   editedAssignment,
   setEditedAssignment,
   editedAssignmentErrors,
   isEditing,
 }: TAssignmentDetailsSectionProps) {
+  // context
+  const { trackEvent } = useStatistics();
+
   return (
     <div className="mt-5 overflow-hidden rounded-xl">
       <div className=" bg-slate-900 px-7 py-5 text-slate-500 dark:text-slate-100">
@@ -57,6 +73,39 @@ export function AssignmentDetailsSection({
               <p className="text-red-700 text-sm mt-1">{editedAssignmentErrors.dueDate}</p>
             )}
           </div>
+        )}
+      </div>
+
+      <div
+        className={`${isAssignmentResourcesLoading && "pb-5"} ${
+          !isAssignmentResourcesLoading && assignmentResources.length && "pb-5"
+        } ${!isAssignmentResourcesLoading && !assignmentResources.length && "pb-0"}  px-7 bg-slate-900`}
+      >
+        {isAssignmentResourcesLoading && (
+          <GridView className="gap-2">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <ResourceItemSkeleton key={index} />
+            ))}
+          </GridView>
+        )}
+
+        {!isAssignmentResourcesLoading && assignmentResources.length > 0 && (
+          <GridView className="gap-2">
+            {assignmentResources.map((file) => (
+              <ResourceItem
+                key={file.id}
+                data={file}
+                statisticsHandler={() => {
+                  // track statistics
+                  trackEvent(
+                    EAssignmentStatisticsEvent.DOWNLOADED_RESOURCES_COUNT,
+                    { assignmentId: assignment.id },
+                    { count: 1 }
+                  );
+                }}
+              />
+            ))}
+          </GridView>
         )}
       </div>
 

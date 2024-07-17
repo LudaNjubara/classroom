@@ -5,7 +5,7 @@ import { ClassroomAssignment } from "@prisma/client";
 import { cookies } from "next/headers";
 import { TUpdateClassroomAssignmentParams } from "../types";
 
-export async function updateClassroomAssignment(classroomAssignment: TUpdateClassroomAssignmentParams) {
+export async function updateClassroomAssignment({ classroomAssignment, assignmentResources }: TUpdateClassroomAssignmentParams) {
     const response = await fetch(API_ENDPOINTS.CLASSROOM.ASSIGNMENT.UPDATE, {
         method: "PUT",
         headers: {
@@ -13,7 +13,8 @@ export async function updateClassroomAssignment(classroomAssignment: TUpdateClas
             Cookie: cookies().toString(),
         },
         body: JSON.stringify({
-            classroomAssignment
+            classroomAssignment,
+            assignmentResources,
         }),
     });
 

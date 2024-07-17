@@ -45,6 +45,9 @@ export const API_ENDPOINTS = {
             GET_ALL: `${BASE_API_ENDPOINT}/entity/classroom/assignment/get-all`,
             UPDATE: `${BASE_API_ENDPOINT}/entity/classroom/assignment`,
             REMOVE: `${BASE_API_ENDPOINT}/entity/classroom/assignment/remove`,
+            RESOURCE: {
+                GET_ALL_FOR_ASSIGNMENT: `${BASE_API_ENDPOINT}/entity/classroom/assignment/resource/get-all-for-assignment`,
+            }
         },
         ASSIGNMENT_SOLUTION: {
             CREATE: `${BASE_API_ENDPOINT}/entity/classroom/assignment-solution`,
@@ -70,6 +73,20 @@ export const API_ENDPOINTS = {
     CALL: {
         GENERATE_TOKEN: `${BASE_API_ENDPOINT}/entity/call/generate-client-token`,
     },
+    STATISTICS: `${BASE_API_ENDPOINT}/entity/statistics`,
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,
+} as const
+
+export const HTTP_STATUS_CODES = {
+    OK: 200,
+    CREATED: 201,
+    NO_CONTENT: 204,
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
+    NOT_FOUND: 404,
+    CONFLICT: 409,
+    UNPROCESSABLE_CONTENT: 422,
+    INTERNAL_SERVER_ERROR: 500,
 } as const

@@ -5,11 +5,16 @@ import { useToast } from "@/components/ui/use-toast";
 import { useEdgeStore } from "@/config/edgestore";
 import { sendMessage, updateClassroom } from "@/features/classrooms/api";
 import { TFileUploadResponseWithFilename } from "@/features/classrooms/types";
+import { useStatistics } from "@/providers/statistics-provider";
 import { useDashboardStore } from "@/stores";
+import { ECommunicationStatisticsEvent } from "@/types/enums";
 import { sanitizeInput } from "@/utils/misc";
 import { FormEvent, RefObject, useState } from "react";
 
 export function ContentPosts() {
+  // context
+  const { trackEvent } = useStatistics();
+
   // zustand state and actions
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
   const selectedChannel = useDashboardStore((state) => state.selectedChannel);
@@ -109,6 +114,13 @@ export function ContentPosts() {
         console.log("Message sent successfully");
         inputRef.current.value = "";
         inputRef.current.focus();
+
+        // track statistics
+        trackEvent(
+          ECommunicationStatisticsEvent.TOTAL_NUMBER_OF_MESSAGES,
+          { classroomId: selectedClassroom.id },
+          { count: 1 }
+        );
       }
     } catch (error) {
       console.log("Error sending message", error);
