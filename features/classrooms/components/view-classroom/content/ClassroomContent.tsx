@@ -7,6 +7,7 @@ import { cn } from "@/utils/cn";
 import { ContentFiles } from "./ContentFiles";
 import { ContentPosts } from "./ContentPosts";
 import { ContentHomework } from "./homework/ContentHomework";
+import { ContentInsights } from "./insights/ContentInsights";
 
 type TClassroomContentProps = {
   className?: string;
@@ -32,14 +33,20 @@ export function ClassroomContent({ className }: TClassroomContentProps) {
       <TabsContent value="posts">
         <ContentPosts />
       </TabsContent>
+
       <TabsContent value="files">
         <ContentFiles
           classroomResourcesState={classroomResourcesState}
           channelResourcesState={channelResourcesState}
         />
       </TabsContent>
+
       <TabsContent value="homework">
         <ContentHomework />
+      </TabsContent>
+
+      <TabsContent value="insights">
+        <ContentInsights />
       </TabsContent>
     </div>
   );

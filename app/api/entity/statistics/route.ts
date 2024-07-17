@@ -1,7 +1,10 @@
 import { db } from "@/config";
+import { MIN_NUM_OF_ASSIGNMENT_STATISTICS_FOR_AGGREGATION, MIN_NUM_OF_ASSIGNMENT_STATISTICS_SUBMISSIONS_COUNT_FOR_AGGREGATION, MIN_NUM_OF_CLASSROOM_STATISTICS_RESOURCES_DOWNLOADS_COUNT_FOR_AGGREGATION, MIN_NUM_OF_COMM_STATISTICS_CALLS_COUNT_FOR_AGGREGATION, MIN_NUM_OF_COMM_STATISTICS_MESSAGES_COUNT_FOR_AGGREGATION } from "@/constants";
+import { TAggregatedAssignmentInsight, TAggregatedClassroomInsight, TAggregatedCommunicationInsight, TClassroomInsight } from "@/features/classrooms/types";
 import { EAssignmentStatisticsEvent, EClassroomStatisticsEvent, ECommunicationStatisticsEvent } from "@/types/enums";
 import { TEventQueue } from "@/types/typings";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 // Type guards
@@ -321,5 +324,203 @@ export async function PUT(req: NextRequest) {
         } else {
             return NextResponse.json({ error: "Internal server error" }, { status: 500 });
         }
+    }
+}
+
+type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST" | "STUDENT">;
+
+export async function GET(req: NextRequest) {
+    try {
+        const { isAuthenticated, getUser } = getKindeServerSession();
+
+        if (!await isAuthenticated()) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        const user = await getUser();
+
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        const profile = await db.profile.findUnique({
+            where: {
+                kindeId: user.id,
+            },
+        });
+
+        if (!profile) {
+            return NextResponse.json({ error: "Profile not found" }, { status: 404 })
+        }
+
+        const allowedRoles: TAllowedRoles[] = ["TEACHER", "ORGANIZATION"];
+
+        if (!allowedRoles.includes(profile.role as TAllowedRoles)) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { searchParams } = new URL(req.url);
+        const classroomId = searchParams.get("classroomId");
+        const sinceDate = searchParams.get("sinceDate") || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(); // If not provided, use the date from a week ago
+
+        if (!classroomId) {
+            return NextResponse.json({ error: "Missing classroomId" }, { status: 400 });
+        }
+
+        // Classroom statistics
+        const classroomStatistics = await db.classroomStatistics.findUnique({
+            where: {
+                classroomId,
+            },
+        });
+
+        if (!classroomStatistics) {
+            return NextResponse.json({ error: "Classroom statistics not found" }, { status: 404 });
+        }
+
+        if (classroomStatistics.totalClassroomResourceDownloads < MIN_NUM_OF_CLASSROOM_STATISTICS_RESOURCES_DOWNLOADS_COUNT_FOR_AGGREGATION) {
+            console.log("Expected", MIN_NUM_OF_CLASSROOM_STATISTICS_RESOURCES_DOWNLOADS_COUNT_FOR_AGGREGATION, "got", classroomStatistics.totalClassroomResourceDownloads);
+            return NextResponse.json({ error: "Not enough data to compute classroom statistics" }, { status: 422 });
+        }
+
+        // Assignment statistics
+        const assignments = await db.classroomAssignment.findMany({
+            where: {
+                classroomId,
+            },
+        });
+
+        const assignmentIds = assignments.map((assignment) => assignment.id);
+
+        const assignmentStatistics = await db.assignmentStatistics.findMany({
+            where: {
+                assignmentId: {
+                    in: assignmentIds,
+                },
+            },
+        });
+
+        if (assignmentStatistics.length < MIN_NUM_OF_ASSIGNMENT_STATISTICS_FOR_AGGREGATION) {
+            console.log("Expected", MIN_NUM_OF_ASSIGNMENT_STATISTICS_FOR_AGGREGATION, "got", assignmentStatistics.length);
+            return NextResponse.json({ error: "Not enough data to compute assignment statistics" }, { status: 422 });
+        }
+
+        // Communication statistics
+        const communicationStatistics = await db.communicationStatistics.findUnique({
+            where: {
+                classroomId,
+            },
+        });
+
+        if (!communicationStatistics) {
+            return NextResponse.json({ error: "Communication statistics not found" }, { status: 404 });
+        }
+
+        if (communicationStatistics.totalNumberOfCalls + 14 < MIN_NUM_OF_COMM_STATISTICS_CALLS_COUNT_FOR_AGGREGATION
+            || communicationStatistics.totalNumberOfMessages < MIN_NUM_OF_COMM_STATISTICS_MESSAGES_COUNT_FOR_AGGREGATION) {
+            console.log("Expected", MIN_NUM_OF_COMM_STATISTICS_CALLS_COUNT_FOR_AGGREGATION, "got", communicationStatistics.totalNumberOfCalls);
+            console.log("Expected", MIN_NUM_OF_COMM_STATISTICS_MESSAGES_COUNT_FOR_AGGREGATION, "got", communicationStatistics.totalNumberOfMessages);
+            return NextResponse.json({ error: "Not enough data to compute communication statistics" }, { status: 422 });
+        }
+
+        // Total number of students in the classroom
+        const studentsCount = await db.classroomStudent.count({
+            where: {
+                classroomId,
+            },
+        });
+
+        // Final classroom statistics
+        const classroomResourcesCount = await db.resourcesMetadata.count({
+            where: {
+                classroomId,
+                channelId: null,
+            },
+        });
+
+        const finalClassroomStatistics: TAggregatedClassroomInsight = {
+            base: {
+                classroomResourceDownloads: classroomStatistics.totalClassroomResourceDownloads,
+            },
+            aggregated: {
+                resourceDownloadRate: ((classroomResourcesCount * studentsCount) / classroomStatistics.totalClassroomResourceDownloads) || 0,
+            },
+        };
+
+        // Final assignment statistics
+        const computedAssignmentStatistics = assignmentStatistics.reduce((acc, curr) => {
+            acc.submissionsCount += curr.submissionsCount;
+            acc.onTimeSubmissionsCount += curr.onTimeSubmissionsCount;
+            acc.notesCount += curr.notesCount;
+            acc.downloadedResourcesCount += curr.downloadedResourcesCount;
+            acc.lockedSubmissionsCount += curr.lockedSubmissionsCount;
+            acc.gradeSumTotal += curr.gradeSumTotal;
+            acc.gradeCount += curr.gradeCount;
+
+            return acc;
+        }, {
+            submissionsCount: 0,
+            onTimeSubmissionsCount: 0,
+            notesCount: 0,
+            downloadedResourcesCount: 0,
+            lockedSubmissionsCount: 0,
+            gradeSumTotal: 0,
+            gradeCount: 0,
+        });
+
+        if (computedAssignmentStatistics.submissionsCount < MIN_NUM_OF_ASSIGNMENT_STATISTICS_SUBMISSIONS_COUNT_FOR_AGGREGATION) {
+            console.log("Expected", MIN_NUM_OF_ASSIGNMENT_STATISTICS_SUBMISSIONS_COUNT_FOR_AGGREGATION, "got", computedAssignmentStatistics.submissionsCount);
+            return NextResponse.json({ error: "Not enough data to compute assignment statistics" }, { status: 422 });
+        }
+
+        const assignmentResourcesCount = await db.resourcesMetadata.count({
+            where: {
+                classroomId,
+                assignmentId: {
+                    in: assignmentIds,
+                },
+                channelId: null,
+            },
+        });
+
+        const finalAssignmentStatistics: TAggregatedAssignmentInsight = {
+            total: { ...computedAssignmentStatistics },
+            aggregated: {
+                submissionTimeliness: computedAssignmentStatistics.onTimeSubmissionsCount / computedAssignmentStatistics.submissionsCount,
+                assignmentNoteUsage: computedAssignmentStatistics.notesCount / computedAssignmentStatistics.submissionsCount,
+                assignmentResourceUsage: (computedAssignmentStatistics.downloadedResourcesCount / (studentsCount * assignmentResourcesCount)) || 0,
+                assignmentCompletionRate: (computedAssignmentStatistics.lockedSubmissionsCount / studentsCount) || 0,
+                gradeDistribution: (computedAssignmentStatistics.gradeSumTotal / computedAssignmentStatistics.gradeCount) || 0,
+            },
+        };
+
+        // Final communication statistics
+        const numberOfDays = (new Date().getTime() - new Date(sinceDate).getTime()) / (24 * 60 * 60 * 1000);
+
+        const finalCommunicationStatistics: TAggregatedCommunicationInsight = {
+            base: {
+                callDuration: communicationStatistics.totalCallDuration,
+                numberOfCalls: communicationStatistics.totalNumberOfCalls,
+                numberOfMessages: communicationStatistics.totalNumberOfMessages,
+            },
+            aggregated: {
+                callDuration: (communicationStatistics.totalCallDuration / communicationStatistics.totalNumberOfCalls) || 0,
+                callFrequency: communicationStatistics.totalNumberOfCalls / numberOfDays,
+                preferredCommMethod: (communicationStatistics.totalNumberOfCalls / communicationStatistics.totalNumberOfMessages) || 0,
+            },
+        };
+
+        const data: TClassroomInsight = {
+            classroomInsights: finalClassroomStatistics,
+            assignmentInsights: finalAssignmentStatistics,
+            communicationInsights: finalCommunicationStatistics,
+        };
+
+        console.log("data", data);
+
+        return NextResponse.json({ data }, { status: 200 });
+
+    } catch (error) {
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
