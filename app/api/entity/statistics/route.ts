@@ -440,10 +440,21 @@ export async function GET(req: NextRequest) {
 
         const finalClassroomStatistics: TAggregatedClassroomInsight = {
             base: {
-                classroomResourceDownloads: classroomStatistics.totalClassroomResourceDownloads,
+                classroomResourceDownloads: {
+                    title: "Classroom Resource Downloads",
+                    description: "Total number of classroom resources downloaded",
+                    value: classroomStatistics.totalClassroomResourceDownloads
+                },
             },
             aggregated: {
-                resourceDownloadRate: ((classroomResourcesCount * studentsCount) / classroomStatistics.totalClassroomResourceDownloads) || 0,
+                resourceDownloadRate: {
+                    title: "Resource Download Rate",
+                    description: "Percentage of resources students engage with",
+                    meaning: "This metric represents the percentage of provided resources downloaded, indicating the level of engagement and material utilization.",
+                    howItWorks: "It compares the total number of classroom resources downloaded to the total number of resources available in the classroom.",
+                    value: ((classroomResourcesCount * studentsCount) / classroomStatistics.totalClassroomResourceDownloads) || 0,
+                    representAs: "percentage"
+                },
             },
         };
 
@@ -484,13 +495,84 @@ export async function GET(req: NextRequest) {
         });
 
         const finalAssignmentStatistics: TAggregatedAssignmentInsight = {
-            total: { ...computedAssignmentStatistics },
+            total: {
+                submissionsCount: {
+                    title: "Submissions Count",
+                    description: "Total number of submissions ",
+                    value: computedAssignmentStatistics.submissionsCount
+                },
+                onTimeSubmissionsCount: {
+                    title: "On Time Submissions Count",
+                    description: "Total number of on-time submissions",
+                    value: computedAssignmentStatistics.onTimeSubmissionsCount
+                },
+                notesCount: {
+                    title: "Notes Count",
+                    description: "Total number of notes",
+                    value: computedAssignmentStatistics.notesCount
+                },
+                downloadedResourcesCount: {
+                    title: "Downloaded Resources Count",
+                    description: "Total number of resources downloaded",
+                    value: computedAssignmentStatistics.downloadedResourcesCount
+                },
+                lockedSubmissionsCount: {
+                    title: "Locked Submissions Count",
+                    description: "Total number of completed submissions",
+                    value: computedAssignmentStatistics.lockedSubmissionsCount
+                },
+                gradeSumTotal: {
+                    title: "Grade Sum Total",
+                    description: "Total sum of grades",
+                    value: computedAssignmentStatistics.gradeSumTotal
+                },
+                gradeCount: {
+                    title: "Grade Count",
+                    description: "Total number of grades",
+                    value: computedAssignmentStatistics.gradeCount
+                },
+            },
             aggregated: {
-                submissionTimeliness: computedAssignmentStatistics.onTimeSubmissionsCount / computedAssignmentStatistics.submissionsCount,
-                assignmentNoteUsage: computedAssignmentStatistics.notesCount / computedAssignmentStatistics.submissionsCount,
-                assignmentResourceUsage: (computedAssignmentStatistics.downloadedResourcesCount / (studentsCount * assignmentResourcesCount)) || 0,
-                assignmentCompletionRate: (computedAssignmentStatistics.lockedSubmissionsCount / studentsCount) || 0,
-                gradeDistribution: (computedAssignmentStatistics.gradeSumTotal / computedAssignmentStatistics.gradeCount) || 0,
+                submissionTimeliness: {
+                    title: "Submission Timeliness",
+                    description: "Percentage of on-time submissions",
+                    meaning: "This metric represents the percentage of submissions uploaded before the assignment's due date, indicating the level of student engagement and timeliness in assignment completion.",
+                    howItWorks: "It compares the total number of on-time submissions to the total number of submissions.",
+                    value: (computedAssignmentStatistics.onTimeSubmissionsCount / computedAssignmentStatistics.submissionsCount) || 0,
+                    representAs: "percentage"
+                },
+                assignmentNoteUsage: {
+                    title: "Assignment Note Usage",
+                    description: "Percentage of submissions with notes",
+                    meaning: "This metric represents the percentage of submissions taken in which there were provided student notes, indicating the level of student engagement and note-taking behavior.",
+                    howItWorks: "It compares the total number of notes to the total number of submissions.",
+                    value: (computedAssignmentStatistics.notesCount / computedAssignmentStatistics.submissionsCount) || 0,
+                    representAs: "percentage"
+                },
+                assignmentResourceUsage: {
+                    title: "Assignment Resource Usage",
+                    description: "Percentage of resources downloaded",
+                    meaning: "This metric represents the percentage of resources downloaded compared to the total number of resources available, indicating the level of student engagement and resource utilization.",
+                    howItWorks: "It compares the total number of resources downloaded to the number of resources downloaded if each student were to download all resources exactly once.",
+                    value: (computedAssignmentStatistics.downloadedResourcesCount / (studentsCount * assignmentResourcesCount)) || 0,
+                    representAs: "percentage"
+                },
+                assignmentCompletionRate: {
+                    title: "Assignment Completion Rate",
+                    description: "Percentage of completed submissions",
+                    meaning: "This metric represents the percentage of submissions which were graded and locked for any further edits, indicating the level of student engagement and assignment completion rate.",
+                    howItWorks: "It compares the total number of completed submissions to the total number of submissions.",
+                    value: (computedAssignmentStatistics.lockedSubmissionsCount / studentsCount / assignments.length) || 0,
+                    representAs: "percentage"
+                },
+                gradeDistribution: {
+                    title: "Grade Distribution",
+                    description: "Average grade distribution",
+                    meaning: "This metric represents the average grade distribution, indicating the level of student performance and grade distribution.",
+                    howItWorks: "It compares the total sum of grades to the total number of grades.",
+                    value: (computedAssignmentStatistics.gradeSumTotal / computedAssignmentStatistics.gradeCount) || 0,
+                    representAs: "number"
+                },
             },
         };
 
@@ -499,14 +581,47 @@ export async function GET(req: NextRequest) {
 
         const finalCommunicationStatistics: TAggregatedCommunicationInsight = {
             base: {
-                callDuration: communicationStatistics.totalCallDuration,
-                numberOfCalls: communicationStatistics.totalNumberOfCalls,
-                numberOfMessages: communicationStatistics.totalNumberOfMessages,
+                callDuration: {
+                    title: "Call Duration",
+                    description: "Total duration of calls made",
+                    value: communicationStatistics.totalCallDuration
+                },
+                numberOfCalls: {
+                    title: "Number of Calls",
+                    description: "Total number of calls made",
+                    value: communicationStatistics.totalNumberOfCalls
+                },
+                numberOfMessages: {
+                    title: "Number of Messages",
+                    description: "Total number of messages sent",
+                    value: communicationStatistics.totalNumberOfMessages
+                },
             },
             aggregated: {
-                callDuration: (communicationStatistics.totalCallDuration / communicationStatistics.totalNumberOfCalls) || 0,
-                callFrequency: communicationStatistics.totalNumberOfCalls / numberOfDays,
-                preferredCommMethod: (communicationStatistics.totalNumberOfCalls / communicationStatistics.totalNumberOfMessages) || 0,
+                callDuration: {
+                    title: "Call Duration",
+                    description: "Average duration of calls made",
+                    meaning: "This metric represents the average call duration made by members of the classroom, indicating the level of communication and engagement.",
+                    howItWorks: "It compares the total call duration to the total number of calls made.",
+                    value: (communicationStatistics.totalCallDuration / communicationStatistics.totalNumberOfCalls) || 0,
+                    representAs: "number"
+                },
+                callFrequency: {
+                    title: "Call Frequency",
+                    description: "Average number of calls made in the last week",
+                    meaning: "This metric represents the average number of calls made by members of the classroom in the last week, indicating the level of communication and engagement.",
+                    howItWorks: "It compares the total number of calls made in the last week to the number of days in the last week.",
+                    value: communicationStatistics.totalNumberOfCalls / numberOfDays, // TODO: promijeniti tako da communicationStatistics.totalNumberOfCalls zapravo gleda zadnjih numberOfDays dana
+                    representAs: "number"
+                },
+                preferredCommMethod: {
+                    title: "Preferred Communication Method",
+                    description: "The preferred communication method used",
+                    meaning: "This metric represents the preferred communication method used by members of the classroom.",
+                    howItWorks: "It compares the total number of calls to the total number of messages sent.",
+                    value: (communicationStatistics.totalNumberOfCalls / communicationStatistics.totalNumberOfMessages) || 0,
+                    representAs: "number"
+                },
             },
         };
 

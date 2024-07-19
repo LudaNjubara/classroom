@@ -5,6 +5,7 @@ import { HTTP_STATUS_CODES } from "@/constants";
 import { useClassroomInsights } from "@/features/classrooms/hooks/useClassroomInsights";
 import { useDashboardStore } from "@/stores";
 import { InfoIcon, RotateCwIcon } from "lucide-react";
+import { InsightDetailsPanel } from "./InsightDetailsPanel";
 
 export function ContentInsights() {
   // zustand state and actions
@@ -21,8 +22,6 @@ export function ContentInsights() {
   return (
     <div>
       <div>
-        <h2 className="text-lg mb-3 font-semibold">Classroom Insights</h2>
-
         {isInsightsLoading && <Spinner />}
 
         {!isInsightsLoading &&
@@ -71,7 +70,7 @@ export function ContentInsights() {
           ))}
 
         {!isInsightsLoading && !!insights && (
-          <p>{insights.assignmentInsights.aggregated.assignmentCompletionRate}</p>
+          <InsightDetailsPanel insights={insights} modes={["base", "total", "aggregated"]} className="mt-8" />
         )}
       </div>
 

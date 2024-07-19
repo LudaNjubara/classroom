@@ -178,44 +178,56 @@ export type TUpdateClassroomAssignmentParams = {
     assignmentResources?: TUpdateClassroomAssignmentResourcesRequestBody;
 }
 
+export type TClassroomInsightBaseItem = {
+    title: string;
+    description: string;
+    value: number;
+}
+
+export type TClassroomInsightAggregatedItem = TClassroomInsightBaseItem & {
+    meaning: string;
+    howItWorks: string;
+    representAs: "number" | "percentage";
+}
+
 export type TAggregatedClassroomInsight = {
     base: {
-        classroomResourceDownloads: number;
+        classroomResourceDownloads: TClassroomInsightBaseItem;
     };
     aggregated: {
-        resourceDownloadRate: number;
+        resourceDownloadRate: TClassroomInsightAggregatedItem;
     };
 }
 
 export type TAggregatedAssignmentInsight = {
     total: {
-        submissionsCount: number;
-        onTimeSubmissionsCount: number;
-        notesCount: number;
-        downloadedResourcesCount: number;
-        lockedSubmissionsCount: number;
-        gradeSumTotal: number;
-        gradeCount: number;
+        submissionsCount: TClassroomInsightBaseItem;
+        onTimeSubmissionsCount: TClassroomInsightBaseItem;
+        notesCount: TClassroomInsightBaseItem;
+        downloadedResourcesCount: TClassroomInsightBaseItem;
+        lockedSubmissionsCount: TClassroomInsightBaseItem;
+        gradeSumTotal: TClassroomInsightBaseItem;
+        gradeCount: TClassroomInsightBaseItem;
     };
     aggregated: {
-        submissionTimeliness: number;
-        assignmentNoteUsage: number;
-        assignmentResourceUsage: number;
-        assignmentCompletionRate: number;
-        gradeDistribution: number;
+        submissionTimeliness: TClassroomInsightAggregatedItem;
+        assignmentNoteUsage: TClassroomInsightAggregatedItem;
+        assignmentResourceUsage: TClassroomInsightAggregatedItem;
+        assignmentCompletionRate: TClassroomInsightAggregatedItem;
+        gradeDistribution: TClassroomInsightAggregatedItem;
     };
 };
 
 export type TAggregatedCommunicationInsight = {
     base: {
-        callDuration: number;
-        numberOfCalls: number;
-        numberOfMessages: number;
+        callDuration: TClassroomInsightBaseItem;
+        numberOfCalls: TClassroomInsightBaseItem;
+        numberOfMessages: TClassroomInsightBaseItem;
     };
     aggregated: {
-        callDuration: number;
-        callFrequency: number;
-        preferredCommMethod: number;
+        callDuration: TClassroomInsightAggregatedItem;
+        callFrequency: TClassroomInsightAggregatedItem;
+        preferredCommMethod: TClassroomInsightAggregatedItem;
     };
 };
 
