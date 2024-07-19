@@ -631,8 +631,6 @@ export async function GET(req: NextRequest) {
             communicationInsights: finalCommunicationStatistics,
         };
 
-        console.log("data", data);
-
         return NextResponse.json({ data }, { status: 200 });
 
     } catch (error) {
