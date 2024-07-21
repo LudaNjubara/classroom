@@ -1,3 +1,5 @@
+import { Role } from "@prisma/client";
+
 export const CLASSROOM_ACCENT_COLORS = [
     {
         value: "#F87171",
@@ -28,3 +30,5 @@ export const CLASSROOM_ACCENT_COLORS = [
         label: "Orange",
     },
 ] as const;
+
+export const ALLOWED_ROLES_TO_SEND_MESSAGES: Role[] = ["STUDENT", "TEACHER"] as const;

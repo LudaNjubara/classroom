@@ -24,9 +24,16 @@ type TMessageInputProps = {
   fileStates: FileState[];
   setFileStates: (fileStates: FileState[]) => void;
   isDisabled: boolean;
+  isSubmitting: boolean;
 };
 
-export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStates }: TMessageInputProps) {
+export function MessageInput({
+  handleSubmit,
+  isDisabled,
+  isSubmitting,
+  fileStates,
+  setFileStates,
+}: TMessageInputProps) {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -118,7 +125,11 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
   })();
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 flex gap-2 bg-slate-400 dark:bg-slate-900 py-2">
+    <div
+      className={`absolute bottom-0 left-0 right-0 flex gap-2 bg-slate-400 dark:bg-slate-900 py-2 ${
+        isDisabled && "pointer-events-none cursor-not-allowed"
+      }`}
+    >
       {/* File upload */}
       {isFilesOpen && (
         <div className="absolute bottom-full left-0 w-full px-5 pt-2 pb-3 bg-inherit rounded-tl-xl rounded-tr-xl border border-b-0 border-slate-800  shadow-sm animate-pop-up duration-300">
@@ -185,7 +196,7 @@ export function MessageInput({ handleSubmit, isDisabled, fileStates, setFileStat
       <form className="flex flex-1 gap-2" onSubmit={(e) => handleSubmit(e, inputRef)}>
         <Input ref={inputRef} placeholder="Type a message..." name="message" disabled={isDisabled} />
         <Button variant={"secondary"} disabled={isDisabled}>
-          {isDisabled ? <Spinner /> : <SendIcon size={16} />}
+          {isSubmitting ? <Spinner /> : <SendIcon size={16} />}
         </Button>
       </form>
     </div>
