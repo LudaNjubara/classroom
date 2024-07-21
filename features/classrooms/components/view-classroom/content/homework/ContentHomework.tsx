@@ -41,7 +41,7 @@ export function ContentHomework() {
   };
 
   return (
-    <div className="relative pb-4 pr-2 max-h-[420px] overflow-y-auto">
+    <div className="relative pb-4 pr-2 max-h-[390px] overflow-y-auto">
       {/* Homework content */}
       {isClassroomAssignmentsLoading && (
         <GridView className="md:grid-cols-1 lg:grid-cols-1 gap-2">
