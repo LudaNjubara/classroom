@@ -1,5 +1,6 @@
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDashboardContext } from "@/context";
+import { useMiscStore } from "@/stores";
 import { cn } from "@/utils/cn";
 
 type TClassroomHeaderProps = {
@@ -10,8 +11,11 @@ export function ClassroomContentHeader({ className }: TClassroomHeaderProps) {
   // context
   const { profile } = useDashboardContext();
 
+  // zustand state and actions
+  const numOfModalsOpen = useMiscStore((state) => state.numOfModalsOpen);
+
   return (
-    <header className={cn("z-50", className)}>
+    <header className={cn(`${numOfModalsOpen === 2 && "z-10"}`, className)}>
       <TabsList className={`grid w-full gap-1 ${profile.role !== "STUDENT" ? "grid-cols-4" : "grid-cols-3"}`}>
         <TabsTrigger className="hover:bg-slate-300/80 dark:hover:bg-slate-900/80" value="posts">
           Posts
