@@ -11,6 +11,7 @@ import { useStatistics } from "@/providers/statistics-provider";
 import { useDashboardStore } from "@/stores";
 import { ECommunicationStatisticsEvent } from "@/types/enums";
 import { sanitizeInput } from "@/utils/misc";
+import Image from "next/image";
 import { FormEvent, RefObject, useState } from "react";
 
 export function ContentPosts() {
@@ -141,8 +142,11 @@ export function ContentPosts() {
 
   if (!selectedChannel)
     return (
-      <div>
-        <p className="text-base font-semibold text-slate-700">Select a channel to view posts</p>
+      <div className="flex flex-col items-center justify-center gap-5 py-8 tracking-wide">
+        <Image src="/no-channels.svg" alt="No channels" width={230} height={230} className="opacity-70" />
+        <p className="text-slate-500 text-lg font-semibold">
+          No channels yet. Create them to view their posts
+        </p>
       </div>
     );
 
