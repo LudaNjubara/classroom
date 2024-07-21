@@ -11,7 +11,7 @@ export function ClassroomContentHeader({ className }: TClassroomHeaderProps) {
   const { profile } = useDashboardContext();
 
   return (
-    <header className={cn("", className)}>
+    <header className={cn("z-50", className)}>
       <TabsList className={`grid w-full gap-1 ${profile.role !== "STUDENT" ? "grid-cols-4" : "grid-cols-3"}`}>
         <TabsTrigger className="hover:bg-slate-300/80 dark:hover:bg-slate-900/80" value="posts">
           Posts
