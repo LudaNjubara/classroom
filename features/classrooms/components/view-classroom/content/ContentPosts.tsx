@@ -116,7 +116,6 @@ export function ContentPosts() {
       });
 
       if (messageData && inputRef.current) {
-        console.log("Message sent successfully");
         inputRef.current.value = "";
         inputRef.current.focus();
 

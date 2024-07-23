@@ -90,12 +90,7 @@ export const StatisticsProvider = ({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
-      console.log("Trying to send statistics");
-
-      if (eventsQueueRef.current.length === 0) {
-        console.log("No statistics to send");
-        return;
-      }
+      if (eventsQueueRef.current.length === 0) return;
 
       try {
         const resData = await sendStatistics(eventsQueueRef.current);
