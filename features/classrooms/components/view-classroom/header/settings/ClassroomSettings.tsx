@@ -51,7 +51,9 @@ export function ClassroomSettings({ toggleModal }: TClassroomSettingsProps) {
       <div className="flex justify-between">
         <div>
           <h2 className="text-2xl font-medium">
-            <span style={{ color: accentColors[selectedClassroom!.id].base }}>{selectedClassroom?.name}</span>
+            <span style={{ color: accentColors[selectedClassroom!.id]?.base }}>
+              {selectedClassroom?.name}
+            </span>
             &apos;s settings
           </h2>
           <p className="text-slate-600">View and manage settings related to the current classroom.</p>

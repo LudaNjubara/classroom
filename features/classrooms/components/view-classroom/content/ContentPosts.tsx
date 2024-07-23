@@ -3,16 +3,20 @@ import { MessageInput } from "@/components/Elements";
 import { FileState } from "@/components/Elements/dropzone/MultiFileDropzone";
 import { useToast } from "@/components/ui/use-toast";
 import { useEdgeStore } from "@/config/edgestore";
+import { useDashboardContext } from "@/context";
 import { sendMessage, updateClassroom } from "@/features/classrooms/api";
+import { ALLOWED_ROLES_TO_SEND_MESSAGES } from "@/features/classrooms/constants";
 import { TFileUploadResponseWithFilename } from "@/features/classrooms/types";
 import { useStatistics } from "@/providers/statistics-provider";
 import { useDashboardStore } from "@/stores";
 import { ECommunicationStatisticsEvent } from "@/types/enums";
 import { sanitizeInput } from "@/utils/misc";
+import Image from "next/image";
 import { FormEvent, RefObject, useState } from "react";
 
 export function ContentPosts() {
   // context
+  const { profile } = useDashboardContext();
   const { trackEvent } = useStatistics();
 
   // zustand state and actions
@@ -78,7 +82,8 @@ export function ContentPosts() {
   const handleSendMessage = async (e: FormEvent<HTMLFormElement>, inputRef: RefObject<HTMLInputElement>) => {
     e.preventDefault();
 
-    if (!selectedClassroom || !selectedChannel) return;
+    if (!selectedClassroom || !selectedChannel || (profile.role !== "STUDENT" && profile.role !== "TEACHER"))
+      return;
 
     const formData = new FormData(e.currentTarget);
     const messageContent = formData.get("message") as string;
@@ -111,7 +116,6 @@ export function ContentPosts() {
       });
 
       if (messageData && inputRef.current) {
-        console.log("Message sent successfully");
         inputRef.current.value = "";
         inputRef.current.focus();
 
@@ -137,8 +141,11 @@ export function ContentPosts() {
 
   if (!selectedChannel)
     return (
-      <div>
-        <p className="text-base font-semibold text-slate-700">Select a channel to view posts</p>
+      <div className="flex flex-col items-center justify-center gap-5 py-8 tracking-wide fade-in duration-200">
+        <Image src="/no-channels.svg" alt="No channels" width={230} height={230} className="opacity-70" />
+        <p className="text-slate-500 text-lg font-semibold">
+          No channels yet. Create them to view their posts
+        </p>
       </div>
     );
 
@@ -149,7 +156,8 @@ export function ContentPosts() {
 
         <MessageInput
           handleSubmit={handleSendMessage}
-          isDisabled={isFormSubmitting}
+          isDisabled={!ALLOWED_ROLES_TO_SEND_MESSAGES.includes(profile.role)}
+          isSubmitting={isFormSubmitting}
           fileStates={fileStates}
           setFileStates={setFileStates}
         />

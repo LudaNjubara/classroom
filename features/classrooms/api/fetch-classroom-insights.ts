@@ -1,6 +1,5 @@
 "use server"
 
-
 import { API_ENDPOINTS, HTTP_STATUS_CODES } from "@/constants";
 import { cookies } from "next/headers";
 import { TClassroomInsight } from "../types";
@@ -12,7 +11,7 @@ type TFetchClassroomInsightsProps = {
 export async function fetchClassroomInsights({ classroomId }: TFetchClassroomInsightsProps): Promise<{ data: TClassroomInsight }> {
     const urlSearchParams = new URLSearchParams({ classroomId });
 
-    const response = await fetch(`${API_ENDPOINTS.STATISTICS}?${urlSearchParams}`, {
+    const response = await fetch(`${API_ENDPOINTS.STATISTICS.GET}?${urlSearchParams}`, {
         headers: { Cookie: cookies().toString() },
     });
 

@@ -215,6 +215,7 @@ model Classroom {
   assignments             ClassroomAssignment[]
   classroomStatistics     ClassroomStatistics?
   communicationStatistics CommunicationStatistics?
+  statisticsSummary       StatisticsSummary?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -512,4 +513,20 @@ model ClassroomStatistics {
 
   @@index([classroomId], name: "classroomStatisticClassroomId")
   @@map("classroom_statistics")
+}
+
+model StatisticsSummary {
+  id String @id @unique @default(cuid())
+
+  prompt  String
+  content String
+
+  classroomId String    @unique
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([classroomId], name: "statisticsSummaryClassroomId")
+  @@map("statistics_summary")
 }

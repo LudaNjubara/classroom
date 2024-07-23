@@ -45,7 +45,7 @@ export function ContentFiles({ classroomResourcesState, channelResourcesState }:
   };
 
   return (
-    <div>
+    <div className="pr-2 max-h-[390px] overflow-y-auto">
       <Accordion type="multiple" defaultValue={["classroom-resources"]}>
         <AccordionItem value="classroom-resources">
           <AccordionTrigger>Classroom resources</AccordionTrigger>

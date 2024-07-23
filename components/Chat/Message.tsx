@@ -126,7 +126,7 @@ export function Message({ data, isCurrentUser, accentColor, channelId }: TMessag
                     <AlertDialogTitle>Delete message</AlertDialogTitle>
 
                     <AlertDialogDescription>
-                      <p>Are you sure you want to permanently delete this message +?</p>
+                      Are you sure you want to permanently delete this message?
                     </AlertDialogDescription>
                   </AlertDialogHeader>
 
@@ -155,7 +155,7 @@ export function Message({ data, isCurrentUser, accentColor, channelId }: TMessag
                     <DrawerTitle>Delete message</DrawerTitle>
 
                     <DrawerDescription>
-                      <p>Are you sure you want to permanently delete this message?</p>
+                      Are you sure you want to permanently delete this message?
                     </DrawerDescription>
                   </DrawerHeader>
 
@@ -180,18 +180,20 @@ export function Message({ data, isCurrentUser, accentColor, channelId }: TMessag
 
       <div>
         {/* Date and time */}
-        <p
-          className={`text-xs font-medium ${
-            isCurrentUser ? "text-black text-right" : "text-white opacity-60"
-          }`}
-        >
-          {isToday(new Date(data.timestamp))
-            ? dayjs(data.timestamp).format("HH:mm A")
-            : dayjs(data.timestamp).format("MMMM D, HH:mm A")}
-        </p>
+        {!data.deleted && (
+          <p
+            className={`text-xs font-medium ${
+              isCurrentUser ? "text-black text-right" : "text-white opacity-60"
+            }`}
+          >
+            {isToday(new Date(data.timestamp))
+              ? dayjs(data.timestamp).format("HH:mm A")
+              : dayjs(data.timestamp).format("MMMM D, HH:mm A")}
+          </p>
+        )}
 
         {/* Sender name and message */}
-        {!isCurrentUser && (
+        {!isCurrentUser && !data.deleted && (
           <p className={`text-sm mb-1 font-bold ${isCurrentUser ? "text-black" : "text-white"}`}>
             {data.senderData.name}
           </p>
