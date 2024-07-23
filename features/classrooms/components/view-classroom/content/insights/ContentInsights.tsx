@@ -6,6 +6,7 @@ import { useClassroomInsights } from "@/features/classrooms/hooks/useClassroomIn
 import { useDashboardStore } from "@/stores";
 import { InfoIcon, RotateCwIcon } from "lucide-react";
 import { InsightDetailsPanel } from "./InsightDetailsPanel";
+import { InsightSummaryPanel } from "./InsightSummaryPanel";
 
 export function ContentInsights() {
   // zustand state and actions
@@ -70,12 +71,17 @@ export function ContentInsights() {
           ))}
 
         {!isInsightsLoading && !!insights && (
-          <InsightDetailsPanel insights={insights} modes={["base", "total", "aggregated"]} className="mt-8" />
+          <>
+            <InsightDetailsPanel
+              insights={insights}
+              modes={["base", "total", "aggregated"]}
+              className="mt-8"
+            />
+
+            <InsightSummaryPanel insights={insights} />
+          </>
         )}
       </div>
-
-      {/* Generate AI insight */}
-      <div className="mt-8"></div>
     </div>
   );
 }

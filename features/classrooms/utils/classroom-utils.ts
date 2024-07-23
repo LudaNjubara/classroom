@@ -1,5 +1,5 @@
 import { sanitizeInput } from "@/utils/misc";
-import { TAccentColor, TClassroomAssignmentWithTeacher, TEditedAssignment } from "../types";
+import { TAccentColor, TClassroomAssignmentWithTeacher, TClassroomInsight, TEditedAssignment } from "../types";
 
 // generate { dark, darker, light, lighter } colors from a seed color
 export const generateAccentColorsFromSeed = (seed: string): TAccentColor => {
@@ -61,4 +61,10 @@ export const validateEditedClassroomAssignment = (
     }
 
     return errors;
+};
+
+export const generateInsightsPrompt = (insights: TClassroomInsight): string => {
+    // generate detailed prompt based on insights. Incorporate insights into the string. Make the prompt at least 10 sentences long.
+
+    return "Hi there. Can you respond with a short joke? I could use a laugh right now.";
 };

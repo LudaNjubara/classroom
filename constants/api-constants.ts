@@ -73,7 +73,12 @@ export const API_ENDPOINTS = {
     CALL: {
         GENERATE_TOKEN: `${BASE_API_ENDPOINT}/entity/call/generate-client-token`,
     },
-    STATISTICS: `${BASE_API_ENDPOINT}/entity/statistics`,
+    STATISTICS: {
+        GET: `${BASE_API_ENDPOINT}/entity/statistics`,
+        SEND: `${BASE_API_ENDPOINT}/entity/statistics`,
+        GENERATE_SUMMARY: `${BASE_API_ENDPOINT}/entity/statistics/generate-summary`,
+        GET_SUMMARY: `${BASE_API_ENDPOINT}/entity/statistics/get-summary`,
+    },
     PROFILE: `${BASE_API_ENDPOINT}/profile`,
     AUTH: `${BASE_API_ENDPOINT}/auth`,
 } as const

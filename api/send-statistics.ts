@@ -5,7 +5,7 @@ import { TEventQueue } from "@/types/typings";
 import { cookies } from "next/headers";
 
 export async function sendStatistics(events: TEventQueue[]) {
-    const response = await fetch(API_ENDPOINTS.STATISTICS, {
+    const response = await fetch(API_ENDPOINTS.STATISTICS.SEND, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
