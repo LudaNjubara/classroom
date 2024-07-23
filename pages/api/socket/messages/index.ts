@@ -115,7 +115,7 @@ export default async function handler(
             return res.status(400).json({ message: "Message content is missing" });
         }
 
-        const tenant = await queryStrategies[profile!.role as MessageSenderType](profile!.kindeId);
+        const tenant = await queryStrategies[profile.role as MessageSenderType](profile.kindeId);
 
         if (!tenant) {
             return res.status(404).json({ message: "Tenant not found" });
@@ -183,7 +183,7 @@ export default async function handler(
             senderData: tenant,
         }
 
-        res?.socket?.server?.io?.emit(channelKey, messageToSend);
+        res.socket.server.io.emit(channelKey, messageToSend);
 
         return res.status(200).json({
             data: {

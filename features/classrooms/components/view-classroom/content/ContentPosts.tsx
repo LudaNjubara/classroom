@@ -141,7 +141,7 @@ export function ContentPosts() {
 
   if (!selectedChannel)
     return (
-      <div className="flex flex-col items-center justify-center gap-5 py-8 tracking-wide">
+      <div className="flex flex-col items-center justify-center gap-5 py-8 tracking-wide fade-in duration-200">
         <Image src="/no-channels.svg" alt="No channels" width={230} height={230} className="opacity-70" />
         <p className="text-slate-500 text-lg font-semibold">
           No channels yet. Create them to view their posts
