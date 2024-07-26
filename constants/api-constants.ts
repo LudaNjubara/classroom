@@ -3,7 +3,14 @@ import { BASE_URL } from "./app-constants"
 const BASE_API_ENDPOINT = `${BASE_URL}/api` as const
 
 export const API_ENDPOINTS = {
-    ORGANIZATION: `${BASE_API_ENDPOINT}/entity/organization`,
+    ORGANIZATION: {
+        GET: `${BASE_API_ENDPOINT}/entity/organization`,
+        CREATE: `${BASE_API_ENDPOINT}/entity/organization`,
+        SETTINGS: {
+            GET: `${BASE_API_ENDPOINT}/entity/organization/settings`,
+            UPDATE: `${BASE_API_ENDPOINT}/entity/organization/settings`,
+        }
+    },
     STUDENT: `${BASE_API_ENDPOINT}/entity/student`,
     TEACHER: `${BASE_API_ENDPOINT}/entity/teacher`,
     MESSAGES: {
