@@ -64,6 +64,18 @@ enum AssignmentSolutionStatus {
   LOCKED
 }
 
+// COMMUNITY
+enum ArticleType {
+  ARTICLE
+  NEWS
+}
+
+enum ArticleUserType {
+  ORGANIZATION
+  TEACHER
+  STUDENT
+}
+
 // DATABASE MODELS
 model Profile {
   id      String @id @unique @default(cuid())
@@ -100,6 +112,7 @@ model Organization {
   students   OrganizationStudent[]
   classrooms Classroom[]
   settings   OrganizationSettings[]
+  articles   Article[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -515,4 +528,47 @@ model OrganizationSettings {
 
   @@index([organizationId], name: "organizationId")
   @@map("organization_settings")
+}
+
+model Article {
+  id String @id @unique @default(cuid())
+
+  authorId   String
+  authorRole ArticleUserType
+
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  title       String
+  imageURL    String
+  description String?
+  content     String      @db.Text
+  tags        String
+  type        ArticleType
+
+  comments ArticleComment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId], name: "organizationId")
+  @@map("community_articles")
+}
+
+model ArticleComment {
+  id String @id @unique @default(cuid())
+
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  authorId   String
+  authorRole ArticleUserType
+
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([articleId], name: "articleId")
+  @@map("community_article_comments")
 }

@@ -34,6 +34,12 @@ export const API_ENDPOINTS = {
             ORGANIZATION: `${BASE_API_ENDPOINT}/entity/notification/organization/for-organization`,
         },
     },
+    COMMUNITY: {
+        ARTICLE: {
+            CREATE: `${BASE_API_ENDPOINT}/entity/community/article`,
+            GET_ALL: `${BASE_API_ENDPOINT}/entity/community/article/get-all`,
+        }
+    },
     RESOURCE: {
         GET_ONE: `${BASE_API_ENDPOINT}/entity/resource`,
     },
