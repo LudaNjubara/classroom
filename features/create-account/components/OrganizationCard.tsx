@@ -105,7 +105,7 @@ export default function OrganizationCard({ profile, countries }: TProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!(form.formState.isValid || selectedCountry)) return;
 
-    fetch(API_ENDPOINTS.ORGANIZATION, {
+    fetch(API_ENDPOINTS.ORGANIZATION.CREATE, {
       method: "POST",
       body: JSON.stringify({
         ...values,

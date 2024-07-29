@@ -40,16 +40,21 @@ enum NotificationStatus {
   REJECTED
 }
 
-// CLASSROOM SETTINGS
-enum ClassroomSetting {
-  ACCENT_COLOR
-}
-
 enum SettingType {
   STRING
   NUMBER
   BOOLEAN
   JSON
+}
+
+// ORGANIZATION SETTINGS
+enum OrganizationSetting {
+  DEFAULT_INVITE_MESSAGE
+}
+
+// CLASSROOM SETTINGS
+enum ClassroomSetting {
+  ACCENT_COLOR
 }
 
 // CLASSROOM HOMEWORK
@@ -59,27 +64,16 @@ enum AssignmentSolutionStatus {
   LOCKED
 }
 
-// STATISTICS
-enum StatisticsEvent {
-  // Platform events
-  LOGIN_FREQUENCY
-  SESSION_DURATION
-  ACTIVE_TIME
+// COMMUNITY
+enum ArticleType {
+  ARTICLE
+  NEWS
+}
 
-  // Assignment events
-  SUBMISSION_TIMELINESS
-  ASSIGNMENT_COMPLETION_RATE
-  ASSIGNMENT_NOTE_USAGE
-  ASSIGNMENT_RESOURCE_USAGE
-  GRADE_DISTRIBUTION
-
-  // Communication events
-  CALL_DURATION
-  CALL_FREQUENCY
-  PREFERED_COMM_METHOD
-
-  // Misc events
-  RESOURCE_DOWNLOAD_RATE
+enum ArticleUserType {
+  ORGANIZATION
+  TEACHER
+  STUDENT
 }
 
 // DATABASE MODELS
@@ -117,6 +111,8 @@ model Organization {
   teachers   OrganizationTeacher[]
   students   OrganizationStudent[]
   classrooms Classroom[]
+  settings   OrganizationSettings[]
+  articles   Article[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -453,20 +449,15 @@ model AssignmentStatistics {
   assignmentId String              @unique
   assignment   ClassroomAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
-  // SUBMISSION_TIMELINESS - calculated as (onTimeSubmissionsCount / submissionsCount)
   submissionsCount       Int @default(0)
   onTimeSubmissionsCount Int @default(0)
 
-  // ASSIGNMENT_NOTE_USAGE - calculated as (notesCount / submissionsCount)
   notesCount Int @default(0)
 
-  // ASSIGNMENT_RESOURCE_USAGE - calculated as (downloadedResourcesCount / (totalNumberOfStudents * totalNumberOfResources)) -> totalNumberOfResources is the number of resources attached to all assignments in the classroom
   downloadedResourcesCount Int @default(0)
 
-  // ASSIGNMENT_COMPLETION_RATE - calculated as (lockedSubmissionsCount / totalNumberOfStudents)
   lockedSubmissionsCount Int @default(0)
 
-  // GRADE_DISTRIBUTION - calculated as (gradeSumTotal / gradeCount)
   gradeSumTotal Int @default(0)
   gradeCount    Int @default(0)
 
@@ -483,13 +474,8 @@ model CommunicationStatistics {
   classroomId String    @unique
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
-  // CALL_DURATION - calculated as (totalCallDuration / totalNumberOfCalls)
-  totalCallDuration  Int @default(0)
-  totalNumberOfCalls Int @default(0)
-
-  // CALL_FREQUENCY - calculated as (totalNumberOfCalls / numberOfDays) -> numberOfDays is the number of days since the classroom was created
-
-  // PREFERED_COMM_METHOD - calculated as (totalNumberOfCalls / totalNumberOfMessages)
+  totalCallDuration     Int @default(0)
+  totalNumberOfCalls    Int @default(0)
   totalNumberOfMessages Int @default(0)
 
   createdAt DateTime @default(now())
@@ -505,7 +491,6 @@ model ClassroomStatistics {
   classroomId String    @unique
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
 
-  // RESOURCE_DOWNLOAD_RATE - calculated as ((numOfClassroomResources * totalNumberOfStudents) / totalClassroomResourceDownloads) -> numOfClassroomResources is the number of classroom resources attached to a classroom
   totalClassroomResourceDownloads Int @default(0)
 
   createdAt DateTime @default(now())
@@ -529,4 +514,61 @@ model StatisticsSummary {
 
   @@index([classroomId], name: "statisticsSummaryClassroomId")
   @@map("statistics_summary")
+}
+
+model OrganizationSettings {
+  id String @id @unique @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  key   OrganizationSetting
+  value String
+  type  SettingType
+
+  @@index([organizationId], name: "organizationId")
+  @@map("organization_settings")
+}
+
+model Article {
+  id String @id @unique @default(cuid())
+
+  authorId   String
+  authorRole ArticleUserType
+
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  title       String
+  imageURL    String
+  description String?
+  content     String      @db.Text
+  tags        String
+  type        ArticleType
+
+  comments ArticleComment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId], name: "organizationId")
+  @@map("community_articles")
+}
+
+model ArticleComment {
+  id String @id @unique @default(cuid())
+
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  authorId   String
+  authorRole ArticleUserType
+
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([articleId], name: "articleId")
+  @@map("community_article_comments")
 }

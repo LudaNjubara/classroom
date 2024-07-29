@@ -35,6 +35,7 @@ type TDashboardAsideTab = {
     teachers: 'teachers',
     students: 'students',
     notifications: 'notifications',
+    community: 'community',
     settings: 'settings',
 }
 

@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 
 const fetchOrganizations = async (): Promise<TOrganizationWithClassroomsWithStudentsWithTeachers[]> => {
 
-    const response = await fetch(API_ENDPOINTS.ORGANIZATION, {
+    const response = await fetch(API_ENDPOINTS.ORGANIZATION.GET, {
         headers: { Cookie: cookies().toString() },
     });
 

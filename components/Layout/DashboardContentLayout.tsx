@@ -1,3 +1,5 @@
+"use client";
+
 import { useDashboardStore } from "@/stores";
 import { TDashboardAsideTab } from "@/types/typings";
 import { lazyImport } from "@/utils/lazy-import";
@@ -6,6 +8,7 @@ const { ClassroomsTab } = lazyImport(() => import("@/features/classrooms"), "Cla
 const { TeachersTab } = lazyImport(() => import("@/features/teachers"), "TeachersTab");
 const { StudentsTab } = lazyImport(() => import("@/features/students"), "StudentsTab");
 const { NotificationsTab } = lazyImport(() => import("@/features/notifications"), "NotificationsTab");
+const { CommunityTab } = lazyImport(() => import("@/features/community"), "CommunityTab");
 const { SettingsTab } = lazyImport(() => import("@/features/settings"), "SettingsTab");
 
 type TContentToRender = {
@@ -17,6 +20,7 @@ const tabToRender: TContentToRender = {
   teachers: <TeachersTab />,
   students: <StudentsTab />,
   notifications: <NotificationsTab />,
+  community: <CommunityTab />,
   settings: <SettingsTab />,
 };
 

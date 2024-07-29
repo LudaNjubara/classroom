@@ -1,4 +1,5 @@
 import { db } from "@/config/db";
+import { ORGANIZATION_DEFAULT_INVITE_MESSAGE } from "@/constants";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Role } from "@prisma/client";
 import { NextResponse } from "next/server";
@@ -7,9 +8,15 @@ type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST">;
 
 export async function POST(req: Request) {
     try {
-        const { isAuthenticated } = getKindeServerSession();
+        const { isAuthenticated, getUser } = getKindeServerSession();
 
-        if (!isAuthenticated()) {
+        if (!await isAuthenticated()) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        const user = await getUser();
+
+        if (!user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
@@ -24,38 +31,74 @@ export async function POST(req: Request) {
             phone,
         } = await req.json();
 
-
-        const organization = await db.organization
-            .create({
-                data: {
-                    name,
-                    email,
-                    address,
-                    city,
-                    state,
-                    country,
-                    profileId,
-                    phone,
-                    students: {
-                        create: [],
+        const data = await db.$transaction([
+            db.organization
+                .create({
+                    data: {
+                        name,
+                        email,
+                        address,
+                        city,
+                        state,
+                        country,
+                        profileId,
+                        phone,
+                        students: {
+                            create: [],
+                        },
+                        teachers: {
+                            create: [],
+                        },
+                        classrooms: {
+                            create: [],
+                        },
                     },
-                    teachers: {
-                        create: [],
-                    },
-                    classrooms: {
-                        create: [],
-                    },
+                }),
+            db.profile.update({
+                where: {
+                    kindeId: profileId,
                 },
-            })
+                data: {
+                    role: "ORGANIZATION",
+                }
+            }),
+        ])
 
-        const profile = await db.profile.update({
-            where: {
-                kindeId: profileId,
-            },
+        if (!data || !data[0] || !data[1]) {
+            return NextResponse.json({ error: "Organization creation failed" }, { status: 400 })
+        }
+
+        const organization = data[0];
+        const profile = data[1];
+
+        const organizationSettings = await db.organizationSettings.create({
             data: {
-                role: "ORGANIZATION",
+                organizationId: organization.id,
+                key: "DEFAULT_INVITE_MESSAGE",
+                value: ORGANIZATION_DEFAULT_INVITE_MESSAGE,
+                type: "STRING",
             }
-        })
+        });
+
+        if (!organizationSettings) {
+            // rollback the organization creation and profile update
+            await db.organization.delete({
+                where: {
+                    id: organization.id,
+                }
+            });
+
+            await db.profile.update({
+                where: {
+                    kindeId: profileId,
+                },
+                data: {
+                    role: "GUEST",
+                }
+            });
+
+            return NextResponse.json({ error: "Organization creation failed" }, { status: 400 })
+        }
 
         return NextResponse.json({ organization, profile }, { status: 201 })
     }
@@ -140,13 +183,13 @@ export async function GET() {
         const { getUser, isAuthenticated } = getKindeServerSession();
 
         if (!await isAuthenticated()) {
-            return NextResponse.json("Unauthorized", { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         const user = await getUser();
 
         if (!user) {
-            return NextResponse.json("Unauthorized", { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
         const profile = await db.profile.findUnique({

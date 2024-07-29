@@ -10,7 +10,7 @@ import {
 } from "@/types/typings";
 import { SocketIndicator } from "@components/Socket";
 import { Profile, Role } from "@prisma/client";
-import { Bell, BookOpen, FlaskConical, GraduationCap, Settings } from "lucide-react";
+import { Bell, BookOpen, FlaskConical, GraduationCap, RssIcon, Settings } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { DashboardContentLayout } from ".";
 
@@ -44,6 +44,12 @@ const asideItems: TAsideItem[] = [
     id: "notifications",
     label: "Notifications",
     icon: <Bell size={20} />,
+    allowedRoles: ["ADMIN", "ORGANIZATION", "TEACHER", "STUDENT"],
+  },
+  {
+    id: "community",
+    label: "Community",
+    icon: <RssIcon size={20} />,
     allowedRoles: ["ADMIN", "ORGANIZATION", "TEACHER", "STUDENT"],
   },
 ];
