@@ -48,9 +48,8 @@ export async function GET(req: NextRequest) {
 
         const articles = await db.article.findMany({
             where: {
-                organizationId: organizationId ? organizationId : {
-                    equals: null
-                },
+                organizationId: organizationId ? organizationId : undefined,
+                isPublic: organizationId ? undefined : true,
                 type: articleType ? articleType as ArticleType : {
                     in: [ArticleType.ARTICLE, ArticleType.NEWS]
                 }

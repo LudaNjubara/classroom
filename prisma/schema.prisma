@@ -545,6 +545,7 @@ model Article {
   content     String      @db.Text
   tags        String
   type        ArticleType
+  isPublic    Boolean
 
   comments ArticleComment[]
 

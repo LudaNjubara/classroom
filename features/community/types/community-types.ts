@@ -1,6 +1,7 @@
 import { ArticleType } from "@prisma/client";
 
 export type TCreateCommunityArticleRequestBody = {
+    isPublic: boolean;
     organizationId?: string;
     title: string;
     description?: string;

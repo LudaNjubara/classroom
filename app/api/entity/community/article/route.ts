@@ -7,7 +7,13 @@ import { NextRequest, NextResponse } from "next/server";
 type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST">;
 
 const validateRequestBody = (body: Object & TCreateCommunityArticleRequestBody) => {
-    if (!body.hasOwnProperty("title") || !body.hasOwnProperty("content") || !body.hasOwnProperty("tags") || !body.hasOwnProperty("imageURL") || !body.hasOwnProperty("type")) {
+    if (!body.hasOwnProperty("title")
+        || !body.hasOwnProperty("content")
+        || !body.hasOwnProperty("tags")
+        || !body.hasOwnProperty("imageURL")
+        || !body.hasOwnProperty("type")
+        || !body.hasOwnProperty("organizationId")
+        || !body.hasOwnProperty("isPublic")) {
         return false;
     }
 
@@ -78,6 +84,8 @@ export async function POST(req: NextRequest) {
                 tags: communityArticle.tags.join(","),
                 imageURL: communityArticle.imageURL,
                 type: communityArticle.type,
+                isPublic: communityArticle.isPublic,
+                organizationId: communityArticle.organizationId,
                 authorId: profile.id,
                 authorRole: mapRoleToArticleUserType(profile.role as TAllowedRoles),
             }
