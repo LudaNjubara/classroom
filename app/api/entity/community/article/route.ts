@@ -1,5 +1,6 @@
 import { db } from "@/config";
 import { TCreateCommunityArticleRequestBody } from "@/features/community";
+import { backendClient } from "@/lib/edgestore-server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArticleUserType, Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -75,6 +76,14 @@ export async function POST(req: NextRequest) {
         if (!validateRequestBody(communityArticle)) {
             return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
         }
+
+        // Confirm image url
+        backendClient.publicFiles.confirmUpload({
+            url: communityArticle.imageURL
+        }).catch((error) => {
+            console.log("error", error);
+            return NextResponse.json({ error: "Invalid image URL" }, { status: 400 })
+        });
 
         const article = await db.article.create({
             data: {
