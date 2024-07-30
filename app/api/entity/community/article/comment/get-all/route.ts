@@ -1,7 +1,6 @@
 import { db } from "@/config";
-import { isInEnum } from "@/utils/misc";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { ArticleType, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST">;
@@ -37,26 +36,19 @@ export async function GET(req: NextRequest) {
         }
 
         const { searchParams } = new URL(req.url)
-        const organizationId = searchParams.get('organizationId')
-        const articleType = searchParams.get('articleType')
+        const articleId = searchParams.get("articleId");
 
-        if (articleType) {
-            if (!isInEnum(ArticleType, articleType)) {
-                return NextResponse.json({ error: "Invalid article type" }, { status: 400 })
-            }
+        if (!articleId) {
+            return NextResponse.json({ error: "Invalid query parameter 'articleId'" }, { status: 400 })
         }
 
-        const articles = await db.article.findMany({
+        const articleComments = await db.articleComment.findMany({
             where: {
-                organizationId: organizationId ? organizationId : undefined,
-                isPublic: organizationId ? undefined : true,
-                type: articleType ? articleType as ArticleType : {
-                    in: [ArticleType.ARTICLE, ArticleType.NEWS]
-                }
+                articleId
             },
         });
 
-        return NextResponse.json({ data: articles }, { status: 200 })
+        return NextResponse.json({ data: articleComments }, { status: 200 })
     }
 
     catch (error) {

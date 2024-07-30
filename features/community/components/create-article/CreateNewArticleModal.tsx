@@ -201,7 +201,7 @@ export function CreateNewArticleModal({
   };
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    setIsFormSubmitting(true);
+    if (!organizationId) return;
 
     // check if there is an image uploaded already
     if (fileStates.length === 0) {
@@ -211,7 +211,6 @@ export function CreateNewArticleModal({
         variant: "destructive",
       });
 
-      setIsFormSubmitting(false);
       return;
     }
 
@@ -224,11 +223,12 @@ export function CreateNewArticleModal({
         variant: "destructive",
       });
 
-      setIsFormSubmitting(false);
       return;
     }
 
     try {
+      setIsFormSubmitting(true);
+
       let imageURL = preview.imageUrl;
       let uploadResponses: TFileUploadResponseWithFilename[] = [];
 
@@ -240,7 +240,8 @@ export function CreateNewArticleModal({
 
       // create assignment
       const communityArticleRes = await createCommunityArticle({
-        organizationId: form.getValues("is_public") ? undefined : organizationId,
+        isPublic: formData.is_public,
+        organizationId,
         title: sanitizeInput(formData.title),
         description: formData.description && sanitizeInput(formData.description),
         content: sanitizeInput(formData.content),

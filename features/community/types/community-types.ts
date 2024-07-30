@@ -1,6 +1,7 @@
 import { ArticleType } from "@prisma/client";
 
 export type TCreateCommunityArticleRequestBody = {
+    isPublic: boolean;
     organizationId?: string;
     title: string;
     description?: string;
@@ -17,4 +18,9 @@ export type TCommunityArticlePreview = {
     tags: string;
     imageUrl?: string;
     imageFileName?: string;
+}
+
+export type TCreateCommunityArticleCommentRequestBody = {
+    articleId: string;
+    content: string;
 }

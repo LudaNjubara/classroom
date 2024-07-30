@@ -1,5 +1,6 @@
 import { db } from "@/config";
 import { TCreateCommunityArticleRequestBody } from "@/features/community";
+import { backendClient } from "@/lib/edgestore-server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArticleUserType, Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -7,7 +8,13 @@ import { NextRequest, NextResponse } from "next/server";
 type TAllowedRoles = Exclude<Role, "ADMIN" | "GUEST">;
 
 const validateRequestBody = (body: Object & TCreateCommunityArticleRequestBody) => {
-    if (!body.hasOwnProperty("title") || !body.hasOwnProperty("content") || !body.hasOwnProperty("tags") || !body.hasOwnProperty("imageURL") || !body.hasOwnProperty("type")) {
+    if (!body.hasOwnProperty("title")
+        || !body.hasOwnProperty("content")
+        || !body.hasOwnProperty("tags")
+        || !body.hasOwnProperty("imageURL")
+        || !body.hasOwnProperty("type")
+        || !body.hasOwnProperty("organizationId")
+        || !body.hasOwnProperty("isPublic")) {
         return false;
     }
 
@@ -70,6 +77,14 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
         }
 
+        // Confirm image url
+        backendClient.publicFiles.confirmUpload({
+            url: communityArticle.imageURL
+        }).catch((error) => {
+            console.log("error", error);
+            return NextResponse.json({ error: "Invalid image URL" }, { status: 400 })
+        });
+
         const article = await db.article.create({
             data: {
                 title: communityArticle.title,
@@ -78,6 +93,8 @@ export async function POST(req: NextRequest) {
                 tags: communityArticle.tags.join(","),
                 imageURL: communityArticle.imageURL,
                 type: communityArticle.type,
+                isPublic: communityArticle.isPublic,
+                organizationId: communityArticle.organizationId,
                 authorId: profile.id,
                 authorRole: mapRoleToArticleUserType(profile.role as TAllowedRoles),
             }
