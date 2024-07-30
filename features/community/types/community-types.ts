@@ -19,3 +19,8 @@ export type TCommunityArticlePreview = {
     imageUrl?: string;
     imageFileName?: string;
 }
+
+export type TCreateCommunityArticleCommentRequestBody = {
+    articleId: string;
+    content: string;
+}

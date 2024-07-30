@@ -562,8 +562,10 @@ model ArticleComment {
   articleId String
   article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
-  authorId   String
-  authorRole ArticleUserType
+  authorId      String
+  authorRole    ArticleUserType
+  authorName    String
+  authorPicture String
 
   content String
 

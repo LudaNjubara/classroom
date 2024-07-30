@@ -38,6 +38,11 @@ export const API_ENDPOINTS = {
         ARTICLE: {
             CREATE: `${BASE_API_ENDPOINT}/entity/community/article`,
             GET_ALL: `${BASE_API_ENDPOINT}/entity/community/article/get-all`,
+            GET_AUTHOR: `${BASE_API_ENDPOINT}/entity/community/article/get-author`,
+            COMMENT: {
+                CREATE: `${BASE_API_ENDPOINT}/entity/community/article/comment`,
+                GET_ALL: `${BASE_API_ENDPOINT}/entity/community/article/comment/get-all`,
+            }
         }
     },
     RESOURCE: {

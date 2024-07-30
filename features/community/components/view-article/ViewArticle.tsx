@@ -1,8 +1,12 @@
+import { ArticleAuthorSkeleton } from "@/components/Loaders";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/utils/misc";
 import { Article } from "@prisma/client";
 import { XIcon } from "lucide-react";
+import { useCommunityArticleAuthor } from "../../hooks";
 import { ArticleTag } from "../common";
+import { ArticleComments } from "./";
+import { ArticleAuthor } from "./ArticleAuthor";
 
 type TViewArticleProps = {
   onClose: () => void;
@@ -10,8 +14,17 @@ type TViewArticleProps = {
 };
 
 export function ViewArticle({ article, onClose }: TViewArticleProps) {
+  const {
+    data: author,
+    isLoading: isAuthorLoading,
+    error: authorError,
+  } = useCommunityArticleAuthor({
+    authorId: article.authorId,
+    authorRole: article.authorRole,
+  });
+
   return (
-    <div className="pb-8">
+    <div className="pb-16">
       <div className="mt-2 px-5 pb-4">
         <div className="flex justify-end">
           <Button
@@ -25,7 +38,12 @@ export function ViewArticle({ article, onClose }: TViewArticleProps) {
       </div>
 
       <div className="mt-5">
-        <div className="flex items-center gap-4 text-sm">
+        <div>
+          {isAuthorLoading && <ArticleAuthorSkeleton />}
+          {!isAuthorLoading && author && <ArticleAuthor author={author} />}
+        </div>
+
+        <div className="flex items-center gap-4 text-sm mt-4">
           <p className="text-muted-foreground">Published on: {formatDateTime(new Date(article.createdAt))}</p>
           <p className="text-muted-foreground">Last edited: {formatDateTime(new Date(article.updatedAt))}</p>
         </div>
@@ -60,6 +78,8 @@ export function ViewArticle({ article, onClose }: TViewArticleProps) {
         </div>
 
         <p className="mt-5 text-lg text-slate-600 dark:text-slate-400">{article.content}</p>
+
+        <ArticleComments articleId={article.id} />
       </div>
     </div>
   );
