@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ insightSummary: null }, { status: 200 })
         }
 
-        return NextResponse.json({ insightSummary }, { status: 200 })
+        return NextResponse.json({ data: insightSummary }, { status: 200 })
     }
 
     catch (error) {
