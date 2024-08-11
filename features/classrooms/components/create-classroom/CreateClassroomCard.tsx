@@ -16,13 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { useEdgeStore } from "@/config/edgestore";
-import { TSelectedStudentItem } from "@/features/students";
-import { TSelectedTeacherItem } from "@/features/teachers";
 import { useDashboardStore } from "@/stores";
 import { sanitizeInput } from "@/utils/misc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
@@ -56,9 +54,13 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
   // zustan state and actions
   const selectedOrganization = useDashboardStore((state) => state.selectedOrganization);
 
+  const selectedTeacherItems = useDashboardStore((state) => state.selectedTeacherItems);
+  const setSelectedTeacherItems = useDashboardStore((state) => state.setSelectedTeacherItems);
+
+  const selectedStudentItems = useDashboardStore((state) => state.selectedStudentItems);
+  const setSelectedStudentItems = useDashboardStore((state) => state.setSelectedStudentItems);
+
   // state
-  const [selectedStudentItems, setSelectedStudentItems] = useState<TSelectedStudentItem[]>([]);
-  const [selectedTeacherItems, setSelectedTeacherItems] = useState<TSelectedTeacherItem[]>([]);
   const [fileStates, setFileStates] = useState<FileState[]>([]);
   const [scheduleItems, setScheduleItems] = useState<TScheduleItem[]>([initialScheduleItem]);
   const [classroomSettings, setClassroomSettings] = useState<TClassroomSettings>();
@@ -165,6 +167,15 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
     }
   };
 
+  useEffect(() => {
+    return () => {
+      setSelectedTeacherItems([]);
+      setSelectedStudentItems([]);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="pb-4">
       <div className="flex justify-between">
@@ -187,13 +198,11 @@ export function CreateClassroomCard({ toggleModal }: TCreateClassroomCardProps) 
       <div className="flex flex-col gap-8 mt-10">
         <StudentsFormField
           selectedStudentItems={selectedStudentItems}
-          setSelectedStudentItems={setSelectedStudentItems}
           className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
         />
 
         <TeachersFormField
           selectedTeacherItems={selectedTeacherItems}
-          setSelectedTeacherItems={setSelectedTeacherItems}
           className="p-4 bg-slate-300 dark:bg-slate-950 rounded-lg border-2 border-slate-100 dark:border-slate-800 transition-colors duration-300 ease-in-out"
         />
 
