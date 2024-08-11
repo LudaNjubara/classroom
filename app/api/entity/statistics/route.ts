@@ -379,7 +379,7 @@ export async function GET(req: NextRequest) {
         }
 
         if (classroomStatistics.totalClassroomResourceDownloads < MIN_NUM_OF_CLASSROOM_STATISTICS_RESOURCES_DOWNLOADS_COUNT_FOR_AGGREGATION) {
-            console.log("Expected", MIN_NUM_OF_CLASSROOM_STATISTICS_RESOURCES_DOWNLOADS_COUNT_FOR_AGGREGATION, "got", classroomStatistics.totalClassroomResourceDownloads);
+            console.log(`Total classroom resource downloads issue: Expected ${MIN_NUM_OF_CLASSROOM_STATISTICS_RESOURCES_DOWNLOADS_COUNT_FOR_AGGREGATION}, got ${classroomStatistics.totalClassroomResourceDownloads}`);
             return NextResponse.json({ error: "Not enough data to compute classroom statistics" }, { status: 422 });
         }
 
@@ -401,7 +401,7 @@ export async function GET(req: NextRequest) {
         });
 
         if (assignmentStatistics.length < MIN_NUM_OF_ASSIGNMENT_STATISTICS_FOR_AGGREGATION) {
-            console.log("Expected", MIN_NUM_OF_ASSIGNMENT_STATISTICS_FOR_AGGREGATION, "got", assignmentStatistics.length);
+            console.log(`Number of assignment statistics issue: Expected ${MIN_NUM_OF_ASSIGNMENT_STATISTICS_FOR_AGGREGATION}, got ${assignmentStatistics.length}`);
             return NextResponse.json({ error: "Not enough data to compute assignment statistics" }, { status: 422 });
         }
 
@@ -416,10 +416,10 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "Communication statistics not found" }, { status: 404 });
         }
 
-        if (communicationStatistics.totalNumberOfCalls + 14 < MIN_NUM_OF_COMM_STATISTICS_CALLS_COUNT_FOR_AGGREGATION
+        if (communicationStatistics.totalNumberOfCalls < MIN_NUM_OF_COMM_STATISTICS_CALLS_COUNT_FOR_AGGREGATION
             || communicationStatistics.totalNumberOfMessages < MIN_NUM_OF_COMM_STATISTICS_MESSAGES_COUNT_FOR_AGGREGATION) {
-            console.log("Expected", MIN_NUM_OF_COMM_STATISTICS_CALLS_COUNT_FOR_AGGREGATION, "got", communicationStatistics.totalNumberOfCalls);
-            console.log("Expected", MIN_NUM_OF_COMM_STATISTICS_MESSAGES_COUNT_FOR_AGGREGATION, "got", communicationStatistics.totalNumberOfMessages);
+            console.log(`Min number of calls issue: Expected ${MIN_NUM_OF_COMM_STATISTICS_CALLS_COUNT_FOR_AGGREGATION}, got ${communicationStatistics.totalNumberOfCalls}`);
+            console.log(`Min number of messages issue: Expected ${MIN_NUM_OF_COMM_STATISTICS_MESSAGES_COUNT_FOR_AGGREGATION}, got ${communicationStatistics.totalNumberOfMessages}`);
             return NextResponse.json({ error: "Not enough data to compute communication statistics" }, { status: 422 });
         }
 
@@ -480,7 +480,7 @@ export async function GET(req: NextRequest) {
         });
 
         if (computedAssignmentStatistics.submissionsCount < MIN_NUM_OF_ASSIGNMENT_STATISTICS_SUBMISSIONS_COUNT_FOR_AGGREGATION) {
-            console.log("Expected", MIN_NUM_OF_ASSIGNMENT_STATISTICS_SUBMISSIONS_COUNT_FOR_AGGREGATION, "got", computedAssignmentStatistics.submissionsCount);
+            console.log(`Assignment submissions count issue: Expected ${MIN_NUM_OF_ASSIGNMENT_STATISTICS_SUBMISSIONS_COUNT_FOR_AGGREGATION}, got ${computedAssignmentStatistics.submissionsCount}`);
             return NextResponse.json({ error: "Not enough data to compute assignment statistics" }, { status: 422 });
         }
 

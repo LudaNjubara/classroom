@@ -12,7 +12,7 @@ const queryStrategies: {
     TEACHER: async (profileId: string) => {
         const teacher = await db.teacher.findFirst({
             where: {
-                profileId
+                id: profileId
             }
         });
 
@@ -23,7 +23,7 @@ const queryStrategies: {
     STUDENT: async (profileId: string) => {
         const student = await db.student.findFirst({
             where: {
-                profileId
+                id: profileId
             }
         });
 
@@ -34,7 +34,7 @@ const queryStrategies: {
     ORGANIZATION: async (profileId: string) => {
         const organization = await db.organization.findFirst({
             where: {
-                profileId
+                id: profileId
             }
         });
 
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "Invalid request" }, { status: 400 });
         }
 
-        const tenant = await queryStrategies[profile!.role as TAllowedRoles](profile!.kindeId);
+        const tenant = await queryStrategies[authorRole as TAllowedRoles](authorId);
 
         if (!tenant) {
             return NextResponse.json({ error: "Tenant not found" }, { status: 404 });
