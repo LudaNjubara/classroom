@@ -59,6 +59,8 @@ export function AddStudentModal({ toggleOpen }: TAddStudentModalProps) {
         "Invitations have been sent to the selected students. You can view the status in the notifications tab.",
       variant: "default",
     });
+
+    toggleOpen();
   };
 
   useEffect(() => {

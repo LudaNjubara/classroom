@@ -59,6 +59,8 @@ export function AddTeacherModal({ toggleOpen }: TAddTeacherModalProps) {
         "Invitations have been sent to the selected teachers. You can view the status in the notifications tab.",
       variant: "default",
     });
+
+    toggleOpen();
   };
 
   useEffect(() => {
