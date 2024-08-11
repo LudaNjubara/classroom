@@ -1,4 +1,4 @@
-import { db } from "@/config";
+import { client, db } from "@/config";
 import { isToday } from "@/utils/misc";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Role } from "@prisma/client";
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Summary already generated today" }, { status: 400 })
         }
 
-        /* const chatCompletion = await client.chat.completions.create({
+        const chatCompletion = await client.chat.completions.create({
             model: MODEL,
             messages: [
                 {
@@ -93,19 +93,13 @@ export async function POST(req: NextRequest) {
             console.log("Content filter triggered", chatCompletion.choices[0].message.content)
             return NextResponse.json({ error: "Failed to generate summary" }, { status: 500 })
         }
- */
-        /* const summary = chatCompletion.choices[0].message.content; */
 
-        const summary = "This is a test";
+        const summary = chatCompletion.choices[0].message.content;
 
         if (!summary) {
             console.log("No summary generated", summary)
             return NextResponse.json({ error: "Failed to generate summary" }, { status: 500 })
         }
-
-        console.log("###############")
-        console.log("ClassroomId", classroomId);
-        console.log("###############")
 
         const insightSummary = await db.statisticsSummary.upsert({
             where: {
