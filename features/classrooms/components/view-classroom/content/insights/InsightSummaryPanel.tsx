@@ -8,7 +8,7 @@ import { TClassroomInsight } from "@/features/classrooms/types";
 import { generateInsightsPrompt } from "@/features/classrooms/utils";
 import { useDashboardStore } from "@/stores";
 import { cn } from "@/utils/cn";
-import { formatDateTime } from "@/utils/misc";
+import { formatDateTime, isToday } from "@/utils/misc";
 import { StatisticsSummary } from "@prisma/client";
 import { WandSparklesIcon } from "lucide-react";
 import Image from "next/image";
@@ -39,11 +39,13 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
 
   // handlers
   const handleGenerateSummaryClick = async () => {
+    if (!selectedClassroom) return;
+
     const prompt = generateInsightsPrompt(insights);
 
     try {
       setIsGeneratingSummary(true);
-      const { insightSummary } = await generateInsightsSummary(prompt);
+      const { insightSummary } = await generateInsightsSummary({ prompt, classroomId: selectedClassroom.id });
 
       setNewSummary(insightSummary);
     } catch (error) {
@@ -63,7 +65,16 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
   };
   return (
     <div className={cn("mt-10", className)}>
-      <Button variant="default" className="ml-auto flex gap-2 w-48" onClick={handleGenerateSummaryClick}>
+      <Button
+        variant="default"
+        className="ml-auto flex gap-2 w-48"
+        onClick={handleGenerateSummaryClick}
+        disabled={
+          isGeneratingSummary ||
+          isOldSummaryLoading ||
+          (!!oldSummary && isToday(new Date(oldSummary.updatedAt)))
+        }
+      >
         {isGeneratingSummary ? (
           <Spinner />
         ) : (

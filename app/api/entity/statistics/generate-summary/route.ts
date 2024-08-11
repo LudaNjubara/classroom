@@ -1,11 +1,12 @@
-import { client, db } from "@/config";
+import { db } from "@/config";
+import { isToday } from "@/utils/misc";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-const MODEL = "gpt-3.5-turbo";
+const MODEL = "gpt-4o-mini-2024-07-18";
 const MESSAGE_ROLE = "system";
-const MAX_TOKENS = 150;
+const MAX_TOKENS = 700;
 const TEMPERATURE = 0.4;
 const NUM_OF_MESSAGES = 1;
 const RESPONSE_FORMAT_TYPE = "text";
@@ -51,7 +52,21 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Prompt is required" }, { status: 400 })
         }
 
-        const chatCompletion = await client.chat.completions.create({
+        if (!classroomId) {
+            return NextResponse.json({ error: "Classroom ID is required" }, { status: 400 })
+        }
+
+        const prevInsightSummary = await db.statisticsSummary.findFirst({
+            where: {
+                classroomId
+            }
+        });
+
+        if (prevInsightSummary && isToday(new Date(prevInsightSummary.updatedAt))) {
+            return NextResponse.json({ error: "Summary already generated today" }, { status: 400 })
+        }
+
+        /* const chatCompletion = await client.chat.completions.create({
             model: MODEL,
             messages: [
                 {
@@ -78,16 +93,25 @@ export async function POST(req: NextRequest) {
             console.log("Content filter triggered", chatCompletion.choices[0].message.content)
             return NextResponse.json({ error: "Failed to generate summary" }, { status: 500 })
         }
+ */
+        /* const summary = chatCompletion.choices[0].message.content; */
 
-        const summary = chatCompletion.choices[0].message.content;
+        const summary = "This is a test";
 
         if (!summary) {
             console.log("No summary generated", summary)
             return NextResponse.json({ error: "Failed to generate summary" }, { status: 500 })
         }
 
-        const insightSummary = await db.statisticsSummary.create({
-            data: {
+        console.log("###############")
+        console.log("ClassroomId", classroomId);
+        console.log("###############")
+
+        const insightSummary = await db.statisticsSummary.upsert({
+            where: {
+                classroomId
+            },
+            create: {
                 prompt,
                 content: summary,
                 classroom: {
@@ -96,6 +120,10 @@ export async function POST(req: NextRequest) {
                     }
                 }
             },
+            update: {
+                prompt,
+                content: summary
+            }
         })
 
         if (!insightSummary) {
