@@ -39,6 +39,44 @@ const mapRoleToArticleUserType = (role: TAllowedRoles): ArticleUserType => {
     return roleType;
 }
 
+const queryStrategies: {
+    [key in TAllowedRoles]: (profileId: string) => Promise<any>
+} = {
+    TEACHER: async (profileId: string) => {
+        const teacher = await db.teacher.findFirst({
+            where: {
+                profileId
+            }
+        });
+
+        if (!teacher) return null
+
+        return teacher;
+    },
+    STUDENT: async (profileId: string) => {
+        const student = await db.student.findFirst({
+            where: {
+                profileId
+            }
+        });
+
+        if (!student) return null
+
+        return student;
+    },
+    ORGANIZATION: async (profileId: string) => {
+        const organization = await db.organization.findFirst({
+            where: {
+                profileId
+            }
+        });
+
+        if (!organization) return null
+
+        return organization;
+    }
+}
+
 export async function POST(req: NextRequest) {
     try {
         const { isAuthenticated, getUser } = getKindeServerSession();
@@ -77,6 +115,13 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
         }
 
+        const tenant = await queryStrategies[profile.role as TAllowedRoles](profile.kindeId);
+
+        if (!tenant) {
+            console.log("error", "Tenant not found for role " + profile.role + " with kindeId " + profile.kindeId);
+            throw new Error("Tenant not found");
+        }
+
         // Confirm image url
         backendClient.publicFiles.confirmUpload({
             url: communityArticle.imageURL
@@ -85,6 +130,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid image URL" }, { status: 400 })
         });
 
+        // TODO: add fields for authorName, authorPicture, authorRole in the schema prisma for the Article model and update the create method
         const article = await db.article.create({
             data: {
                 title: communityArticle.title,
@@ -95,7 +141,7 @@ export async function POST(req: NextRequest) {
                 type: communityArticle.type,
                 isPublic: communityArticle.isPublic,
                 organizationId: communityArticle.organizationId,
-                authorId: profile.id,
+                authorId: tenant.id,
                 authorRole: mapRoleToArticleUserType(profile.role as TAllowedRoles),
             }
         });
