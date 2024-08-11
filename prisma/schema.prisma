@@ -503,8 +503,8 @@ model ClassroomStatistics {
 model StatisticsSummary {
   id String @id @unique @default(cuid())
 
-  prompt  String
-  content String
+  prompt  String @db.Text
+  content String @db.Text
 
   classroomId String    @unique
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)

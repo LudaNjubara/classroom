@@ -3,14 +3,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { generateInsightsSummary } from "@/features/classrooms/api";
+import { INSIGHTS_SUMMARY_MARKDOWN_OPTIONS } from "@/features/classrooms/constants";
 import { useClassroomInsightsSummary } from "@/features/classrooms/hooks/useClassroomInsightsSummary";
 import { TClassroomInsight } from "@/features/classrooms/types";
 import { generateInsightsPrompt } from "@/features/classrooms/utils";
 import { useDashboardStore } from "@/stores";
 import { cn } from "@/utils/cn";
-import { formatDateTime } from "@/utils/misc";
+import { formatDateTime, isToday } from "@/utils/misc";
 import { StatisticsSummary } from "@prisma/client";
 import { WandSparklesIcon } from "lucide-react";
+import Markdown from "markdown-to-jsx";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -37,13 +39,18 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
 
   const { toast } = useToast();
 
+  // derived state
+  const isSummaryGeneratedToday = !!oldSummary && isToday(new Date(oldSummary.createdAt));
+
   // handlers
   const handleGenerateSummaryClick = async () => {
+    if (!selectedClassroom || isSummaryGeneratedToday) return;
+
     const prompt = generateInsightsPrompt(insights);
 
     try {
       setIsGeneratingSummary(true);
-      const { insightSummary } = await generateInsightsSummary(prompt);
+      const { insightSummary } = await generateInsightsSummary({ prompt, classroomId: selectedClassroom.id });
 
       setNewSummary(insightSummary);
     } catch (error) {
@@ -63,16 +70,27 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
   };
   return (
     <div className={cn("mt-10", className)}>
-      <Button variant="default" className="ml-auto flex gap-2 w-48" onClick={handleGenerateSummaryClick}>
-        {isGeneratingSummary ? (
-          <Spinner />
-        ) : (
-          <>
-            <WandSparklesIcon size={16} />
-            Generate Summary
-          </>
+      <div className="flex justify-end gap-4 items-center">
+        {isSummaryGeneratedToday && (
+          <p className="text-sm text-muted-foreground">Summary already generated today.</p>
         )}
-      </Button>
+
+        <Button
+          variant="default"
+          className="flex gap-2 w-48"
+          onClick={handleGenerateSummaryClick}
+          disabled={isGeneratingSummary || isOldSummaryLoading || isSummaryGeneratedToday}
+        >
+          {isGeneratingSummary ? (
+            <Spinner />
+          ) : (
+            <>
+              <WandSparklesIcon size={16} />
+              Generate Summary
+            </>
+          )}
+        </Button>
+      </div>
 
       <div className="mt-3 border rounded-lg overflow-hidden">
         <div className="px-3 py-4 bg-slate-800">
@@ -84,16 +102,22 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
           </p>
         </div>
 
-        {isGeneratingSummary && <InsightSummarySkeleton />}
+        {isGeneratingSummary && (
+          <div className="px-3 py-6">
+            <InsightSummarySkeleton />
+          </div>
+        )}
 
-        <div className="px-3 py-8">
+        <div className="px-3 py-6">
           {!isGeneratingSummary && (
             <div>
               {oldSummary && (
                 <>
                   <Badge>Generated on {formatDateTime(new Date(oldSummary.createdAt))}</Badge>
 
-                  <p className="text-xs text-slate-500">{oldSummary.content}</p>
+                  <div className="mt-3">
+                    <Markdown options={INSIGHTS_SUMMARY_MARKDOWN_OPTIONS}>{oldSummary.content}</Markdown>
+                  </div>
                 </>
               )}
 
@@ -101,7 +125,9 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
                 <>
                   <Badge>Generated on {formatDateTime(new Date(newSummary.createdAt))}</Badge>
 
-                  <p className="text-xs text-slate-500">{newSummary.content}</p>
+                  <div className="mt-3">
+                    <Markdown options={INSIGHTS_SUMMARY_MARKDOWN_OPTIONS}>{newSummary.content}</Markdown>
+                  </div>
                 </>
               )}
 

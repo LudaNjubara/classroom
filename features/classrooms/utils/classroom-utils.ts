@@ -64,7 +64,68 @@ export const validateEditedClassroomAssignment = (
 };
 
 export const generateInsightsPrompt = (insights: TClassroomInsight): string => {
-    // generate detailed prompt based on insights. Incorporate insights into the string. Make the prompt at least 10 sentences long.
+    const { classroomInsights, assignmentInsights, communicationInsights } = insights;
 
-    return "Hi there. Can you respond with a short joke? I could use a laugh right now.";
+    const baseClassroomStats = Object.values(classroomInsights.base)
+        .map(stat => `${stat.title}: ${stat.value}`)
+        .join('. ');
+
+    const aggregatedClassroomStats = Object.values(classroomInsights.aggregated)
+        .map(stat => {
+            const value = stat.representAs === 'percentage' ? (stat.value * 100).toFixed(2) : stat.value;
+            return `${stat.title}: ${value}${stat.representAs === 'percentage' ? '%' : ''} (${stat.meaning})`;
+        })
+        .join('. ');
+
+    const baseAssignmentStats = Object.values(assignmentInsights.total)
+        .map(stat => `${stat.title}: ${stat.value}`)
+        .join('. ');
+
+    const aggregatedAssignmentStats = Object.values(assignmentInsights.aggregated)
+        .map(stat => {
+            const value = stat.representAs === 'percentage' ? (stat.value * 100).toFixed(2) : stat.value;
+            return `${stat.title}: ${value}${stat.representAs === 'percentage' ? '%' : ''} (${stat.meaning})`;
+        })
+        .join('. ');
+
+    const baseCommunicationStats = Object.values(communicationInsights.base)
+        .map(stat => `${stat.title}: ${stat.value}`)
+        .join('. ');
+
+    const aggregatedCommunicationStats = Object.values(communicationInsights.aggregated)
+        .map(stat => {
+            const value = stat.representAs === 'percentage' ? (stat.value * 100).toFixed(2) : stat.value;
+            return `${stat.title}: ${value}${stat.representAs === 'percentage' ? '%' : ''} (${stat.meaning})`;
+        })
+        .join('. ');
+
+    const prompt = `
+    Imagine you are a highly-experienced educator who has been teaching in the classroom for years. You possess a wealth of knowledge and expertise in the field of education i.e. reading long text, analyzing data, and summarizing key insights. Your response should be detailed and informative, providing valuable feedback and recommendations to the teacher reading your response in order to improve the teaching process and their approach to students, app in which they operate, and teaching in general. Your manner of speech should be professional, and insightful, reflecting your expertise in the subject matter.
+
+    Based on the provided classroom insights, please generate a comprehensive summary that addresses the following points:
+
+    1. **Summary of Key Insights**:
+       - **Classroom Resource Downloads**: ${baseClassroomStats}. Aggregated data: ${aggregatedClassroomStats}.
+       - **Assignment Submissions**: ${baseAssignmentStats}. Aggregated data: ${aggregatedAssignmentStats}.
+       - **Communication Activity**: ${baseCommunicationStats}. Aggregated data: ${aggregatedCommunicationStats}.
+    
+    2. **Interpretation of Data**:
+       - Explain what these insights mean in the context of student engagement, resource utilization, assignment completion, and communication habits within the classroom.
+    
+    3. **Areas for Improvement**:
+       - Based on the insights, identify specific areas where the teaching process can be improved. Provide actionable suggestions on how these improvements could be implemented.
+       - Highlight any areas of concern or metrics that are below expected standards. Suggest methods to address these issues and improve performance in those areas.
+
+    4. **Current Strengths**:
+       - Identify areas where the classroom is performing well according to the data. Mention any metrics that meet or exceed common ratios or standards, indicating positive trends or successful practices.
+
+    5. **Recommendations**:
+       - Based on the overall analysis, provide recommendations for the educator or classroom administrator on how to enhance the teaching process, increase student engagement, and foster better communication.
+
+    Please ensure that the summary is concise, yet detailed enough to provide clear guidance on how the data can be used to improve the overall learning environment. Your response should be well-structured, coherent, and demonstrate your expertise in interpreting educational data. Make sure that your summary does not exceed 300 words and that you format it in markdown.
+    `;
+
+    console.log("Prompt", prompt);
+
+    return prompt;
 };
