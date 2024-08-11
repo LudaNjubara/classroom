@@ -32,3 +32,33 @@ export const CLASSROOM_ACCENT_COLORS = [
 ] as const;
 
 export const ALLOWED_ROLES_TO_SEND_MESSAGES: Role[] = ["STUDENT", "TEACHER"] as const;
+
+export const INSIGHTS_SUMMARY_MARKDOWN_OPTIONS = {
+    overrides: {
+        h1: {
+            props: {
+                className: "mb-3 text-2xl font-semibold",
+            },
+        },
+        h2: {
+            props: {
+                className: "mt-4 mb-1 text-lg font-semibold underline underline-offset-2",
+            },
+        },
+        ul: {
+            props: {
+                className: "pl-5 my-2 border-l-4 list-inside",
+            },
+        },
+        li: {
+            props: {
+                className: "py-2",
+            },
+        },
+        p: {
+            props: {
+                className: "pl-5",
+            },
+        },
+    },
+}

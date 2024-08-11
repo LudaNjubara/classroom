@@ -122,7 +122,7 @@ export const generateInsightsPrompt = (insights: TClassroomInsight): string => {
     5. **Recommendations**:
        - Based on the overall analysis, provide recommendations for the educator or classroom administrator on how to enhance the teaching process, increase student engagement, and foster better communication.
 
-    Please ensure that the summary is concise, yet detailed enough to provide clear guidance on how the data can be used to improve the overall learning environment. Your response should be well-structured, coherent, and demonstrate your expertise in interpreting educational data. Make sure that your summary does not exceed 400 words.
+    Please ensure that the summary is concise, yet detailed enough to provide clear guidance on how the data can be used to improve the overall learning environment. Your response should be well-structured, coherent, and demonstrate your expertise in interpreting educational data. Make sure that your summary does not exceed 300 words and that you format it in markdown.
     `;
 
     console.log("Prompt", prompt);

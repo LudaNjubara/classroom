@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { generateInsightsSummary } from "@/features/classrooms/api";
+import { INSIGHTS_SUMMARY_MARKDOWN_OPTIONS } from "@/features/classrooms/constants";
 import { useClassroomInsightsSummary } from "@/features/classrooms/hooks/useClassroomInsightsSummary";
 import { TClassroomInsight } from "@/features/classrooms/types";
 import { generateInsightsPrompt } from "@/features/classrooms/utils";
@@ -11,6 +12,7 @@ import { cn } from "@/utils/cn";
 import { formatDateTime, isToday } from "@/utils/misc";
 import { StatisticsSummary } from "@prisma/client";
 import { WandSparklesIcon } from "lucide-react";
+import Markdown from "markdown-to-jsx";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -100,7 +102,11 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
           </p>
         </div>
 
-        {isGeneratingSummary && <InsightSummarySkeleton />}
+        {isGeneratingSummary && (
+          <div className="px-3 py-6">
+            <InsightSummarySkeleton />
+          </div>
+        )}
 
         <div className="px-3 py-6">
           {!isGeneratingSummary && (
@@ -109,7 +115,9 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
                 <>
                   <Badge>Generated on {formatDateTime(new Date(oldSummary.createdAt))}</Badge>
 
-                  <p className="mt-3 text-sm text-slate-300">{oldSummary.content}</p>
+                  <div className="mt-3">
+                    <Markdown options={INSIGHTS_SUMMARY_MARKDOWN_OPTIONS}>{oldSummary.content}</Markdown>
+                  </div>
                 </>
               )}
 
@@ -117,7 +125,9 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
                 <>
                   <Badge>Generated on {formatDateTime(new Date(newSummary.createdAt))}</Badge>
 
-                  <p className="mt-3 text-sm text-slate-300">{newSummary.content}</p>
+                  <div className="mt-3">
+                    <Markdown options={INSIGHTS_SUMMARY_MARKDOWN_OPTIONS}>{newSummary.content}</Markdown>
+                  </div>
                 </>
               )}
 
