@@ -541,7 +541,7 @@ model Article {
 
   title       String
   imageURL    String
-  description String?
+  description String?     @db.Text
   content     String      @db.Text
   tags        String
   type        ArticleType
