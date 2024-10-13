@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
         backendClient.publicFiles.confirmUpload({
             url: communityArticle.imageURL
         }).catch((error) => {
-            console.log("error", error);
+            console.log("Failed to confirm uploaded file", error);
             return NextResponse.json({ error: "Invalid image URL" }, { status: 400 })
         });
 
@@ -147,6 +147,12 @@ export async function POST(req: NextRequest) {
         });
 
         if (!article) {
+            backendClient.publicFiles.deleteFile({
+                url: communityArticle.imageURL
+            }).catch((error) => {
+                console.log("Failed to delete a file ", error);
+            });
+
             return NextResponse.json({ error: "Failed to create article" }, { status: 500 })
         }
 

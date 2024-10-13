@@ -28,7 +28,7 @@ function EmptyContent() {
   return (
     <div className="w-full h-full grid place-items-center ">
       <h2
-        className="text-6xl font-semibold bg-clip-text text-transparent
+        className="text-6xl text-center font-semibold bg-clip-text text-transparent
       bg-gradient-to-b from-slate-200/40 to-slate-200/90
       dark:from-slate-800 dark:to-slate-900/90"
       >
