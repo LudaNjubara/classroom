@@ -2,14 +2,15 @@ import { InsightSummarySkeleton, Spinner } from "@/components/Loaders";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useDashboardContext } from "@/context";
 import { generateInsightsSummary } from "@/features/classrooms/api";
 import { INSIGHTS_SUMMARY_MARKDOWN_OPTIONS } from "@/features/classrooms/constants";
 import { useClassroomInsightsSummary } from "@/features/classrooms/hooks/useClassroomInsightsSummary";
 import { TClassroomInsight } from "@/features/classrooms/types";
-import { generateInsightsPrompt } from "@/features/classrooms/utils";
+import { generateInsightsPrompt, hasSummaryBeenGeneratedToday } from "@/features/classrooms/utils";
 import { useDashboardStore } from "@/stores";
 import { cn } from "@/utils/cn";
-import { formatDateTime, isToday } from "@/utils/misc";
+import { formatDateTime } from "@/utils/misc";
 import { StatisticsSummary } from "@prisma/client";
 import { WandSparklesIcon } from "lucide-react";
 import Markdown from "markdown-to-jsx";
@@ -22,6 +23,9 @@ type TInsightSummaryPanelProps = {
 };
 
 export function InsightSummaryPanel({ insights, className }: TInsightSummaryPanelProps) {
+  // context
+  const { profile } = useDashboardContext();
+
   // zustand state and actions
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
 
@@ -40,7 +44,7 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
   const { toast } = useToast();
 
   // derived state
-  const isSummaryGeneratedToday = !!oldSummary && isToday(new Date(oldSummary.createdAt));
+  const isSummaryGeneratedToday = hasSummaryBeenGeneratedToday(oldSummary, newSummary);
 
   // handlers
   const handleGenerateSummaryClick = async () => {
@@ -79,7 +83,12 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
           variant="default"
           className="flex gap-2 w-48"
           onClick={handleGenerateSummaryClick}
-          disabled={isGeneratingSummary || isOldSummaryLoading || isSummaryGeneratedToday}
+          disabled={
+            profile.role !== "TEACHER" ||
+            isGeneratingSummary ||
+            isOldSummaryLoading ||
+            isSummaryGeneratedToday
+          }
         >
           {isGeneratingSummary ? (
             <Spinner />
@@ -111,22 +120,22 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
         <div className="px-3 py-6">
           {!isGeneratingSummary && (
             <div>
-              {oldSummary && (
-                <>
-                  <Badge>Generated on {formatDateTime(new Date(oldSummary.createdAt))}</Badge>
-
-                  <div className="mt-3">
-                    <Markdown options={INSIGHTS_SUMMARY_MARKDOWN_OPTIONS}>{oldSummary.content}</Markdown>
-                  </div>
-                </>
-              )}
-
               {newSummary && (
                 <>
                   <Badge>Generated on {formatDateTime(new Date(newSummary.createdAt))}</Badge>
 
                   <div className="mt-3">
                     <Markdown options={INSIGHTS_SUMMARY_MARKDOWN_OPTIONS}>{newSummary.content}</Markdown>
+                  </div>
+                </>
+              )}
+
+              {!newSummary && oldSummary && (
+                <>
+                  <Badge>Generated on {formatDateTime(new Date(oldSummary.updatedAt))}</Badge>
+
+                  <div className="mt-3">
+                    <Markdown options={INSIGHTS_SUMMARY_MARKDOWN_OPTIONS}>{oldSummary.content}</Markdown>
                   </div>
                 </>
               )}
@@ -140,7 +149,7 @@ export function InsightSummaryPanel({ insights, className }: TInsightSummaryPane
                     height={200}
                     className="opacity-70"
                   />
-                  <p className="text-slate-500 text-sm font-semibold">
+                  <p className="text-slate-500 text-sm text-center font-semibold">
                     No summary available. Click the button above to generate a new summary.
                   </p>
                 </div>

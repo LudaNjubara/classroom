@@ -76,7 +76,7 @@ export function AddClassroomStudentModal({ onSuccess, toggleOpen }: TAddClassroo
     <>
       <h2 className="text-2xl font-medium">
         Add students to{" "}
-        <span style={{ color: accentColors[selectedClassroom!.id].base }}>{selectedClassroom?.name}</span>
+        <span style={{ color: accentColors[selectedClassroom!.id]?.base }}>{selectedClassroom?.name}</span>
       </h2>
 
       <p className="text-slate-600">

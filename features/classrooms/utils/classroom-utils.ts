@@ -1,4 +1,5 @@
-import { sanitizeInput } from "@/utils/misc";
+import { isToday, sanitizeInput } from "@/utils/misc";
+import { StatisticsSummary } from "@prisma/client";
 import { TAccentColor, TClassroomAssignmentWithTeacher, TClassroomInsight, TEditedAssignment } from "../types";
 
 // generate { dark, darker, light, lighter } colors from a seed color
@@ -125,7 +126,15 @@ export const generateInsightsPrompt = (insights: TClassroomInsight): string => {
     Please ensure that the summary is concise, yet detailed enough to provide clear guidance on how the data can be used to improve the overall learning environment. Your response should be well-structured, coherent, and demonstrate your expertise in interpreting educational data. Make sure that your summary does not exceed 300 words and that you format it in markdown.
     `;
 
-    console.log("Prompt", prompt);
-
     return prompt;
+};
+
+export const hasSummaryBeenGeneratedToday = (
+    oldSummary: StatisticsSummary | null,
+    newSummary: StatisticsSummary | null
+): boolean => {
+    const hasOldSummaryBeenGeneratedToday = !!oldSummary && isToday(new Date(oldSummary.updatedAt));
+    const hasNewSummaryBeenGeneratedToday = !!newSummary && isToday(new Date(newSummary.updatedAt));
+
+    return hasOldSummaryBeenGeneratedToday || hasNewSummaryBeenGeneratedToday;
 };
