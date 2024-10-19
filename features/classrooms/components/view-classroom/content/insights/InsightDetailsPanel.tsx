@@ -50,7 +50,9 @@ const InsightDetailsPanelAggregatedItem = ({ insight }: TInsightDetailsPanelAggr
 
       <h4 className="text-sm font-semibold">{insight.title}</h4>
       <span className="block py-1 text-center text-3xl bg-slate-800 rounded-full text-slate-400 ">
-        {insight.representAs === "percentage" ? `${insight.value * 100}%` : insight.value}
+        {insight.representAs === "percentage"
+          ? `${Number(insight.value.toFixed(2)) * 100}%`
+          : Number(insight.value.toFixed(2))}
       </span>
       <p className="mt-4 text-xs text-slate-500">{insight.description}</p>
     </div>

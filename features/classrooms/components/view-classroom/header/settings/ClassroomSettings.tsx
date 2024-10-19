@@ -24,7 +24,7 @@ const CLASSROOM_SETTINGS_ITEMS: TClassroomSettingsItem[] = [
   },
   {
     id: "resources",
-    title: "Resources",
+    title: "Files",
     description: "View and manage resources",
     icon: <FileCogIcon size={20} />,
   },

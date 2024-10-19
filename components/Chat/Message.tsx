@@ -271,7 +271,9 @@ export function Message({ data, isCurrentUser, accentColor, channelId }: TMessag
 
         {data.fileUrl && (
           <div
-            className="mt-3 py-1 px-4 flex items-center gap-3 rounded-lg dark:bg-slate-800 bg-slate-500 shadow-lg"
+            className={`mt-3 py-1 pl-3 pr-1 flex items-center gap-3 max-w-48 rounded-lg dark:bg-slate-800 bg-slate-500 shadow-lg ${
+              isCurrentUser ? "ml-auto" : "mr-auto"
+            }`}
             style={
               isCurrentUser && accentColor
                 ? {
