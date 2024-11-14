@@ -1,4 +1,5 @@
 import { db } from "@/config";
+import { NotificationWithOrgSender } from "@/features/notifications/types";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextResponse } from "next/server";
 
@@ -25,7 +26,7 @@ export async function GET() {
             return NextResponse.json({ error: "Teacher not found" }, { status: 404 })
         }
 
-        const notifications = await db.$transaction([
+        const [count, notifications] = await db.$transaction([
             db.notification.count({
                 where: {
                     recipientId: teacher.id,
@@ -38,10 +39,25 @@ export async function GET() {
                     senderType: "ORGANIZATION"
                 },
                 orderBy: {
-                    status: 'asc'
+                    status: 'asc',
                 },
             })
         ]);
+
+        const data: NotificationWithOrgSender[] = await Promise.all(notifications.map(async n => {
+            const org = await db.organization.findUnique({
+                where: {
+                    id: n.senderId
+                }
+            });
+
+            return {
+                ...n,
+                sender: org!
+            };
+        }))
+
+        return NextResponse.json({ count, data }, { status: 200 })
 
         return NextResponse.json({ count: notifications[0], data: notifications[1] }, { status: 200 })
     } catch (error) {

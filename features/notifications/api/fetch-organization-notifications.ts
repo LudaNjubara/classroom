@@ -3,9 +3,8 @@
 import { API_ENDPOINTS } from "@/constants";
 import { TPaginatedResponse } from "@/types/typings";
 import { handleError } from "@/utils/handle-error";
-import { Notification } from "@prisma/client";
 import { cookies } from "next/headers";
-import { TNotificationForType } from "../types";
+import { NotificationWithOrgSender, TNotificationForType } from "../types";
 
 const roleToUrlMap: { [key in TNotificationForType]: string } = {
     ORGANIZATION: API_ENDPOINTS.NOTIFICATION.ORGANIZATION.ORGANIZATION,
@@ -13,7 +12,7 @@ const roleToUrlMap: { [key in TNotificationForType]: string } = {
     STUDENT: API_ENDPOINTS.NOTIFICATION.ORGANIZATION.STUDENT,
 };
 
-export async function fetchOrganizationNotifications(profileRole: TNotificationForType): Promise<TPaginatedResponse<Notification>> {
+export async function fetchOrganizationNotifications(profileRole: TNotificationForType): Promise<TPaginatedResponse<NotificationWithOrgSender>> {
     const URL = roleToUrlMap[profileRole];
 
     const response = await fetch(URL, {

@@ -11,11 +11,11 @@ import { memo, useCallback } from "react";
 import { acceptNotification, dismissNotification } from "../..";
 import { NOTIFICATIONS_WITH_ACTIONS } from "../../constants";
 import { useOrganizationNotifications } from "../../hooks/useOrganizationNotifications";
-import { TNotificationAction } from "../../types";
+import { NotificationWithOrgSender, TNotificationAction } from "../../types";
 
 type TNotificationItemProps = {
-  notification: Notification;
-  handleAction: (action: TNotificationAction, notification: Notification) => void;
+  notification: NotificationWithOrgSender;
+  handleAction: (action: TNotificationAction, notification: NotificationWithOrgSender) => void;
 };
 
 const NotificationItem: React.FC<TNotificationItemProps> = memo(({ notification, handleAction }) => {
@@ -32,7 +32,7 @@ const NotificationItem: React.FC<TNotificationItemProps> = memo(({ notification,
             </div>
 
             <div>
-              <h3 className="text-lg font-medium">{notification.recipientId}</h3>
+              <h3 className="text-lg font-medium">{notification.sender.name}</h3>
               <p className="text-slate-600 dark:text-slate-600">{notification.message}</p>
             </div>
           </div>

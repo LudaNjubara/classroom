@@ -3,7 +3,6 @@
 import { API_ENDPOINTS } from "@/constants";
 import { TSelectedStudentItem } from "@/features/students";
 import { TSelectedTeacherItem } from "@/features/teachers";
-import { handleError } from "@/utils/handle-error";
 import { Classroom } from "@prisma/client";
 import { cookies } from "next/headers";
 import { TClassroomSettings, TScheduleItem } from "../types";
@@ -45,7 +44,9 @@ export async function createClassroom({
     });
 
     if (!response.ok) {
-        handleError(response.status)
+        const res = await response.json() as { error: string }
+
+        throw new Error(res.error)
     }
 
     return response.json() as unknown as { classroom: Classroom }
