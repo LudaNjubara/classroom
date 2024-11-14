@@ -276,12 +276,20 @@ export async function PUT(req: Request) {
         if (data.settings) {
             // @ts-ignore-next-line
             const a = data.settings.forEach(async (setting) => {
-                await db.classroomSettings.update({
+                await db.classroomSettings.upsert({
                     where: {
-                        id: setting.id
+                        id: setting.id || ""
                     },
-                    data: setting
-                })
+                    update: setting,
+                    create: {
+                        ...setting,
+                        classroom: {
+                            connect: {
+                                id: whereClause.id
+                            }
+                        }
+                    }
+                });
             });
         } else if (data.teachers) {
             const classroom = await db.classroomTeacher.createMany({

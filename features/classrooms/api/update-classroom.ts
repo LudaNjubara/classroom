@@ -1,7 +1,6 @@
 "use server";
 
 import { API_ENDPOINTS } from "@/constants";
-import { handleError } from "@/utils/handle-error";
 import { Classroom } from "@prisma/client";
 import { cookies } from "next/headers";
 import { TUpdateClassroomParams } from "../types";
@@ -23,7 +22,9 @@ export async function updateClassroom({ resources, classroom, classroomSettings,
     });
 
     if (!response.ok) {
-        handleError(response.status)
+        const res = await response.json() as { error: string }
+
+        throw new Error(res.error)
     }
 
     return response.json() as unknown as { classroom: Classroom }

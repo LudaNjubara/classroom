@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { updateClassroom } from "@/features/classrooms/api";
 import { TClassroomSettings, TClassroomSettingsWithId } from "@/features/classrooms/types";
+import { generateAccentColorsFromSeed } from "@/features/classrooms/utils";
 import { useDashboardStore } from "@/stores";
 import { useMemo, useState } from "react";
 import { AccentColorSetting } from "../../../create-classroom/ClassroomSettingsFormField";
@@ -10,6 +11,9 @@ import { AccentColorSetting } from "../../../create-classroom/ClassroomSettingsF
 export function CustomizationSettingsItem() {
   // zustand state and actions
   const selectedClassroom = useDashboardStore((state) => state.selectedClassroom);
+  const setSelectedClassroom = useDashboardStore((state) => state.setSelectedClassroom);
+  const accentColors = useDashboardStore((state) => state.accentColors);
+  const setAccentColors = useDashboardStore((state) => state.setAccentColors);
 
   // hooks
   const { toast } = useToast();
@@ -43,7 +47,7 @@ export function CustomizationSettingsItem() {
 
     // add id to every setting in the classroom settings
     Object.entries(classroomSettings).map(([key, value]) => {
-      const b = selectedClassroom!.settings.find((setting) => setting.key === key);
+      const setting = selectedClassroom.settings.find((setting) => setting.key === key);
 
       // @ts-ignore-next-line
       classroomSettings[key] = {
@@ -51,7 +55,7 @@ export function CustomizationSettingsItem() {
         metadata: {
           type: value.metadata.type,
         },
-        id: b?.id,
+        id: setting?.id,
       };
     });
 
@@ -61,6 +65,11 @@ export function CustomizationSettingsItem() {
           settings: classroomSettings as TClassroomSettingsWithId,
           classroomId: selectedClassroom!.id,
         },
+      });
+
+      setAccentColors({
+        ...accentColors,
+        [selectedClassroom.id]: generateAccentColorsFromSeed(classroomSettings.ACCENT_COLOR!.value),
       });
 
       toast({
