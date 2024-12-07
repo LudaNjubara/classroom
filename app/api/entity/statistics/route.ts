@@ -452,7 +452,7 @@ export async function GET(req: NextRequest) {
                     description: "Percentage of resources students engage with",
                     meaning: "This metric represents the percentage of provided resources downloaded, indicating the level of engagement and material utilization.",
                     howItWorks: "It compares the total number of classroom resources downloaded to the total number of resources available in the classroom.",
-                    value: ((classroomResourcesCount * studentsCount) / classroomStatistics.totalClassroomResourceDownloads) || 0,
+                    value: isFinite(((classroomResourcesCount * studentsCount) / classroomStatistics.totalClassroomResourceDownloads)) ? ((classroomResourcesCount * studentsCount) / classroomStatistics.totalClassroomResourceDownloads) : 0,
                     representAs: "percentage"
                 },
             },
